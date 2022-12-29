@@ -1,0 +1,21 @@
+{
+  "name": "bogunproject",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server/index.js",
+    "server": "nodemon server/index.js",
+    "client": "npm run front --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run start --prefix client\""
+  },
+  "author": "inveloper",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  },
+  "dependencies": {
+    "concurrently": "^7.6.0"
+  }
+}
