@@ -66,10 +66,18 @@ const Register = () => {
         // SchoolList(data);
     }
 
-
-    useEffect(() => {
-        // fetchData();
-    }, [data]);
+    const SearchResultBox = () => {
+        if(data) {
+            for(let i = 0; i < data.length; i++) {
+                return <ul>
+                    <li>{ data[i].SCHUL_NM }</li>
+                </ul>
+            }
+        }
+    }
+    // useEffect(() => {
+    //     // fetchData();
+    // }, [data]);
 
     // if(loading) return <div>loading...</div>;
     // if(error) return <div>Error...</div>;
@@ -117,6 +125,7 @@ const Register = () => {
                                 <label className='label'>학교 선택</label>
                                 <input className="input" name="searchSchool" type="text" value={schoolName} onChange={ searchHandle } placeholder="학교명을 입력하세요" />
                                 <div>
+                                    <SearchResultBox />
                                 </div>
                                 <div className="field mt-5">
                                     <label className="label">Name</label>
