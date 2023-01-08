@@ -6,17 +6,18 @@
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-// import { setegid } from 'process';
+import Neis from "@my-school.info/neis-api";
 
-const URL = "https://open.neis.go.kr/hub/schoolInfo";
+const neis = new Neis({ KEY : "1addcd8b3de24aa5920d79df1bbe2ece", Type : "json" });
 
 const Register = () => {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-
+    
+    const [isSelected, setIsSelected] = useState(false);
+    
     const [schoolName, setSchoolName] = useState('');
-
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -24,34 +25,27 @@ const Register = () => {
     const [msg, setMsg] = useState('');
     const navigate = useNavigate();
     
+    // const URL = "https://open.neis.go.kr/hub/schoolInfo";
     const getSchoolInfo = (e) => {
         try {
             setLoading(true);
-            axios.get(URL, {
-                params: {
-                    KEY: "1addcd8b3de24aa5920d79df1bbe2ece",
-                    pIndex: 1,
-                    pSize: 100,
-                    Type: "json",
-                    SCHUL_NM: e
-                }
+            neis.getSchoolInfo({
+                    // args
+                    SCHUL_NM : e
+                },{
+                    // config
+                    pIndex : 1,
+                    pSize : 100
             }).then((response) => {
-                const data = response.data;
-                
-                // data.schoolInfo가 없으면 값이 없을 떄
-                if(!data.schoolInfo) {
-                    setData(null)
-                } else {
-                    if(data.schoolInfo[1].row.length > 50) {
-                        setData(null);
+                if(!response) {
+                    setData(null);
+                }else{
+                    if(response.length > 20) {
+                        setData(null)
                     }else{
-                        setData(data.schoolInfo[1].row);
-                        // SchoolList(data.schoolInfo[1].row);
+                        setData(response);
                     }
-                }    
-                
-                // setData(data);
-                console.log(data);
+                }
             });
         } catch (error) {
             console.log(error);
@@ -61,32 +55,34 @@ const Register = () => {
     }
 
     const searchHandle = (e) => {
+        setIsSelected(false);
         setSchoolName(e.target.value);
         getSchoolInfo(e.target.value);
-        // SchoolList(data);
+    }
+
+    const selectSchool = (props) => {
+        setSchoolName(props);
+        setIsSelected(true);
     }
 
     const SearchResultBox = () => {
-        if(data) {
+        if(data && !isSelected) {
+            const schoolList = [];
             for(let i = 0; i < data.length; i++) {
-                return <ul>
-                    <li>{ data[i].SCHUL_NM }</li>
-                </ul>
+                let info = data[i];
+                schoolList.push(<li key={i} onClick={(event)=>{ selectSchool(info.SCHUL_NM) }}><b>{ info.SCHUL_NM }</b> [{ info.ORG_RDNMA }]</li>);
             }
+            return <div className='box'>
+                <ul> { schoolList } </ul>
+            </div>
         }
     }
-    // useEffect(() => {
-    //     // fetchData();
-    // }, [data]);
-
-    // if(loading) return <div>loading...</div>;
-    // if(error) return <div>Error...</div>;
-    // if(!data) return null;
 
     const Register = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost8000/users', {
+            await axios.post('http://localhost:8000/users', {
+                schoolName: schoolName,
                 name: name,
                 email: email,
                 password: password,
@@ -99,20 +95,6 @@ const Register = () => {
             }
         }
     }
- 
-    // const SchoolList = (data) => {
-    //     if(data.length) {
-    //         debugger
-    //         return (
-    //                         data.forEach(item => {
-    //                             <li>item.SCHUL_NM</li>
-    //                         })
-    //                         // data.map((v, inx) => {
-    //                         //     <li>v.SCHUL_NM</li>
-    //                         // })
-    //         )
-    //     }
-    // }
 
     return (
         <section className="hero has-background-grey-light is-fullheight is-fullwidth">
@@ -156,9 +138,6 @@ const Register = () => {
                                     <button className="button is-success is-fullwidth">Register</button>
                                 </div>
                             </form>
-                            {/* <div>
-                                <p>{ data.response }</p>
-                            </div> */}
                         </div>
                     </div>
                 </div>

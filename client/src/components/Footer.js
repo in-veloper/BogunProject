@@ -2,10 +2,10 @@
 /* eslint-disable react/react-in-jsx-scope */
 const Footer = () => {
     return (
-        <footer className="footer">
+        <footer className="footer" style={{ height : 60, padding : 20 ,backgroundColor : 'lightgrey'}}>
             <div className="content has-text-centered">
                 <p>
-                    <strong>보건업무시스템</strong> by <a href="#">inveloper</a>. <br/>All right reserved.
+                    Developed by <a href="#">inveloper</a>. All right reserved.
                 </p>
             </div>
         </footer>

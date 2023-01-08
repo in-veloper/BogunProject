@@ -1,3 +1,16 @@
+import Neis from "@my-school.info/neis-api";
+const neis = new Neis({ KEY : "1addcd8b3de24aa5920d79df1bbe2ece", Type : "json" });
+
+
+neis.getSchedule(
+    {
+        // args
+    },
+    {
+        // config
+    }
+)
+
 // import Students from "../models/StudentsModel.js";
 // import bcrypt from "bcrypt";
 // // import jwt from "jsonwebtoken";

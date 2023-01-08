@@ -1,8 +1,11 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable no-undef */
 import React, { useState, useEffect } from 'react';
 import jwt_decode from "jwt-decode";
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { FaAngleDown } from 'react-icons/fa';
+import { AiOutlinePlusSquare } from 'react-icons/ai';
  
 const Navbar = () => {
     const [name, setName] = useState('');
@@ -15,9 +18,11 @@ const Navbar = () => {
     
     const getUserName = async () => {
         try{
-            const response = await axios.get('http://localhost8000/token');
-            const decoded = jwt_decode(response.data.accessToken);
-            setName(decoded.name);
+            if(name.length === 0) {
+                const response = await axios.get('http://localhost:8000/token');
+                const decoded = jwt_decode(response.data.accessToken);
+                setName(decoded.name);
+            }
         } catch (error) {
             if(error.response) {
                 console.log(error);
@@ -61,15 +66,37 @@ const Navbar = () => {
                         <a href="/dailyWorkNote" className="navbar-item" onClick={goDailyWorkNote}>
                             <b>보건일지</b>
                         </a>
-                        <a href="/" className="navbar-item">
+                        <a href="/calendar" className="navbar-item">
                             <b>보건일정</b>
                         </a>
                         <a href="/" className="navbar-item">
                             <b>약품정보</b>
                         </a>
-                        <a href="/" className="navbar-item">
-                            <b>관련페이지</b>
-                        </a>
+                        <div className="navbar-item">
+                            <div className='dropdown is-hoverable'>
+                                <div className='dropdown-trigger'>
+                                    <span aria-haspopup="true" aria-controls='dropdown-menu3'><b>관련페이지</b></span>
+                                    <span className='icon is-small' style={{ verticalAlign : 'middle', marginTop : -3}}>
+                                        <FaAngleDown />
+                                    </span>
+                                </div>
+                                <div className='dropdown-menu' id='dropdown-menu3' role='menu'>
+                                    <div className='dropdown-content'>
+                                        <a href="www.naver.com" className='dropdown-item'>
+                                            네이버
+                                        </a>
+                                        <a href="www.google.com" className='dropdown-item'>
+                                            구글
+                                        </a>
+                                        <hr className='dropdown-divider'/>
+                                        <a href='#' className='dropdown-item'>
+                                            <AiOutlinePlusSquare style={{ marginRight : 5, marginTop : -5, fontSize : 17, verticalAlign : 'middle', fontWeight : 'bold' }}/>
+                                            추가등록
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <a href="/myPage" className="navbar-item">
                             <b>내정보</b>
                         </a>

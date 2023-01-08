@@ -9,7 +9,7 @@
 /* eslint-disable react/jsx-key */
 /* eslint-disable react/react-in-jsx-scope */
 import { FaAngleDown } from 'react-icons/fa';
-import { AiOutlineFileSearch } from 'react-icons/ai';
+import { AiOutlinePrinter, AiOutlineSave } from 'react-icons/ai';
 
 const DailyWorkNote = () => {
 
@@ -99,7 +99,7 @@ const DailyWorkNote = () => {
     }
 
     return (
-        <div className="container mt-5">
+        <div className="container mt-5" >
             <table className="table is-bordered is-fullwidth is-hoverable">
                 <thead>
                     <tr>
@@ -112,14 +112,23 @@ const DailyWorkNote = () => {
                     {createStatTr()}
                 </tbody>
             </table>
-            <br/>
+            <hr/>
             <div style={{ float: 'left', marginLeft: 10, marginTop: 5 }}>
                 <span style={{ verticalAlign : 'middle', fontSize : 18}}><b><Today /></b></span>
             </div>
             <div style={{ float: 'right', marginBottom: 10 }}>
-                {/* < AiOutlineFileSearch size="27" style={{ color : 'gray', verticalAlign : 'middle', marginTop : 5, marginRight : 10 }}/> */}
+                <button className='button is-info is-outlined' style={{ marginRight : 5 }}>
+                    <span className='icon is-small'>
+                        <AiOutlineSave style={{ fontSize : 20 }}/>
+                    </span>
+                </button>
+                <button className='button is-info is-outlined' style={{ marginRight : 5 }}>
+                    <span className='icon is-small'>
+                        <AiOutlinePrinter style={{ fontSize : 20 }}/>
+                    </span>
+                </button>
                 <input 
-                    className='input is-normal'
+                    className='input is-info'
                     placeholder='검색어를 입력하세요'
                     // onSearch={(value) => console.log(value)}
                     style={{ width: 200 }}

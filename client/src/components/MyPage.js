@@ -9,11 +9,35 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable react/react-in-jsx-scope */
 
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 import * as XLSX from 'xlsx';
 import Excel from 'exceljs';
-import { useState } from 'react';
+import { ImUpload } from 'react-icons/im';
+import Neis from "@my-school.info/neis-api";
+import jwt_decode from "jwt-decode";
 
 const MyPage = () => {
+    const [users, setUsers] = useState([]);
+
+    useEffect(() => {
+        getUsersInfo();
+    });
+
+    const getUsersInfo = async () => {
+        try {
+            if(users.length === 0) {
+                const response = await axios.get('http://localhost:8000/token');
+                const decoded = jwt_decode(response.data.accessToken);
+                setUsers(decoded);
+            }
+        } catch (error) {
+            if(error.response) {
+                console.log(error);
+            }
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
         function openModal($el) {
             $el.classList.add('is-active');
@@ -56,10 +80,12 @@ const MyPage = () => {
     });
 
 
-
+    
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+
+    const neis = new Neis({ KEY : "1addcd8b3de24aa5920d79df1bbe2ece", Type : "json" });
 
     const readExcel = (e) => {
         const [file] = e.target.files;
@@ -108,30 +134,60 @@ const MyPage = () => {
     }
 
     return (
-        <div className="container mt-5">
-            {/* <div className='file is-info has-name'>
-                <label className='file-label'>
-                    <input className='file-input' type='file' name='resume' onChange={readExcel}>
-                        {/* <span className='file-cta'>
-                            <span className='file-icon'>
-                                {/* <i></i> */}
-                            {/* </span>
-                            <span className='file-label'>
-                                파일선택
+        <div className="container mt-5" style={{display: "flex", flexDirection: 'column', height: '100vh'}}>
+            <div className='field'>
+                <label className='label'>ID</label>
+                <div className='control'>
+                    <input className='input' type='text' value={users.email || ''} readOnly={true}/>
+                </div>
+            </div>
+            <div className='field'>
+                <label className='label'>이름</label>
+                <div className='control'>
+                    <input className='input' type='text' value={users.name || ''} readOnly={true}/>
+                </div>
+            </div>
+            <div className='field'>
+                <label className='label'>소속 학교</label>
+                <div className='control'>
+                    <input className='input' type='text' value={users.schoolName || ''} readOnly={true}/>
+                </div>
+            </div>
+            <div className='field'>
+                <label className='label'>관련 페이지 관리</label>
+                <div className='box'>
+                    <li>네이버</li>
+                    <li>구글</li>
+                </div>
+            </div>
+            <div className='field'>
+                <label className='label'>명렬표 등록 및 현황</label>
+                <div className='box' style={{ height : 80}}>
+                    <div className='file has-name is-success' style={{ float : 'left'}}>
+                        <label className='file-label'>
+                            <input className='file-input' type="file" name="resume" onChange={ readExcel }/>
+                            <span className='file-cta'>
+                                <span className='file-icon'>
+                                    <ImUpload />
+                                </span>
+                                <span className='file-label'>
+                                    Choose a file
+                                </span>
                             </span>
-                        </span>
-                        <span className='file-name'>
-
-                        </span> */}
-                    {/* </input>
-                </label>
-            </div> */}
-            <input type="file" onChange={readExcel}></input>
-            <button className='button is-success js-modal-trigger' data-target="modal" onClick={handleShow}>
-                명렬표 미리보기
-            </button>
+                            <span className='file-name'>
+                                선택된 파일 없음
+                            </span>
+                        </label>
+                    </div>
+                    <button className='button is-success js-modal-trigger' style={{width: 303, float : 'right'}} data-target="modal" onClick={handleShow}>
+                        명렬표 미리보기
+                    </button>
+                </div>
+            </div>
+            
+            <br></br>
+            
             <div className= {show ? 'modal is-active' : 'modal'}>
-            {/* <div className='modal' showmodal={show}> */}
                 <div className='modal-background'></div>
                 <div className='modal-card'>
                     <header className='modal-card-head'>
