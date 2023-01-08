@@ -1,12 +1,14 @@
-html, body {
+/* html, body {
     height: 100%;
     width: 100%;
     /* background: #d8dbe0; */
-}
+/* } */ 
 
 .Calendar {
     height: 100%;
     width: 100%;
+    padding-left: 115px;
+    padding-right: 115px;
     font-size: 1.5rem;
     display: flex;
     flex-direction: column;
