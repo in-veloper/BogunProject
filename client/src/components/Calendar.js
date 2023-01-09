@@ -9,7 +9,7 @@ import './style/modal.css';
 import './style/table.css';
 
 
-const today = new Date()
+const today = new Date();
 
 // 초기 상태
 const initialState = {
@@ -24,7 +24,7 @@ const initialState = {
 
 
 const Calendar = () => {
-    const [state, dispatch] = useReducer(CalendarReducer, initialState)
+    const [state, dispatch] = useReducer(CalendarReducer, initialState);
 
     // 날짜 관련
     const year = state.year;
@@ -34,57 +34,55 @@ const Calendar = () => {
     const firstDay = parseInt(new Date(year, month, 1).getDay());
 
     // 일정
-    const todo = state.schedule
+    const todo = state.schedule;
 
     // Modal
-    const visible = state.modal.visible
-    const index = state.modal.index
+    const visible = state.modal.visible;
+    const index = state.modal.index;
 
 
     // Month 감소
     const onDecreases = () => {
-        dispatch({ type: 'DECREMENT'})
+        dispatch({ type: 'DECREMENT'});
     }
 
     // Month 증가
     const onIncreases = () => {
-        dispatch({ type: 'INCREMENT'})
+        dispatch({ type: 'INCREMENT'});
     }
 
     // Modal Active
     const changeVisible = (key) => {
-        dispatch({ type: 'MODAL', value: key})
+        dispatch({ type: 'MODAL', value: key});
     }
 
     // 일정 입력
     const onConfirm = ({index, todo, color, todos}) => {
-        debugger
         if (todos.length != 0) {
             todos.map((item) => {
-                dispatch({type: 'INSERT', index: item, todo: todo, color: color})
-            })
+                dispatch({type: 'INSERT', index: item, todo: todo, color: color});
+            });
+        } else {
+            dispatch({type: 'INSERT', index: index, todo: todo, color: color});
         }
-        else {
-            dispatch({type: 'INSERT', index: index, todo: todo, color: color})
-        }
-        dispatch({ type: "MODAL"})
+        dispatch({ type: "MODAL"});
     }
 
     // 일정 입력 취소
     const onCancel = () => {
-        dispatch({ type: "MODAL"})
+        dispatch({ type: "MODAL"});
     }
 
     return (
         <>
-            <div className="Calendar">
+            <div className="Calendar" style={{ marginBottom : 50}}>
                 <div className="cal-header">
                     <button className="move" onClick={onDecreases}>&lt;</button>
                     <p>{yearMonth}</p>
                     <button className="move" onClick={onIncreases}>&gt;</button>
                 </div>
                 <table className='cal-table'>
-                <thead>
+                <thead style={{ fontWeight : 'bold'}}>
                     <tr>
                         <td>Sun</td>
                         <td>Mon</td>

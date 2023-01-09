@@ -19,14 +19,6 @@ const Modal = ({index, visible, onConfirm, onCancel}) => {
     const [state, dispatch] = useReducer(ModalReducer, initialState);
     const [modalShow, setModalShow] = useState(false);
 
-    const handleClose = () => {
-        debugger
-    }
-
-    // const handleClose = () => setModalShow(false);
-    const handleShow = () => setModalShow(true);
-
-    
     const color = state.color;
     const todo = state.todo;
     const todos = state.todos;
@@ -52,8 +44,7 @@ const Modal = ({index, visible, onConfirm, onCancel}) => {
     
     // 일정
     const onChange = useCallback(e => {
-        debugger
-        dispatch({type: 'TODO', value: e.target.value})
+        dispatch({type: 'TODO', value: e.target.value});
     }, [])
     
     // 일정 종료일
@@ -68,9 +59,8 @@ const Modal = ({index, visible, onConfirm, onCancel}) => {
     
     // 입력 취소
     const cancel = () => {
-        onCancel()
-        handleClose()
-        Initialization()
+        onCancel();
+        Initialization();
     }
     
     // 입력
@@ -81,7 +71,6 @@ const Modal = ({index, visible, onConfirm, onCancel}) => {
         changeColor('')
     }
 
-    // if(visible) setModalShow(true);
     if (!visible) return null;
     
     return (
@@ -91,7 +80,7 @@ const Modal = ({index, visible, onConfirm, onCancel}) => {
             <div className='modal-card'>
                 <header className='modal-card-head'>
                     <p className='modal-card-title'>일정 등록</p>
-                    <button className='delete' aria-label='close' onClick={handleClose}></button>
+                    <button className='delete' aria-label='close' onClick={cancel}></button>
                 </header>
                 <section className='modal-card-body'>
                     <p>{index}</p>

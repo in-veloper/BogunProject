@@ -107,4 +107,4 @@ const MakeCalendar = ({year, month, firstDay, lastDate, changeVisible, todo}) =>
     return result;
 };
 
-export default MakeCalendar
+export default MakeCalendar;

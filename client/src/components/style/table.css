@@ -8,7 +8,8 @@
 }
 
 .cal-table tbody tr {
-    border-top: 0.5px solid #c4c9d0;
+    /* border-top: 0.5px solid #c4c9d0; */
+    border: 0.5px solid #c4c9d0;
 }
 
 .cal-table, .cal-table th, .cal-table td {
@@ -26,6 +27,7 @@
     overflow:hidden;
     white-space : nowrap;
     text-overflow: ellipsis;
+    border: 0.5px solid #c4c9d0;
 }
 .cal-table td:first-child, .cal-table td:last-child {
     color: red;
