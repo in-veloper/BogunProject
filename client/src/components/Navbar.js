@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable no-undef */
 import React, { useState, useEffect } from 'react';
@@ -9,10 +11,12 @@ import { AiOutlinePlusSquare } from 'react-icons/ai';
  
 const Navbar = () => {
     const [name, setName] = useState('');
+    const [bookmarkData, setBookmarkData] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
         getUserName();
+        getBookmarkData();
     }, []);
 
     
@@ -55,14 +59,97 @@ const Navbar = () => {
         setShow(true)
     };
     
-    const AddBookmark = () => {
-        return (
-            <li>
-                <input className='input' name='bookmarkName' type='text' placeholder='페이지명' style={{ width : 150 }}/>&nbsp;&nbsp; : &nbsp;&nbsp;
-                <input className='input' name='bookmarkAddress' type='text' placeholder='페이지 주소' style={{ width : 300 }}/>
-                <button className='button is-small' style={{ marginLeft : 10 }}>추가</button>
-            </li>
-        )
+    const AddBookmark = async (event) => {
+        debugger
+        event.preventDefault();
+        var bookmarkElements = event.target.getElementsByTagName('li');
+        for(let i = 0; i < bookmarkElements.length; i++) {
+            if(bookmarkElements[i].firstChild.value && bookmarkElements[i].lastChild.value) {
+                try {
+                    await axios.post('http://localhost:8000/bookmarks', {
+                        bookmarkName : bookmarkElements[i].firstChild.value,
+                        bookmarkAddress : bookmarkElements[i].lastChild.value
+                    });
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+        }
+
+        setShow(false);
+    }
+
+    const getBookmarkData = async () => {
+        let bookmarkList = [];
+        const response = await axios.get('http://localhost:8000/bookmarks');
+        if(response.data) {
+            for(let i = 0; i < response.data.length; i++) {
+                bookmarkList.push(response.data[i]);
+            }
+        }
+        setBookmarkData(bookmarkList);
+    }
+
+    const GetBookmarks = () => {
+        const bookmarkTag = [];
+        if(bookmarkData.length > 0) {
+            for(let i = 0; i < bookmarkData.length; i++) {
+                bookmarkTag.push(
+                    <a key={i} className='dropdown-item' onClick={moveToBookmark}>
+                        {bookmarkData[i].bookmarkName}
+                    </a>    
+                )
+            }
+        }
+        return bookmarkTag;
+    }
+
+    const BookmarkFormData = () => {
+        const bookmarkFormData = [];
+        const sortedBookmarkData = bookmarkData.sort((a, b) => b.id - a.id);
+        if(sortedBookmarkData.length > 0) {
+            for(let i = 0; i < sortedBookmarkData.length; i++) {
+                if(sortedBookmarkData[i].bookmarkName && bookmarkData[i].bookmarkAddress) {
+                    bookmarkFormData.unshift(
+                        <div className="controls">
+                            <li>
+                                <input className='input' name='bookmarkName' type='text' value={ sortedBookmarkData[i].bookmarkName || '' } placeholder='페이지명' style={{ width : 150 }}/>&nbsp;&nbsp; : &nbsp;&nbsp;
+                                <input className='input' name='bookmarkAddress' type='text' value={ sortedBookmarkData[i].bookmarkAddress || '' } placeholder='페이지 주소' style={{ width : 300 }}/>
+                            </li>
+                        </div>
+                    )
+                }
+
+                if(bookmarkFormData.length < 6) {
+                    for(let i = 0; i < (4 - bookmarkFormData.length); i++) {
+                        bookmarkFormData.push(
+                            <div className="controls">
+                                <li>
+                                    <input className='input' name='bookmarkName' type='text' placeholder='페이지명' style={{ width : 150 }}/>&nbsp;&nbsp; : &nbsp;&nbsp;
+                                    <input className='input' name='bookmarkAddress' type='text' placeholder='페이지 주소' style={{ width : 300 }}/>
+                                </li>
+                            </div>
+                        )
+                    }
+                }
+            }
+        }
+        return bookmarkFormData;
+    }
+
+    const moveToBookmark = (event) => {
+        event.preventDefault();
+        let address = '';
+        bookmarkData.forEach(item => {
+            if(item.bookmarkName === event.target.text) {
+                const url = item.bookmarkAddress;
+                if(!url.startsWith('http')) {
+                    address = 'https://' + url;
+                } 
+            }
+        });
+        // 브라우저 창을 따로 열어야 할 경우 및 외부 Link(URL)로 연결해야 할 경우 -> 앞에 Localhost 및 Port 번호가 붙는다면 변수에 담아 https를 포함한 전체 주소를 입력하면 해결된다.
+        window.open(address);
     }
 
     return (
@@ -97,19 +184,14 @@ const Navbar = () => {
                         <div className="navbar-item">
                             <div className='dropdown is-hoverable'>
                                 <div className='dropdown-trigger'>
-                                    <span aria-haspopup="true" aria-controls='dropdown-menu3'><b>관련페이지</b></span>
+                                    <span aria-haspopup="true" aria-controls='dropdown-menu3'><b>즐겨찾기</b></span>
                                     <span className='icon is-small' style={{ verticalAlign : 'middle', marginTop : -3}}>
                                         <FaAngleDown />
                                     </span>
                                 </div>
                                 <div className='dropdown-menu' id='dropdown-menu3' role='menu'>
                                     <div className='dropdown-content'>
-                                        <a href="www.naver.com" className='dropdown-item'>
-                                            네이버
-                                        </a>
-                                        <a href="www.google.com" className='dropdown-item'>
-                                            구글
-                                        </a>
+                                        <GetBookmarks />
                                         <hr className='dropdown-divider'/>
                                         <a href='#' className='dropdown-item js-modal-trigger' data-target="modal" onClick={handleShow}>
                                             <AiOutlinePlusSquare style={{ marginRight : 5, marginTop : -5, fontSize : 17, verticalAlign : 'middle', fontWeight : 'bold' }}/>
@@ -117,29 +199,56 @@ const Navbar = () => {
                                         </a>
                                         {/* 즐겨찾기 추가 Modal */}
                                         <div className= {show ? 'modal is-active' : 'modal'}>
-                                            <div className='modal-background'></div>
-                                                <div className='modal-card'>
-                                                <header className='modal-card-head'>
-                                                    <p className='modal-card-title'>즐겨찾기 목록 관리</p>
-                                                    <button className='delete' aria-label='close' onClick={ handleClose }></button>
-                                                </header>
-                                                <section className='modal-card-body'>
-                                                    <ul>
-                                                        <li>
-                                                            <input className='input' name='bookmarkName' type='text' placeholder='페이지명' style={{ width : 150 }}/>&nbsp;&nbsp; : &nbsp;&nbsp;
-                                                            <input className='input' name='bookmarkAddress' type='text' placeholder='페이지 주소' style={{ width : 300 }}/>
-                                                            <button className='button is-small' style={{ marginLeft : 10 }} onClick={AddBookmark}>추가</button>
-                                                        </li>
-                                                        <AddBookmark />
-                                                    </ul>
-                                                    {/* <label className='label'>학교 선택</label>
-                                                    <input className="input" name="searchSchool" type="text" value={schoolName} onChange={ searchHandle } placeholder="학교명을 입력하세요" /> */}
-                                                </section>
-                                                <footer className='modal-card-foot'>
-                                                    <button className='button is-success'>저장</button>
-                                                    <button className='button' onClick={ handleClose }>닫기</button>
-                                                </footer>
-                                            </div>
+                                            <form onSubmit={AddBookmark}>
+                                                <div className='modal-background'></div>
+                                                    <div className='modal-card' style={{ width : 550}}>
+                                                    <header className='modal-card-head'>
+                                                        <p className='modal-card-title'>즐겨찾기 목록 관리</p>
+                                                        <button className='delete' aria-label='close' onClick={ handleClose }></button>
+                                                    </header>
+                                                    <section className='modal-card-body'>
+                                                            <ul style={{ marginLeft : 20}}>
+                                                                <BookmarkFormData />
+                                                                {/* <div className="controls">
+                                                                    <li>
+                                                                        <input className='input' name='bookmarkName' type='text'  placeholder='페이지명' style={{ width : 150 }}/>&nbsp;&nbsp; : &nbsp;&nbsp;
+                                                                        <input className='input' name='bookmarkAddress' type='text' placeholder='페이지 주소' style={{ width : 300 }}/>
+                                                                    </li>
+                                                                </div>
+                                                                <div className="controls">
+                                                                    <li>
+                                                                        <input className='input' name='bookmarkName' type='text' placeholder='페이지명' style={{ width : 150 }}/>&nbsp;&nbsp; : &nbsp;&nbsp;
+                                                                        <input className='input' name='bookmarkAddress' type='text' placeholder='페이지 주소' style={{ width : 300 }}/>
+                                                                    </li>
+                                                                </div>
+                                                                <div className="controls">
+                                                                    <li>
+                                                                        <input className='input' name='bookmarkName' type='text' placeholder='페이지명' style={{ width : 150 }}/>&nbsp;&nbsp; : &nbsp;&nbsp;
+                                                                        <input className='input' name='bookmarkAddress' type='text' placeholder='페이지 주소' style={{ width : 300 }}/>
+                                                                    </li>
+                                                                </div>
+                                                                <div className="controls">
+                                                                    <li>
+                                                                        <input className='input' name='bookmarkName' type='text' placeholder='페이지명' style={{ width : 150 }}/>&nbsp;&nbsp; : &nbsp;&nbsp;
+                                                                        <input className='input' name='bookmarkAddress' type='text' placeholder='페이지 주소' style={{ width : 300 }}/>
+                                                                    </li>
+                                                                </div>
+                                                                <div className="controls">
+                                                                    <li>
+                                                                        <input className='input' name='bookmarkName' type='text' placeholder='페이지명' style={{ width : 150 }}/>&nbsp;&nbsp; : &nbsp;&nbsp;
+                                                                        <input className='input' name='bookmarkAddress' type='text' placeholder='페이지 주소' style={{ width : 300 }}/>
+                                                                    </li>
+                                                                </div> */}
+                                                            </ul>
+                                                    </section>
+                                                    <footer className='modal-card-foot'>
+                                                        <div style={{ marginLeft : 350 }}>
+                                                            <button className='button is-success'>저장</button>
+                                                            <button className='button' onClick={ handleClose }>닫기</button>
+                                                        </div>
+                                                    </footer>
+                                                </div>
+                                            </form>
                                         </div>
                                     </div>
                                 </div>
