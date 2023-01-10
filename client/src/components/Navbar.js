@@ -42,7 +42,29 @@ const Navbar = () => {
     const goDailyWorkNote = async () => {
         navigate("/dailyWorkNote");
     }
+
+    const [show, setShow] = useState(false);
     
+    const handleClose = (event) => {
+        event.preventDefault();
+        setShow(false)
+    };
+    
+    const handleShow = (event) => {
+        event.preventDefault();
+        setShow(true)
+    };
+    
+    const AddBookmark = () => {
+        return (
+            <li>
+                <input className='input' name='bookmarkName' type='text' placeholder='페이지명' style={{ width : 150 }}/>&nbsp;&nbsp; : &nbsp;&nbsp;
+                <input className='input' name='bookmarkAddress' type='text' placeholder='페이지 주소' style={{ width : 300 }}/>
+                <button className='button is-small' style={{ marginLeft : 10 }}>추가</button>
+            </li>
+        )
+    }
+
     return (
         <nav className="navbar is-light" role="navigation" aria-label="main navigation">
             <div className="container">
@@ -89,10 +111,36 @@ const Navbar = () => {
                                             구글
                                         </a>
                                         <hr className='dropdown-divider'/>
-                                        <a href='#' className='dropdown-item'>
+                                        <a href='#' className='dropdown-item js-modal-trigger' data-target="modal" onClick={handleShow}>
                                             <AiOutlinePlusSquare style={{ marginRight : 5, marginTop : -5, fontSize : 17, verticalAlign : 'middle', fontWeight : 'bold' }}/>
                                             추가등록
                                         </a>
+                                        {/* 즐겨찾기 추가 Modal */}
+                                        <div className= {show ? 'modal is-active' : 'modal'}>
+                                            <div className='modal-background'></div>
+                                                <div className='modal-card'>
+                                                <header className='modal-card-head'>
+                                                    <p className='modal-card-title'>즐겨찾기 목록 관리</p>
+                                                    <button className='delete' aria-label='close' onClick={ handleClose }></button>
+                                                </header>
+                                                <section className='modal-card-body'>
+                                                    <ul>
+                                                        <li>
+                                                            <input className='input' name='bookmarkName' type='text' placeholder='페이지명' style={{ width : 150 }}/>&nbsp;&nbsp; : &nbsp;&nbsp;
+                                                            <input className='input' name='bookmarkAddress' type='text' placeholder='페이지 주소' style={{ width : 300 }}/>
+                                                            <button className='button is-small' style={{ marginLeft : 10 }} onClick={AddBookmark}>추가</button>
+                                                        </li>
+                                                        <AddBookmark />
+                                                    </ul>
+                                                    {/* <label className='label'>학교 선택</label>
+                                                    <input className="input" name="searchSchool" type="text" value={schoolName} onChange={ searchHandle } placeholder="학교명을 입력하세요" /> */}
+                                                </section>
+                                                <footer className='modal-card-foot'>
+                                                    <button className='button is-success'>저장</button>
+                                                    <button className='button' onClick={ handleClose }>닫기</button>
+                                                </footer>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
