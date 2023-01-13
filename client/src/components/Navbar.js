@@ -100,6 +100,12 @@ const Navbar = () => {
                     </a>    
                 )
             }
+        }else{
+            bookmarkTag.push(
+                <a key={10} className='dropdown-item' onClick={(e) => {e.preventDefault()}}>
+                    등록항목 없음
+                </a>
+            )
         }
         return bookmarkTag;
     }
@@ -107,23 +113,24 @@ const Navbar = () => {
     const BookmarkFormData = () => {
         const bookmarkFormData = [];
         const sortedBookmarkData = bookmarkData.sort((a, b) => b.id - a.id);
+
         if(sortedBookmarkData.length > 0) {
             for(let i = 0; i < sortedBookmarkData.length; i++) {
                 if(sortedBookmarkData[i].bookmarkName && bookmarkData[i].bookmarkAddress) {
                     bookmarkFormData.unshift(
-                        <div className="controls">
+                        <div className="controls" key={i}>
                             <li>
-                                <input className='input' name='bookmarkName' type='text' value={ sortedBookmarkData[i].bookmarkName || '' } placeholder='페이지명' style={{ width : 150 }}/>&nbsp;&nbsp; : &nbsp;&nbsp;
-                                <input className='input' name='bookmarkAddress' type='text' value={ sortedBookmarkData[i].bookmarkAddress || '' } placeholder='페이지 주소' style={{ width : 300 }}/>
+                                <input className='input' name='bookmarkName' type='text' defaultValue={ sortedBookmarkData[i].bookmarkName || '' } placeholder='페이지명' style={{ width : 150 }}/>&nbsp;&nbsp; : &nbsp;&nbsp;
+                                <input className='input' name='bookmarkAddress' type='text' defaultValue={ sortedBookmarkData[i].bookmarkAddress || '' } placeholder='페이지 주소' style={{ width : 300 }}/>
                             </li>
                         </div>
                     )
                 }
-
+                
                 if(bookmarkFormData.length < 6) {
                     for(let i = 0; i < (4 - bookmarkFormData.length); i++) {
                         bookmarkFormData.push(
-                            <div className="controls">
+                            <div className="controls" key={i + 10}>
                                 <li>
                                     <input className='input' name='bookmarkName' type='text' placeholder='페이지명' style={{ width : 150 }}/>&nbsp;&nbsp; : &nbsp;&nbsp;
                                     <input className='input' name='bookmarkAddress' type='text' placeholder='페이지 주소' style={{ width : 300 }}/>
@@ -132,6 +139,17 @@ const Navbar = () => {
                         )
                     }
                 }
+            }
+        }else{
+            for(let i = 0; i < 5; i++) {
+                bookmarkFormData.push(
+                    <div className="controls" key={i}>
+                        <li>
+                            <input className='input' name='bookmarkName' type='text' placeholder='페이지명' style={{ width : 150 }}/>&nbsp;&nbsp; : &nbsp;&nbsp;
+                            <input className='input' name='bookmarkAddress' type='text' placeholder='페이지 주소' style={{ width : 300 }}/>
+                        </li>
+                    </div>
+                );
             }
         }
         return bookmarkFormData;

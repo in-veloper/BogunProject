@@ -133,6 +133,23 @@ const MyPage = () => {
         // reader.readAsBinaryString(e.target.files[0]);
     }
 
+    const AddNameTableButtons = () => {
+        const userSchoolName = users.schoolName;
+        if(userSchoolName.includes('초등학교')) {
+            for(let i = 0; i < 6; i++) {
+                <div class="buttons has-addons">
+                    <button class="button">Yes</button>
+                </div>
+            }
+        }else if(userSchoolName.includes('중학교')) {
+
+        }else if(userSchoolName.includes('고등학교')) {
+
+        }
+
+        return 
+    }
+
     return (
         <div className="container mt-5" style={{display: "flex", flexDirection: 'column', height: '100vh'}}>
             <div className='field'>
@@ -179,6 +196,7 @@ const MyPage = () => {
                             </span>
                         </label>
                     </div>
+                    <AddNameTableButtons />
                     <button className='button is-success js-modal-trigger' style={{width: 303, float : 'right'}} data-target="modal" onClick={handleShow}>
                         명렬표 미리보기
                     </button>
