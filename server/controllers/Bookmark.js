@@ -1,7 +1,6 @@
 import Bookmarks from "../models/BookmarkModel.js";
 
 export const getBookmarks = async(req, res) => {
-    debugger
     try {
         const bookmarks = await Bookmarks.findAll({
             // attributes : [bookmarkName, bookmarkAddress]

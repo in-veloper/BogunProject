@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/no-unknown-property */
 /* eslint-disable no-inner-declarations */
@@ -22,7 +23,8 @@ const MyPage = () => {
 
     useEffect(() => {
         getUsersInfo();
-    });
+        getBookmarkData();
+    }, []);
 
     const getUsersInfo = async () => {
         try {
@@ -78,8 +80,30 @@ const MyPage = () => {
             }
         });
     });
+    const [bookmarkData, setBookmarkData] = useState([]);
 
+    const getBookmarkData = async () => {
+        let bookmarkList = [];
+        const response = await axios.get('http://localhost:8000/bookmarks');
+        if(response.data) {
+            for(let i = 0; i < response.data.length; i++) {
+                bookmarkList.push(response.data[i]);
+            }
+        }
+        setBookmarkData(bookmarkList);
+    }
 
+    const GetBookmarks = () => {
+        const bookmarkList = [];
+        if(bookmarkData.length > 0) {
+            for(let i = 0; i < bookmarkData.length; i++) {
+                bookmarkList.push(
+                    <li key={i}>{bookmarkData[i].bookmarkName}</li>
+                )
+            }
+        }
+        return bookmarkList;
+    }
     
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
@@ -133,21 +157,70 @@ const MyPage = () => {
         // reader.readAsBinaryString(e.target.files[0]);
     }
 
-    const AddNameTableButtons = () => {
-        const userSchoolName = users.schoolName;
-        if(userSchoolName.includes('초등학교')) {
-            for(let i = 0; i < 6; i++) {
-                <div class="buttons has-addons">
-                    <button class="button">Yes</button>
-                </div>
+    const setNameTableFunc = (event) => {
+        event.preventDefault();
+        const targetGrade = Number(event.target.name);
+        
+        const [file] = event.target.files;
+        const reader =  new FileReader();
+
+        reader.readAsArrayBuffer(event.target.files[0]);
+        reader.onload = function(e) {
+            const data = new Uint8Array(reader.result);
+            const wb = XLSX.read(data, {type : 'array'});
+            const wsname = wb.SheetNames[0];
+
+            var htmlstr = XLSX.write(wb, {sheet : wsname, type : 'string', bookType : 'html'});
+            debugger
+            if(htmlstr && users.userId && users.name) {
+                debugger
+                try {
+                    axios.post('http://localhost:8000/nametable', {
+                        userId : users.userId,
+                        userName : users.name,
+                        grade : targetGrade,
+                        html : htmlstr
+                    });
+                } catch(error) {
+                    console.log(error);
+                }
             }
-        }else if(userSchoolName.includes('중학교')) {
-
-        }else if(userSchoolName.includes('고등학교')) {
-
+            // document.getElementById('nameTableResult').innerHTML +=  htmlstr;
         }
+    }
 
-        return 
+    const AddNameTableButtons = () => {
+        const buttonList = [];
+        const userSchoolName = users.schoolName;
+
+        if(userSchoolName) {
+            if(userSchoolName.includes('초등학교')) {
+                for(let i = 1; i < 7; i++) {
+                    buttonList.push(
+                        <button key={i} className='button'>{i}</button>
+                    )
+                }
+            }else if(userSchoolName.includes('중학교') || userSchoolName.includes('고등학교')) {
+                for(let i = 1; i < 4; i++) {
+                    buttonList.push(
+                        <button key={i} className='button' style={{padding : 0, border : 'none'}}>
+                            <div className='file'>
+                                <label className='file-label'>
+                                    <input className='file-input' type='file' name={i} onChange={setNameTableFunc}/>
+                                    <span className='file-cta'>
+                                        <span className='file-label'>
+                                            {i}
+                                        </span>
+                                    </span>
+                                </label>
+                            </div>
+                        </button>
+                    )
+                }
+            }
+        }
+        
+        return buttonList;
     }
 
     return (
@@ -171,16 +244,15 @@ const MyPage = () => {
                 </div>
             </div>
             <div className='field'>
-                <label className='label'>관련 페이지 관리</label>
+                <label className='label'>즐겨찾기 관리</label>
                 <div className='box'>
-                    <li>네이버</li>
-                    <li>구글</li>
+                    <GetBookmarks/>
                 </div>
             </div>
             <div className='field'>
                 <label className='label'>명렬표 등록 및 현황</label>
                 <div className='box' style={{ height : 80}}>
-                    <div className='file has-name is-success' style={{ float : 'left'}}>
+                    {/* <div className='file has-name is-success' style={{ float : 'left'}}>
                         <label className='file-label'>
                             <input className='file-input' type="file" name="resume" onChange={ readExcel }/>
                             <span className='file-cta'>
@@ -195,8 +267,10 @@ const MyPage = () => {
                                 선택된 파일 없음
                             </span>
                         </label>
+                    </div> */}
+                    <div className='buttons has-addons' style={{ float : 'left' }}>
+                        <AddNameTableButtons />
                     </div>
-                    <AddNameTableButtons />
                     <button className='button is-success js-modal-trigger' style={{width: 303, float : 'right'}} data-target="modal" onClick={handleShow}>
                         명렬표 미리보기
                     </button>

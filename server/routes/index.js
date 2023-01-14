@@ -4,6 +4,7 @@ import { getBookmarks, addBookmark } from "../controllers/Bookmark.js";
 // import { getStudents, setStudents } from "../controllers/MyPage.js";
 import { verifyToken } from "../middleware/VerifyToken.js";
 import { refreshToken } from "../controllers/RefreshToken.js";
+import { getNameTable, addNameTable } from "../controllers/NameTable.js";
  
 const router = express.Router();
  
@@ -16,5 +17,7 @@ router.get('/token', refreshToken);
 router.delete('/logout', Logout);
 router.get('/bookmarks', getBookmarks);
 router.post('/bookmarks', addBookmark);
+router.get('/nametable', getNameTable);
+router.post('/nametable', addNameTable);
  
 export default router;
