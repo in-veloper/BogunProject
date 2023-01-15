@@ -3,7 +3,11 @@ import NameTable from "../models/NameTableModel.js";
 export const getNameTable = async(req, res) => {
     try {
         const nametable = await NameTable.findAll({
-
+            // where : {
+            //     userId : userId,
+            //     userName : userName,
+            //     grade : grade
+            // }
         });
         res.json(nametable);
     } catch(error) {

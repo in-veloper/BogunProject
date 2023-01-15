@@ -24,6 +24,7 @@ const MyPage = () => {
     useEffect(() => {
         getUsersInfo();
         getBookmarkData();
+        getNameTableData();
     }, []);
 
     const getUsersInfo = async () => {
@@ -189,6 +190,24 @@ const MyPage = () => {
         }
     }
 
+    const [registeredGrade, setRegisteredGrade] = useState([]);
+
+    const getNameTableData = async() => {
+        const registeredGrade = [];
+        try {
+            const response = await axios.get('http://localhost:8000/nametable');
+            if(response.data) {
+                response.data.forEach(item => {
+                    registeredGrade.push(item.grade);
+                });
+            }
+            setRegisteredGrade(registeredGrade);
+        } catch(error) {
+            console.log(error);
+        }
+        
+    }
+
     const AddNameTableButtons = () => {
         const buttonList = [];
         const userSchoolName = users.schoolName;
@@ -207,9 +226,9 @@ const MyPage = () => {
                             <div className='file'>
                                 <label className='file-label'>
                                     <input className='file-input' type='file' name={i} onChange={setNameTableFunc}/>
-                                    <span className='file-cta'>
+                                    <span className='file-cta' style={registeredGrade.includes(String(i)) ? {backgroundColor : 'lightpink'} : {}}>
                                         <span className='file-label'>
-                                            {i}
+                                            <b>{i}</b>
                                         </span>
                                     </span>
                                 </label>
