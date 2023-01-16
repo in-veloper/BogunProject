@@ -19,7 +19,24 @@ export const addBookmark = async(req, res) => {
             bookmarkName : bookmarkName,
             bookmarkAddress : bookmarkAddress
         });
-        res.json({ msg : "Add bookmark Successful"});
+        res.json({ msg : "Add Bookmark Successful"});
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const removeBookmark = async(req, res) => {
+    const { id, bookmarkName, bookmarkAddress } = req.body;
+
+    try {
+        await Bookmarks.destroy({
+            where : {
+                id : id,
+                bookmarkName : bookmarkName,
+                bookmarkAddress : bookmarkAddress
+            }
+        });
+        res.json({ msg : "Delete Bookmark Successful"})
     } catch (error) {
         console.log(error);
     }

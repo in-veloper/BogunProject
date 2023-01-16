@@ -1,3 +1,4 @@
+/* eslint-disable eqeqeq */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/anchor-is-valid */
@@ -59,19 +60,22 @@ const Navbar = () => {
         setShow(true)
     };
     
-    const AddBookmark = async (event) => {
-        debugger
+    const AddBookmark = (event) => {
         event.preventDefault();
-        var bookmarkElements = event.target.getElementsByTagName('li');
+        const registeredBookmarks = [];
+        let bookmarkElements = event.target.getElementsByTagName('li');
+        bookmarkData.forEach(item => { registeredBookmarks.push(item.bookmarkName) });
         for(let i = 0; i < bookmarkElements.length; i++) {
-            if(bookmarkElements[i].firstChild.value && bookmarkElements[i].lastChild.value) {
-                try {
-                    await axios.post('http://localhost:8000/bookmarks', {
-                        bookmarkName : bookmarkElements[i].firstChild.value,
-                        bookmarkAddress : bookmarkElements[i].lastChild.value
-                    });
-                } catch (error) {
-                    console.log(error);
+            if(!registeredBookmarks.includes(bookmarkElements[i].firstChild.value)) {
+                if(bookmarkElements[i].firstChild.value.length > 0 && bookmarkElements[i].lastChild.value.length > 0) {
+                    try {
+                        axios.post('http://localhost:8000/addBookmarks', {
+                            bookmarkName : bookmarkElements[i].firstChild.value,
+                            bookmarkAddress : bookmarkElements[i].lastChild.value
+                        });
+                    } catch (error) {
+                        console.log(error);
+                    }
                 }
             }
         }
@@ -81,7 +85,7 @@ const Navbar = () => {
 
     const getBookmarkData = async () => {
         let bookmarkList = [];
-        const response = await axios.get('http://localhost:8000/bookmarks');
+        const response = await axios.get('http://localhost:8000/getBookmarks');
         if(response.data) {
             for(let i = 0; i < response.data.length; i++) {
                 bookmarkList.push(response.data[i]);
@@ -90,13 +94,40 @@ const Navbar = () => {
         setBookmarkData(bookmarkList);
     }
 
+    const onDeleteBookmark = (event) => {
+        event.preventDefault();
+        //! 여기부터 즐겨찾기 삭제 처리 로직 시작
+        const targetBookmarkName = event.target.parentElement.getElementsByTagName('span')[0].textContent;
+        bookmarkData.forEach(item => {
+            if(item.bookmarkName === targetBookmarkName) {
+                debugger
+                try {
+                    axios.post('http://localhost:8000/removeBookmarks', {
+                        id : item.id,
+                        bookmarkName : item.bookmarkName,
+                        bookmarkAddress : item.bookmarkAddress
+                    });
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+        })
+    }
+
     const GetBookmarks = () => {
         const bookmarkTag = [];
         if(bookmarkData.length > 0) {
             for(let i = 0; i < bookmarkData.length; i++) {
                 bookmarkTag.push(
-                    <a key={i} className='dropdown-item' onClick={moveToBookmark}>
-                        {bookmarkData[i].bookmarkName}
+                    // <span style={{ display : 'inline-block' }}>
+                    //     <a key={i} className='dropdown-item' style={{ height : 32 }} onClick={moveToBookmark}>
+                    //         {bookmarkData[i].bookmarkName}
+                    //     </a>    
+                    //     <button className='button is-small' style={{ height : 20 }}>삭제</button>
+                    // </span>
+                    <a key={i} className='dropdown-item' style={{ height : 32, display : 'inline-block', paddingRight : 17 }} onClick={moveToBookmark}>
+                        <span>{bookmarkData[i].bookmarkName}</span>
+                        <button className='button is-small' style={{ height : 20, float : 'right' }} onClick={onDeleteBookmark}>삭제</button>
                     </a>    
                 )
             }
@@ -127,17 +158,18 @@ const Navbar = () => {
                     )
                 }
                 
-                if(bookmarkFormData.length < 6) {
-                    for(let i = 0; i < (4 - bookmarkFormData.length); i++) {
-                        bookmarkFormData.push(
-                            <div className="controls" key={i + 10}>
-                                <li>
-                                    <input className='input' name='bookmarkName' type='text' placeholder='페이지명' style={{ width : 150 }}/>&nbsp;&nbsp; : &nbsp;&nbsp;
-                                    <input className='input' name='bookmarkAddress' type='text' placeholder='페이지 주소' style={{ width : 300 }}/>
-                                </li>
-                            </div>
-                        )
-                    }
+            }
+            
+            if(bookmarkFormData.length < 6) {
+                for(let i = 0; i < (7 - bookmarkFormData.length); i++) {
+                    bookmarkFormData.push(
+                        <div className="controls" key={i + 10}>
+                            <li>
+                                <input className='input' name='bookmarkName' type='text' placeholder='페이지명' style={{ width : 150 }}/>&nbsp;&nbsp; : &nbsp;&nbsp;
+                                <input className='input' name='bookmarkAddress' type='text' placeholder='페이지 주소' style={{ width : 300 }}/>
+                            </li>
+                        </div>
+                    )
                 }
             }
         }else{
@@ -158,16 +190,18 @@ const Navbar = () => {
     const moveToBookmark = (event) => {
         event.preventDefault();
         let address = '';
-        bookmarkData.forEach(item => {
-            if(item.bookmarkName === event.target.text) {
-                const url = item.bookmarkAddress;
-                if(!url.startsWith('http')) {
-                    address = 'https://' + url;
-                } 
-            }
-        });
-        // 브라우저 창을 따로 열어야 할 경우 및 외부 Link(URL)로 연결해야 할 경우 -> 앞에 Localhost 및 Port 번호가 붙는다면 변수에 담아 https를 포함한 전체 주소를 입력하면 해결된다.
-        window.open(address);
+        if(event.target.textContent != '삭제') {
+            bookmarkData.forEach(item => {
+                if(item.bookmarkName === event.target.textContent) {
+                    const url = item.bookmarkAddress;
+                    if(!url.startsWith('http')) {
+                        address = 'https://' + url;
+                    } 
+                }
+            });
+            // 브라우저 창을 따로 열어야 할 경우 및 외부 Link(URL)로 연결해야 할 경우 -> 앞에 Localhost 및 Port 번호가 붙는다면 변수에 담아 https를 포함한 전체 주소를 입력하면 해결된다.
+            window.open(address);
+        }
     }
 
     return (
@@ -211,7 +245,7 @@ const Navbar = () => {
                                     <div className='dropdown-content'>
                                         <GetBookmarks />
                                         <hr className='dropdown-divider'/>
-                                        <a href='#' className='dropdown-item js-modal-trigger' data-target="modal" onClick={handleShow}>
+                                        <a className='dropdown-item js-modal-trigger' data-target="modal" onClick={handleShow}>
                                             <AiOutlinePlusSquare style={{ marginRight : 5, marginTop : -5, fontSize : 17, verticalAlign : 'middle', fontWeight : 'bold' }}/>
                                             추가등록
                                         </a>

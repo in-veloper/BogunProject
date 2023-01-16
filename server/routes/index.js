@@ -1,6 +1,6 @@
 import express from "express";
 import { getUsers, Register, Login, Logout } from "../controllers/Users.js";
-import { getBookmarks, addBookmark } from "../controllers/Bookmark.js";
+import { getBookmarks, addBookmark, removeBookmark } from "../controllers/Bookmark.js";
 // import { getStudents, setStudents } from "../controllers/MyPage.js";
 import { verifyToken } from "../middleware/VerifyToken.js";
 import { refreshToken } from "../controllers/RefreshToken.js";
@@ -15,9 +15,10 @@ router.post('/users', Register);
 router.post('/login', Login);
 router.get('/token', refreshToken);
 router.delete('/logout', Logout);
-router.get('/bookmarks', getBookmarks);
-router.post('/bookmarks', addBookmark);
-router.get('/nametable', getNameTable);
-router.post('/nametable', addNameTable);
+router.get('/getBookmarks', getBookmarks);
+router.post('/addBookmarks', addBookmark);
+router.post('/removeBookmarks', removeBookmark);
+router.get('/getNametable', getNameTable);
+router.post('/addNametable', addNameTable);
  
 export default router;

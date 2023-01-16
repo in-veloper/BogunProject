@@ -85,7 +85,7 @@ const MyPage = () => {
 
     const getBookmarkData = async () => {
         let bookmarkList = [];
-        const response = await axios.get('http://localhost:8000/bookmarks');
+        const response = await axios.get('http://localhost:8000/getBookmarks');
         if(response.data) {
             for(let i = 0; i < response.data.length; i++) {
                 bookmarkList.push(response.data[i]);
@@ -172,11 +172,9 @@ const MyPage = () => {
             const wsname = wb.SheetNames[0];
 
             var htmlstr = XLSX.write(wb, {sheet : wsname, type : 'string', bookType : 'html'});
-            debugger
             if(htmlstr && users.userId && users.name) {
-                debugger
                 try {
-                    axios.post('http://localhost:8000/nametable', {
+                    axios.post('http://localhost:8000/addNametable', {
                         userId : users.userId,
                         userName : users.name,
                         grade : targetGrade,
@@ -191,21 +189,33 @@ const MyPage = () => {
     }
 
     const [registeredGrade, setRegisteredGrade] = useState([]);
+    const [nameTableData, setNameTableData] = useState([]);
 
     const getNameTableData = async() => {
         const registeredGrade = [];
+        const tableData = [];
         try {
-            const response = await axios.get('http://localhost:8000/nametable');
+            const response = await axios.get('http://localhost:8000/getNametable');
             if(response.data) {
                 response.data.forEach(item => {
                     registeredGrade.push(item.grade);
+                    tableData.push(item);
                 });
             }
+            debugger
             setRegisteredGrade(registeredGrade);
+            setNameTableData(tableData);
         } catch(error) {
             console.log(error);
         }
         
+    }
+
+    const readNameTableFunc = (event) => {
+        event.preventDefault();
+        debugger
+        let selectedGrade = event.target.name;
+        handleShow();
     }
 
     const AddNameTableButtons = () => {
@@ -225,7 +235,7 @@ const MyPage = () => {
                         <button key={i} className='button' style={{padding : 0, border : 'none'}}>
                             <div className='file'>
                                 <label className='file-label'>
-                                    <input className='file-input' type='file' name={i} onChange={setNameTableFunc}/>
+                                    <input className='file-input' type='file' name={i} onClick={registeredGrade.includes(String(i)) ? readNameTableFunc : undefined} onChange={registeredGrade.includes(String(i)) ? undefined : setNameTableFunc}/>
                                     <span className='file-cta' style={registeredGrade.includes(String(i)) ? {backgroundColor : 'lightpink'} : {}}>
                                         <span className='file-label'>
                                             <b>{i}</b>
