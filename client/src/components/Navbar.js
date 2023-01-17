@@ -205,7 +205,7 @@ const Navbar = () => {
     }
 
     return (
-        <nav className="navbar is-light" role="navigation" aria-label="main navigation">
+        <nav className="navbar" style={{ borderBottom : '1px solid lightgrey'}} role="navigation" aria-label="main navigation">
             <div className="container">
                 <div className="navbar-brand">
                     <a className="navbar-item" href="https://bulma.io">
@@ -261,36 +261,6 @@ const Navbar = () => {
                                                     <section className='modal-card-body'>
                                                             <ul style={{ marginLeft : 20}}>
                                                                 <BookmarkFormData />
-                                                                {/* <div className="controls">
-                                                                    <li>
-                                                                        <input className='input' name='bookmarkName' type='text'  placeholder='페이지명' style={{ width : 150 }}/>&nbsp;&nbsp; : &nbsp;&nbsp;
-                                                                        <input className='input' name='bookmarkAddress' type='text' placeholder='페이지 주소' style={{ width : 300 }}/>
-                                                                    </li>
-                                                                </div>
-                                                                <div className="controls">
-                                                                    <li>
-                                                                        <input className='input' name='bookmarkName' type='text' placeholder='페이지명' style={{ width : 150 }}/>&nbsp;&nbsp; : &nbsp;&nbsp;
-                                                                        <input className='input' name='bookmarkAddress' type='text' placeholder='페이지 주소' style={{ width : 300 }}/>
-                                                                    </li>
-                                                                </div>
-                                                                <div className="controls">
-                                                                    <li>
-                                                                        <input className='input' name='bookmarkName' type='text' placeholder='페이지명' style={{ width : 150 }}/>&nbsp;&nbsp; : &nbsp;&nbsp;
-                                                                        <input className='input' name='bookmarkAddress' type='text' placeholder='페이지 주소' style={{ width : 300 }}/>
-                                                                    </li>
-                                                                </div>
-                                                                <div className="controls">
-                                                                    <li>
-                                                                        <input className='input' name='bookmarkName' type='text' placeholder='페이지명' style={{ width : 150 }}/>&nbsp;&nbsp; : &nbsp;&nbsp;
-                                                                        <input className='input' name='bookmarkAddress' type='text' placeholder='페이지 주소' style={{ width : 300 }}/>
-                                                                    </li>
-                                                                </div>
-                                                                <div className="controls">
-                                                                    <li>
-                                                                        <input className='input' name='bookmarkName' type='text' placeholder='페이지명' style={{ width : 150 }}/>&nbsp;&nbsp; : &nbsp;&nbsp;
-                                                                        <input className='input' name='bookmarkAddress' type='text' placeholder='페이지 주소' style={{ width : 300 }}/>
-                                                                    </li>
-                                                                </div> */}
                                                             </ul>
                                                     </section>
                                                     <footer className='modal-card-foot'>
@@ -315,7 +285,7 @@ const Navbar = () => {
                         <div className="navbar-item">
                             <span style={{ marginRight: 20, color: 'gray' }}><b><u>{name} 보건교사님</u></b></span>
                             <div className="buttons are-small">
-                                <button onClick={Logout} className="button is-success">
+                                <button onClick={Logout} className="button is-info">
                                     <b>로그아웃</b>
                                 </button>
                             </div>

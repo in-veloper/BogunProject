@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
@@ -60,73 +61,239 @@ const Dashboard = () => {
     return (
         <div className="container mt-5" style={{display: 'flex', flexDirection: 'column', height: '100vh', marginBottom : 25}}>
             <div className='tile is-ancestor'>
-                <div className='tile is-vertical is-8'>
-                    <div className='tile'>
-                        <div className='tile is-parent is-vertical'>
-                            <article className='tile is-child notification is-primary'>
-                                <p className='title'>Vertical...</p>
-                                <p className='subtitle'>Top Tile</p>
-                            </article>
-                            <article className='tile is-child notification is-warning'>
-                                <p className='title'>...tiles</p>
-                                <p className='subtitle'>Bottom Tile</p>
-                            </article>
+                <div className='tile is-vertical is-12 mt-5'>
+                    <div className='panel is-info'>
+                        <p class="panel-heading" style={{ fontSize : 17 }}>
+                            공지사항
+                            <button className='button is-text is-normal' style={{ padding : 0, float : 'right', verticalAlign: 'center', marginLeft : -35, marginTop : -8, marginBottom : -10, color : 'white', background : 'transparent' }}>
+                                More
+                            </button>
+                        </p>
+                        <div class="panel-block">
+                            <table className='table is-fullwidth is-striped is-hoverable' style={{ textAlign : 'center' }}>
+                                <thead>
+                                    <tr style={{ fontSize : 15 }}>
+                                        <th style={{ textAlign : 'center', width : 50 }}>No</th>
+                                        <th style={{ textAlign : 'center', width : 300 }}>제목</th>
+                                        <th style={{ textAlign : 'center', width : 450 }}>내용</th>
+                                        <th style={{ textAlign : 'center', width : 200 }}>작성일</th>
+                                        <th style={{ textAlign : 'center', width : 100 }}>분류</th>
+                                    </tr>
+                                </thead>
+                                <tbody style={{ fontSize : 15 }}>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>1</td>
+                                        <td>1</td>
+                                        <td>1</td>
+                                        <td>1</td>
+                                    </tr>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>1</td>
+                                        <td>1</td>
+                                        <td>1</td>
+                                        <td>1</td>
+                                    </tr>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>1</td>
+                                        <td>1</td>
+                                        <td>1</td>
+                                        <td>1</td>
+                                    </tr>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>1</td>
+                                        <td>1</td>
+                                        <td>1</td>
+                                        <td>1</td>
+                                    </tr>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>1</td>
+                                        <td>1</td>
+                                        <td>1</td>
+                                        <td>1</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
-                        <div className='tile is-parent'>
-                            <article className='tile is-child notification is-info'>
-                                <p className='title'>Middle Tile</p>
-                                <p className='subtitle'>With an image</p>
-                                <figure className='image is-4by3'>
-                                    {/* <img src=''></img> */}
-                                </figure>
-                            </article>
+                        <div className='panel-block'>
+                            <div style={{ marginLeft : '33%'}}>
+                                <nav className="pagination is-centered" role="navigation" aria-label="pagination">
+                                    <a className="pagination-previous">Previous</a>
+                                    <a className="pagination-next">Next page</a>
+                                    <ul className="pagination-list">
+                                        <li><a className="pagination-link" aria-label="Goto page 1">1</a></li>
+                                        <li><span className="pagination-ellipsis">&hellip;</span></li>
+                                        <li><a className="pagination-link" aria-label="Goto page 45">45</a></li>
+                                        <li><a className="pagination-link is-current" aria-label="Page 46" aria-current="page">46</a></li>
+                                        <li><a className="pagination-link" aria-label="Goto page 47">47</a></li>
+                                        <li><span className="pagination-ellipsis">&hellip;</span></li>
+                                        <li><a className="pagination-link" aria-label="Goto page 86">86</a></li>
+                                    </ul>
+                                </nav>
+                            </div>
                         </div>
                     </div>
-                    <div className='tile is-parent'>
-                        <article className='tile is-child notification is-danger'>
-                            <p className='title'>Wide Tile</p>
-                            <p className='subtitle'>Aligned with the right Tile</p>
-                            <div className='content'>
-                                {/* <!-- Content --> */}
+                    
+                    <div className='tile mt-5'>
+                        <div className='tile is-parent is-vertical mr-5'>
+                            <div class="panel is-info" style={{ marginLeft : -12, marginTop : -10}}>
+                                <p class="panel-heading" style={{ fontSize : 17 }}>
+                                    이번 달 보건일정
+                                </p>
+                                <div class="panel-block">
+                                    <p class="control has-icons-left">
+                                    </p>
+                                </div>
+                                <a class="panel-block is-active">
+                                    <span class="panel-icon">
+                                    <i class="fas fa-book" aria-hidden="true"></i>
+                                    </span>
+                                    bulma
+                                </a>
+                                <a class="panel-block">
+                                    <span class="panel-icon">
+                                    <i class="fas fa-book" aria-hidden="true"></i>
+                                    </span>
+                                    marksheet
+                                </a>
+                                <a class="panel-block">
+                                    <span class="panel-icon">
+                                    <i class="fas fa-book" aria-hidden="true"></i>
+                                    </span>
+                                    minireset.css
+                                </a>
+                                <a class="panel-block">
+                                    <span class="panel-icon">
+                                    <i class="fas fa-book" aria-hidden="true"></i>
+                                    </span>
+                                    jgthms.github.io
+                                </a>
                             </div>
-                        </article>
-                    </div>
-                </div>
-                <div className='tile is-parent'>
-                    <article className='tile is-child notification is-success'>
-                        <div className='content'>
-                            <p className='title'>Tall Tile</p>
-                            <p className='subtitle'>With even more content</p>
-                            <div className='content'>
-                                {/* <!-- Content --> */}
+                            <div class="panel is-info mt-3" style={{ marginLeft : -12, marginTop : -10}}>
+                                <p class="panel-heading" style={{ fontSize : 17 }}>
+                                    미정
+                                </p>
+                                <div class="panel-block">
+                                    <p class="control has-icons-left">
+                                    </p>
+                                </div>
+                                <a class="panel-block">
+                                    <span class="panel-icon">
+                                    <i class="fas fa-book" aria-hidden="true"></i>
+                                    </span>
+                                    bulma
+                                </a>
+                                <a class="panel-block">
+                                    <span class="panel-icon">
+                                    <i class="fas fa-book" aria-hidden="true"></i>
+                                    </span>
+                                    marksheet
+                                </a>
+                                <a class="panel-block">
+                                    <span class="panel-icon">
+                                    <i class="fas fa-book" aria-hidden="true"></i>
+                                    </span>
+                                    minireset.css
+                                </a>
+                                <a class="panel-block">
+                                    <span class="panel-icon">
+                                    <i class="fas fa-book" aria-hidden="true"></i>
+                                    </span>
+                                    jgthms.github.io
+                                </a>
                             </div>
                         </div>
-                    </article>
+                        
+                        <div className='tile is-child' style={{ padding : 0 }}>
+                            <div className='panel is-info' style={{ paddingBottom : 45}}>
+                                <p className='panel-heading' style={{ fontSize : 17 }}>
+                                    문의 & 요청
+                                    <button className='button is-text is-normal' style={{ padding : 0, float : 'right', verticalAlign: 'center', marginLeft : -35, marginTop : -8, marginBottom : -10, color : 'white', background : 'transparent' }}>
+                                        More
+                                    </button>
+                                </p>
+                                <div className='panel-block'>
+                                    <table className='table is-fullwidth is-striped is-hoverable' style={{ textAlign : 'center', margin : 10 }}>
+                                        <thead style={{ fontSize : 15 }}>
+                                            <tr>
+                                                <th style={{ textAlign : 'center', width : 50 }}>No</th>
+                                                <th style={{ textAlign : 'center', width : 350 }}>제목</th>
+                                                <th style={{ textAlign : 'center', width : 100}}>작성자</th>
+                                                <th style={{ textAlign : 'center', width : 70}}>답변</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody style={{ fontSize : 15 }}>
+                                            <tr>
+                                                <td>1</td>
+                                                <td>1</td>
+                                                <td>1</td>
+                                                <td>1</td>
+                                            </tr>
+                                            <tr>
+                                                <td>1</td>
+                                                <td>1</td>
+                                                <td>1</td>
+                                                <td>1</td>
+                                            </tr>
+                                            <tr>
+                                                <td>1</td>
+                                                <td>1</td>
+                                                <td>1</td>
+                                                <td>1</td>
+                                            </tr>
+                                            <tr>
+                                                <td>1</td>
+                                                <td>1</td>
+                                                <td>1</td>
+                                                <td>1</td>
+                                            </tr>
+                                            <tr>
+                                                <td>1</td>
+                                                <td>1</td>
+                                                <td>1</td>
+                                                <td>1</td>
+                                            </tr>
+                                            <tr>
+                                                <td>1</td>
+                                                <td>1</td>
+                                                <td>1</td>
+                                                <td>1</td>
+                                            </tr>
+                                            <tr>
+                                                <td>1</td>
+                                                <td>1</td>
+                                                <td>1</td>
+                                                <td>1</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div className='panel-block'>
+                                    <div style={{ marginLeft : '11%'}}>
+                                        <nav className="pagination is-centered" role="navigation" aria-label="pagination">
+                                            <a className="pagination-previous">Previous</a>
+                                            <a className="pagination-next">Next page</a>
+                                            <ul className="pagination-list">
+                                                <li><a className="pagination-link" aria-label="Goto page 1">1</a></li>
+                                                <li><span className="pagination-ellipsis">&hellip;</span></li>
+                                                <li><a className="pagination-link" aria-label="Goto page 45">45</a></li>
+                                                <li><a className="pagination-link is-current" aria-label="Page 46" aria-current="page">46</a></li>
+                                                <li><a className="pagination-link" aria-label="Goto page 47">47</a></li>
+                                                <li><span className="pagination-ellipsis">&hellip;</span></li>
+                                                <li><a className="pagination-link" aria-label="Goto page 86">86</a></li>
+                                            </ul>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-
-
-            {/* <h1>Welcome Back: {name}</h1>
-            <table className="table is-striped is-fullwidth">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {users.map((user, index) => (
-                        <tr key={user.id}>
-                            <td>{index + 1}</td>
-                            <td>{user.name}</td>
-                            <td>{user.email}</td>
-                        </tr>
-                    ))}
- 
-                </tbody>
-            </table> */}
         </div>
     )
 }

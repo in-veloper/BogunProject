@@ -43,8 +43,11 @@ const DailyWorkNote = () => {
 
         for(let j = 0; j < tdCount; j++) {
             trResult.push(
-                <td key={j} style={{height: 30, textAlign: 'center', padding: 0}}><input style={{ border: 'none', outline: 'none', width: '100%', height: '100%'}}/></td>
+                <td key={j} style={{height: 30, textAlign: 'center', padding: 0}}>
+                    <input style={{ border: 'none', outline: 'none', width: '100%', height: '100%'}}/>
+                </td>
             )
+            console.log(j)
         }
         
         for(let i = 0; i < rowCount; i ++) {
@@ -104,7 +107,7 @@ const DailyWorkNote = () => {
                 <thead>
                     <tr>
                         {statData.header.map((item) => {
-                            return <th key={item} style={{backgroundColor: 'lightpink', textAlign: 'center'}}>{item}</th>
+                            return <th key={item} style={{backgroundColor: '#96C7ED', textAlign: 'center' }}>{item}</th>
                         })}
                     </tr>
                 </thead>
@@ -114,7 +117,7 @@ const DailyWorkNote = () => {
             </table>
             <hr/>
             <div style={{ float: 'left', marginLeft: 10, marginTop: 5 }}>
-                <span style={{ verticalAlign : 'middle', fontSize : 18}}><b><Today /></b></span>
+                <span style={{ verticalAlign : 'middle', fontSize : 18 }}><b><Today /></b></span>
             </div>
             <div style={{ float: 'right', marginBottom: 10 }}>
                 <button className='button is-info is-outlined' style={{ marginRight : 5 }}>
@@ -139,15 +142,15 @@ const DailyWorkNote = () => {
                     <tr>
                         {tableData.header.map((item) => {
                             if(item == "학년/반") {
-                                return <th key={item} width="100" style={{backgroundColor: 'lightyellow', textAlign: 'center'}}>{item}</th>;
+                                return <th key={item} width="100" style={{backgroundColor: '#96C7ED', textAlign: 'center'}}>{item}</th>;
                             }else if(item == "성별" || item == "NO") {
-                                return <th key={item} width="70" style={{backgroundColor: 'lightyellow', textAlign: 'center'}}>{item}</th>;
+                                return <th key={item} width="70" style={{backgroundColor: '#96C7ED', textAlign: 'center'}}>{item}</th>;
                             }else if(item == "투약사항") {
-                                return <th key={item} width="200" style={{backgroundColor: 'lightyellow', textAlign: 'center'}}>{item}</th>;
+                                return <th key={item} width="200" style={{backgroundColor: '#96C7ED', textAlign: 'center'}}>{item}</th>;
                             }else if(item == "처치사항") {
-                                return <th key={item} width="450" style={{backgroundColor: 'lightyellow', textAlign: 'center'}}>{item}</th>;
+                                return <th key={item} width="450" style={{backgroundColor: '#96C7ED', textAlign: 'center'}}>{item}</th>;
                             }
-                            return <th key={item} style={{backgroundColor: 'lightyellow', textAlign: 'center'}}>{item}</th>;
+                            return <th key={item} style={{backgroundColor: '#96C7ED', textAlign: 'center'}}>{item}</th>;
                         })}
                     </tr>
                 </thead>
@@ -180,26 +183,6 @@ const DailyWorkNote = () => {
                 <button className="button is-success is-outlined is-normal" style={{ marginRight : 10 }}>저장</button>
                 <button className="button is-success is-outlined is-normal" onClick={ finalSubmit() }>최종제출</button>
             </div>
-
-            {/* <div className="control has-icons-left">
-                <div className="select is-info">
-                    <select>
-                        <option>10줄 추가</option>
-                        <option>50줄 추가</option>
-                        <option>100줄 추가</option>
-                    </select>
-                </div>
-                <div className="icon is-small is-left">
-                    <BiPlusMedical />
-                </div>
-            </div> */}
-            
-            {/* <div className="buttons"> */}
-                {/* <button className="button is-info is-light">
-                    행 추가(+10)
-                </button>        
-                <FaAngleDown /> */}
-            {/* </div> */}
             <br></br>
             <br></br>
             <br></br>

@@ -112,52 +112,6 @@ const MyPage = () => {
 
     const neis = new Neis({ KEY : "1addcd8b3de24aa5920d79df1bbe2ece", Type : "json" });
 
-    const readExcel = (e) => {
-        const [file] = e.target.files;
-        const target = document.getElementsByClassName('container mt-5');
-        const reader = new FileReader();
-
-        const isElementSchool = false;
-        const isMiddleSchool = true;
-        const isHighSchool = false;
-        const elementSchoolGrade = 6;
-        const middleSchoolGrade = 3;
-        const highSchoolGrade = 3;
-
-        const nameTable = [];
-        let test1 = null; 
-        let test2 = null;
-
-        debugger
-        reader.readAsArrayBuffer(e.target.files[0]);
-        reader.onload = function(e) {
-            const data = new Uint8Array(reader.result);
-            const wb = XLSX.read(data, {type: 'array'});
-            const wsname = wb.SheetNames[0];
-            // const ws = wb.Sheets[wsname];
-            // const sheetData = XLSX.utils.sheet_to_json(ws);
-            // let headerIndex = 0;
-            // let headerData = {};
-
-            // const getKeyByValue = (obj, value) => {
-            //     return Object.keys(obj).findIndex(key => obj[key] === value);
-            // }
-
-            // for(let i = 1; i < sheetData.length; i++) {
-            //     const index = getKeyByValue(sheetData[i], '성명');
-            //     if(index != -1) {
-            //         headerData = data[i];
-            //         headerIndex = index;
-            //     }
-            // }
-            debugger
-            var htmlstr = XLSX.write(wb, {sheet: wsname, type: 'string', bookType: 'html'});
-            document.getElementById('excelResult').innerHTML += htmlstr;
-        }
-
-        // reader.readAsBinaryString(e.target.files[0]);
-    }
-
     const setNameTableFunc = (event) => {
         event.preventDefault();
         const targetGrade = Number(event.target.name);
@@ -184,37 +138,41 @@ const MyPage = () => {
                     console.log(error);
                 }
             }
-            // document.getElementById('nameTableResult').innerHTML +=  htmlstr;
         }
     }
 
     const [registeredGrade, setRegisteredGrade] = useState([]);
-    const [nameTableData, setNameTableData] = useState([]);
 
     const getNameTableData = async() => {
         const registeredGrade = [];
-        const tableData = [];
         try {
             const response = await axios.get('http://localhost:8000/getNametable');
             if(response.data) {
                 response.data.forEach(item => {
                     registeredGrade.push(item.grade);
-                    tableData.push(item);
                 });
             }
-            debugger
             setRegisteredGrade(registeredGrade);
-            setNameTableData(tableData);
         } catch(error) {
             console.log(error);
         }
-        
     }
 
-    const readNameTableFunc = (event) => {
+    const readNameTableFunc = async(event) => {
         event.preventDefault();
-        debugger
         let selectedGrade = event.target.name;
+        try{
+            const response = await axios.get('http://localhost:8000/getNametable');
+            if(response.data) {
+                response.data.forEach(item => {
+                    if(item.grade === selectedGrade) {
+                        document.getElementById('excelResult').innerHTML = item.html;
+                    }
+                })
+            }
+        } catch(error) {
+            console.log(error);
+        }
         handleShow();
     }
 
@@ -236,7 +194,7 @@ const MyPage = () => {
                             <div className='file'>
                                 <label className='file-label'>
                                     <input className='file-input' type='file' name={i} onClick={registeredGrade.includes(String(i)) ? readNameTableFunc : undefined} onChange={registeredGrade.includes(String(i)) ? undefined : setNameTableFunc}/>
-                                    <span className='file-cta' style={registeredGrade.includes(String(i)) ? {backgroundColor : 'lightpink'} : {}}>
+                                    <span className='file-cta' style={registeredGrade.includes(String(i)) ? {backgroundColor : '#96C7ED', border : 'none', marginRight : 5 } : {}}>
                                         <span className='file-label'>
                                             <b>{i}</b>
                                         </span>
@@ -248,7 +206,6 @@ const MyPage = () => {
                 }
             }
         }
-        
         return buttonList;
     }
 
@@ -281,26 +238,10 @@ const MyPage = () => {
             <div className='field'>
                 <label className='label'>명렬표 등록 및 현황</label>
                 <div className='box' style={{ height : 80}}>
-                    {/* <div className='file has-name is-success' style={{ float : 'left'}}>
-                        <label className='file-label'>
-                            <input className='file-input' type="file" name="resume" onChange={ readExcel }/>
-                            <span className='file-cta'>
-                                <span className='file-icon'>
-                                    <ImUpload />
-                                </span>
-                                <span className='file-label'>
-                                    Choose a file
-                                </span>
-                            </span>
-                            <span className='file-name'>
-                                선택된 파일 없음
-                            </span>
-                        </label>
-                    </div> */}
                     <div className='buttons has-addons' style={{ float : 'left' }}>
                         <AddNameTableButtons />
                     </div>
-                    <button className='button is-success js-modal-trigger' style={{width: 303, float : 'right'}} data-target="modal" onClick={handleShow}>
+                    <button className='button is-info js-modal-trigger' style={{width: 303, float : 'right'}} data-target="modal" onClick={handleShow}>
                         명렬표 미리보기
                     </button>
                 </div>
