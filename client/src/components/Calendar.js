@@ -58,6 +58,7 @@ const Calendar = () => {
 
     // 일정 입력
     const onConfirm = ({index, todo, color, todos}) => {
+        debugger
         if (todos.length != 0) {
             todos.map((item) => {
                 dispatch({type: 'INSERT', index: item, todo: todo, color: color});

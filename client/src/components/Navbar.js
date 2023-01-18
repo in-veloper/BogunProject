@@ -255,18 +255,18 @@ const Navbar = () => {
                                                 <div className='modal-background'></div>
                                                     <div className='modal-card' style={{ width : 550}}>
                                                     <header className='modal-card-head'>
-                                                        <p className='modal-card-title'>즐겨찾기 목록 관리</p>
+                                                        <p className='modal-card-title' style={{ fontSize : 20, fontWeight : 'bold' }}>즐겨찾기 목록 관리</p>
                                                         <button className='delete' aria-label='close' onClick={ handleClose }></button>
                                                     </header>
                                                     <section className='modal-card-body'>
-                                                            <ul style={{ marginLeft : 20}}>
-                                                                <BookmarkFormData />
-                                                            </ul>
+                                                        <ul style={{ marginLeft : 20}}>
+                                                            <BookmarkFormData />
+                                                        </ul>
                                                     </section>
-                                                    <footer className='modal-card-foot'>
-                                                        <div style={{ marginLeft : 350 }}>
-                                                            <button className='button is-success'>저장</button>
-                                                            <button className='button' onClick={ handleClose }>닫기</button>
+                                                    <footer className='modal-card-foot' style={{ padding : 0 }}>
+                                                        <div style={{ marginLeft : 420, marginTop : 10 }}>
+                                                            <button className='button is-info is-small'>저장</button>
+                                                            <button className='button is-small' onClick={ handleClose }>닫기</button>
                                                         </div>
                                                     </footer>
                                                 </div>

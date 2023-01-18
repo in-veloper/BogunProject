@@ -47,7 +47,6 @@ const DailyWorkNote = () => {
                     <input style={{ border: 'none', outline: 'none', width: '100%', height: '100%'}}/>
                 </td>
             )
-            console.log(j)
         }
         
         for(let i = 0; i < rowCount; i ++) {

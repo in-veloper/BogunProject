@@ -5,6 +5,8 @@ import Picker from "./Picker";
 import Style from "./Style";
 import ModalReducer from "./reducer/ModalReducer";
 import CalcDate from './CalcDate';
+import './style/calendarModal.css';
+import { ImNotification } from 'react-icons/im';
 
 const Modal = ({index, visible, onConfirm, onCancel}) => {
     
@@ -15,6 +17,11 @@ const Modal = ({index, visible, onConfirm, onCancel}) => {
         checked: false,
         date: ''
     };
+
+    let convertedToday = '';
+    if(index) 
+        convertedToday = index.split('.')[0] + '년 ' + index.split('.')[1] + '월 ' + index.split('.')[2] + '일';
+    
 
     const [state, dispatch] = useReducer(ModalReducer, initialState);
     const [modalShow, setModalShow] = useState(false);
@@ -65,6 +72,7 @@ const Modal = ({index, visible, onConfirm, onCancel}) => {
     
     // 입력
     const confirm = () => {
+        debugger
         const todos = CalcDate(index, end);
         onConfirm({index, todo, color, todos})
         Initialization()
@@ -75,41 +83,49 @@ const Modal = ({index, visible, onConfirm, onCancel}) => {
     
     return (
         <div className= { visible ? "modal is-active" : "modal" }>
-        {/* <div className="modal is-active"> */}
             <div className='modal-background'></div>
             <div className='modal-card'>
                 <header className='modal-card-head'>
-                    <p className='modal-card-title'>일정 등록</p>
+                    <p className='modal-card-title' style={{ fontSize : 20, fontWeight : 'bold' }}>보건일정 등록</p>
                     <button className='delete' aria-label='close' onClick={cancel}></button>
                 </header>
                 <section className='modal-card-body'>
-                    <p>{index}</p>
+                    <p style={{ fontSize : 18, fontWeight : 'bold', marginLeft : -15, marginBottom : 10 }}>{convertedToday}</p>
                     <div className="input">
-                        <input placeholder="일정" value={todo} onChange={onChange} onKeyPress={onKeyPress}></input>
+                        <input className='schedule-input' placeholder="보건 일정을 입력해 주세요" value={todo} onChange={onChange} onKeyPress={onKeyPress} style={{ width : '95%', border : 'none'}}></input>
                             {color !== '' && <div className="custom-check-box" style={Style(color)}/>}
                     </div>
+                    <hr style={{ marginTop : 15, marginBottom : 15 }}/>
                     <div className="end">
-                        <p>종료일 설정</p>
-                        <input type = 'checkbox' onClick = {onCheck} 
-                    />
+                        <p style={{ fontSize : 15 }}><b>종료일 설정</b></p>
+                        <input type='checkbox' onClick = {onCheck} style={{ marginTop : 7}}/>
                     </div>
-                    <div className="choice-day">
+                    <div className="choice-day" style={{ marginLeft : -20, marginTop : 10 }}>
                         { check === true &&
                             <div className="day">
-                                <div className="end-day">
-                                    <input type="text" onChange={onTodos} placeholder="2021.10.13"/>
+                                <div className="end-day" style={{ display : 'inline-block'}}>
+                                    <div className='input' style={{ width : 120, float : 'left' }}>
+                                        <input className='schedule-input' type="text" onChange={onTodos} placeholder="2021.10.13" style={{ width : 80, marginLeft : 10, border : 'none' }}/>
+                                    </div>
+                                    <div className='notification' style={{ float : 'right', height : 35, marginTop : 2, paddingTop : 7, fontSize : 12, width : 355 }}>
+                                        <ImNotification style={{ fontSize : 13, marginBottom : -2, marginRight : 5 }} />
+                                        <span>날짜 입력은 20OO.OO.OO 형식으로 입력해 주세요</span>
+                                    </div>
                                 </div>
                             </div>
                         }
                     </div>
+                    <hr style={{ marginTop : 15, marginBottom : 15 }}/>
+                    <p style={{ fontSize : 15, textAlign : 'left', marginTop : 15, marginBottom : -15}}><b>일정 분류색 설정</b></p>
                     <Picker changeColor = {changeColor}/>
                 </section>
-                <footer className='modal-card-foot'>
-                    <button className="choice button is-success" onClick={confirm}>Confirm</button>
-                    <button className="choice button" onClick={cancel}>Cancel</button>
+                <footer className='modal-card-foot' style={{ padding : 0 }}>
+                    <div style={{ marginLeft : 370, marginTop : 10 }}>
+                        <button className="choice button is-info is-small" style={{ padding : 0 }} onClick={confirm}>저장</button>
+                        <button className="choice button is-small" style={{ marginLeft : 0, padding : 0 }} onClick={cancel}>닫기</button>
+                    </div>
                 </footer>
             </div>
-        {/* </div> */}
         </div>
      );
 };
