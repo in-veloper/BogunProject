@@ -5,6 +5,7 @@ import { getBookmarks, addBookmark, removeBookmark } from "../controllers/Bookma
 import { verifyToken } from "../middleware/VerifyToken.js";
 import { refreshToken } from "../controllers/RefreshToken.js";
 import { getNameTable, addNameTable } from "../controllers/NameTable.js";
+import { getCalendarData, addCalendarData, removeCalendarData } from "../controllers/Calendar.js";
  
 const router = express.Router();
  
@@ -20,5 +21,10 @@ router.post('/addBookmarks', addBookmark);
 router.post('/removeBookmarks', removeBookmark);
 router.get('/getNametable', getNameTable);
 router.post('/addNametable', addNameTable);
+
+router.get('/getCalendar', getCalendarData);
+router.post('/addCalendar', addCalendarData);
+router.post('/removeCalendar', removeCalendarData);
+
  
 export default router;

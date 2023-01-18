@@ -1,14 +1,34 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable eqeqeq */
-import React, { useState, useCallback, useReducer} from 'react';
+import React, { useState, useEffect, useCallback, useReducer} from 'react';
 import Picker from "./Picker";
 import Style from "./Style";
 import ModalReducer from "./reducer/ModalReducer";
 import CalcDate from './CalcDate';
 import './style/calendarModal.css';
 import { ImNotification } from 'react-icons/im';
+import axios from 'axios';
+import jwt_decode from "jwt-decode";
 
 const Modal = ({index, visible, onConfirm, onCancel}) => {
+
+    useEffect(() => {
+        getUserName();
+    }, []);
+    
+    const getUserName = async () => {
+        try{
+            const response = await axios.get('http://localhost:8000/token');
+            const decoded = jwt_decode(response.data.accessToken);
+            debugger
+            // setName(decoded.name);
+        } catch (error) {
+            if(error.response) {
+                console.log(error);
+            }
+        }
+    }
+    
     
     const initialState = {
         color: '',
@@ -74,9 +94,23 @@ const Modal = ({index, visible, onConfirm, onCancel}) => {
     const confirm = () => {
         debugger
         const todos = CalcDate(index, end);
-        onConfirm({index, todo, color, todos})
-        Initialization()
-        changeColor('')
+        onConfirm({index, todo, color, todos});
+        Initialization();
+        changeColor('');
+
+        try{
+            axios.post('http://localhost:8000/addCalendarData', {
+                userId : '',
+                selectedDate : index,
+                endDate : end,
+                selectedColor : color,
+                todo : todo,
+                todos : todos
+            });
+        } catch(error) {
+            console.log(error);
+            return;
+        }
     }
 
     if (!visible) return null;
