@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 /* eslint-disable eqeqeq */
 import React, { useState, useEffect, useCallback, useReducer} from 'react';
@@ -11,6 +12,7 @@ import axios from 'axios';
 import jwt_decode from "jwt-decode";
 
 const Modal = ({index, visible, onConfirm, onCancel}) => {
+    const [userId, setUserId] = useState('');
 
     useEffect(() => {
         getUserName();
@@ -18,10 +20,11 @@ const Modal = ({index, visible, onConfirm, onCancel}) => {
     
     const getUserName = async () => {
         try{
-            const response = await axios.get('http://localhost:8000/token');
-            const decoded = jwt_decode(response.data.accessToken);
-            debugger
-            // setName(decoded.name);
+            if(userId.length === 0) {
+                const response = await axios.get('http://localhost:8000/token');
+                const decoded = jwt_decode(response.data.accessToken);
+                setUserId(decoded.email);
+            }
         } catch (error) {
             if(error.response) {
                 console.log(error);
@@ -92,7 +95,6 @@ const Modal = ({index, visible, onConfirm, onCancel}) => {
     
     // 입력
     const confirm = () => {
-        debugger
         const todos = CalcDate(index, end);
         onConfirm({index, todo, color, todos});
         Initialization();
@@ -100,7 +102,7 @@ const Modal = ({index, visible, onConfirm, onCancel}) => {
 
         try{
             axios.post('http://localhost:8000/addCalendarData', {
-                userId : '',
+                userId : userId,
                 selectedDate : index,
                 endDate : end,
                 selectedColor : color,
