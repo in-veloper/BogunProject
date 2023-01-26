@@ -28,7 +28,6 @@ function CalendarReducer(state, action) {
             }}
         case 'INSERT' : 
             //해당 Index에 이미 일정이 있는 경우
-            debugger
             if(state.schedule[action.index] !== undefined) {
                 return {...state, schedule : {
                     ...state.schedule,

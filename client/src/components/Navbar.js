@@ -283,7 +283,7 @@ const Navbar = () => {
  
                     <div className="navbar-end">
                         <div className="navbar-item">
-                            <span style={{ marginRight: 20, color: 'gray' }}><b><u>{name} 보건교사님</u></b></span>
+                            <span style={{ marginRight: 20, color: 'gray' }}><b><u><a href='/myPage' style={{color: 'gray'}}>{name} 보건교사님</a></u></b></span>
                             <div className="buttons are-small">
                                 <button onClick={Logout} className="button is-info">
                                     <b>로그아웃</b>

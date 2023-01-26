@@ -101,13 +101,12 @@ const Modal = ({index, visible, onConfirm, onCancel}) => {
         changeColor('');
 
         try{
-            axios.post('http://localhost:8000/addCalendarData', {
+            axios.post('http://localhost:8000/addCalendar', {
                 userId : userId,
                 selectedDate : index,
                 endDate : end,
                 selectedColor : color,
-                todo : todo,
-                todos : todos
+                todo : todo
             });
         } catch(error) {
             console.log(error);

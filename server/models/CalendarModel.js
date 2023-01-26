@@ -18,9 +18,6 @@ const Calendars = db.define('calendars', {
     },
     todo : {
         type : DataTypes.STRING
-    },
-    todos : {
-        type : DataTypes.STRING
     }
 },{
     freezeTableName : true

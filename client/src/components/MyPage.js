@@ -125,7 +125,10 @@ const MyPage = () => {
             const wb = XLSX.read(data, {type : 'array'});
             const wsname = wb.SheetNames[0];
 
-            var htmlstr = XLSX.write(wb, {sheet : wsname, type : 'string', bookType : 'html'});
+            const jsonData = XLSX.utils.sheet_to_json(wb.Sheets[wsname]);
+            let htmlstr = XLSX.write(wb, {sheet : wsname, type : 'string', bookType : 'html'});
+            htmlstr = htmlstr.split('검사명: 전체</td></tr><tr><td id="sjs-B7"></td><td id="sjs-C7"></td><td id="sjs-D7"></td><td id="sjs-E7"></td><td id="sjs-F7"></td><td id="sjs-G7"></td><td id="sjs-H7"></td></tr>')[1];
+            
             if(htmlstr && users.userId && users.name) {
                 try {
                     axios.post('http://localhost:8000/addNametable', {
@@ -184,17 +187,28 @@ const MyPage = () => {
             if(userSchoolName.includes('초등학교')) {
                 for(let i = 1; i < 7; i++) {
                     buttonList.push(
-                        <button key={i} className='button'>{i}</button>
+                        <button key={i} className='button' style={{padding : 0, border : 'none'}}>
+                            <div className='file'>
+                                <label className='file-label'>
+                                    <input className='file-input' type='file' name={i} onClick={registeredGrade.includes(String(i)) ? readNameTableFunc : undefined} onChange={registeredGrade.includes(String(i)) ? undefined : setNameTableFunc}/>
+                                    <span className='file-cta' style={registeredGrade.includes(String(i)) ? {backgroundColor : '#96C7ED', border : 'none', marginRight : 5} : {}}>
+                                        <span className='file-label'>
+                                            <b>{i}</b>
+                                        </span>
+                                    </span>
+                                </label>
+                            </div>
+                        </button>
                     )
                 }
             }else if(userSchoolName.includes('중학교') || userSchoolName.includes('고등학교')) {
                 for(let i = 1; i < 4; i++) {
                     buttonList.push(
-                        <button key={i} className='button' style={{padding : 0, border : 'none'}}>
+                        <button key={i} className='button' style={{padding : 0, border : 'none', marginRight : 5}}>
                             <div className='file'>
                                 <label className='file-label'>
                                     <input className='file-input' type='file' name={i} onClick={registeredGrade.includes(String(i)) ? readNameTableFunc : undefined} onChange={registeredGrade.includes(String(i)) ? undefined : setNameTableFunc}/>
-                                    <span className='file-cta' style={registeredGrade.includes(String(i)) ? {backgroundColor : '#96C7ED', border : 'none', marginRight : 5 } : {}}>
+                                    <span className='file-cta' style={registeredGrade.includes(String(i)) ? {backgroundColor : '#96C7ED', border : 'none'} : {}}>
                                         <span className='file-label'>
                                             <b>{i}</b>
                                         </span>
@@ -253,7 +267,7 @@ const MyPage = () => {
                 <div className='modal-background'></div>
                 <div className='modal-card'>
                     <header className='modal-card-head'>
-                        <p className='modal-card-title'>명렬표 미리보기</p>
+                        <p className='modal-card-title' style={{ fontSize : 20, fontWeight : 'bold' }}>명렬표 미리보기</p>
                         <button className='delete' aria-label='close' onClick={handleClose}></button>
                     </header>
                     <section className='modal-card-body'>
@@ -261,10 +275,20 @@ const MyPage = () => {
 
                         </table>
                     </section>
-                    <footer className='modal-card-foot'>
-                        <button className='button is-success'>저장</button>
-                        <button className='button' onClick={ handleClose }>닫기</button>
+                    <footer className='modal-card-foot' style={{ padding : 0 }}>
+                        <div style={{ marginLeft : 500, marginTop : 10 }}>
+                            <button className='button is-info is-small'>삭제</button>
+                            <button className='button is-small' onClick={ handleClose }>닫기</button>
+                        </div>
                     </footer>
+
+                    {/* <footer className='modal-card-foot' style={{ padding : 0 }}>
+                        <div style={{ marginLeft : 420, marginTop : 10 }}>
+                            <button className='button is-info is-small'>저장</button>
+                            <button className='button is-small' onClick={ handleClose }>닫기</button>
+                        </div>
+                    </footer> */}
+
                 </div>
             </div>
         </div>

@@ -12,7 +12,7 @@ export const getCalendarData = async(req, res) => {
 }
 
 export const addCalendarData = async(req, res) => {
-    const { userId, selectedDate, endDate, selectedColor, todo, todos } = req.body;
+    const { userId, selectedDate, endDate, selectedColor, todo } = req.body;
 
     try {
         await Calendars.create({
@@ -21,7 +21,6 @@ export const addCalendarData = async(req, res) => {
             endDate : endDate,
             selectedColor : selectedColor,
             todo : todo,
-            todos : todos
         });
         res.json({ msg : "Add Calendar Data Successful"});
     } catch (error) {
@@ -30,7 +29,7 @@ export const addCalendarData = async(req, res) => {
 }
 
 export const removeCalendarData = async(req, res) => {
-    const { userId, selectedDate, todo, todos } = req.body;
+    const { userId, selectedDate, todo } = req.body;
 
     try {
         await Calendars.destroy({
@@ -38,7 +37,6 @@ export const removeCalendarData = async(req, res) => {
                 userId : userId,
                 selectedDate : selectedDate,
                 todo : todo,
-                todos : todos
             }
         });
         res.json({ msg : "Delete Calendar data Successful"})

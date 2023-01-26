@@ -10,6 +10,7 @@
 /* eslint-disable react/react-in-jsx-scope */
 import { FaAngleDown } from 'react-icons/fa';
 import { AiOutlinePrinter, AiOutlineSave } from 'react-icons/ai';
+import { FiPlusSquare } from 'react-icons/fi';
 
 const DailyWorkNote = () => {
 
@@ -39,20 +40,31 @@ const DailyWorkNote = () => {
 
     const createTr = () => {
         const result = [];
-        const trResult = [];
 
-        for(let j = 0; j < tdCount; j++) {
-            trResult.push(
-                <td key={j} style={{height: 30, textAlign: 'center', padding: 0}}>
-                    <input style={{ border: 'none', outline: 'none', width: '100%', height: '100%'}}/>
-                </td>
-            )
-        }
-        
-        for(let i = 0; i < rowCount; i ++) {
+        for(let i = 1; i <= rowCount; i ++) {
             result.push(
                 <tr key={i}>
-                    {trResult}
+                    <td key={i} style={{height: 30, textAlign: 'center', padding: 0}}>
+                        {i}
+                    </td>
+                    <td key={i} style={{height: 30, textAlign: 'center', padding: 0}}>
+                        <input style={{ border: 'none', outline: 'none', width: '100%', height: '100%'}}/>
+                    </td>
+                    <td key={i} style={{height: 30, textAlign: 'center', padding: 0}}>
+                        <input style={{ border: 'none', outline: 'none', width: '100%', height: '100%'}}/>
+                    </td>
+                    <td key={i} style={{height: 30, textAlign: 'center', padding: 0}}>
+                        <input style={{ border: 'none', outline: 'none', width: '100%', height: '100%'}}/>
+                    </td>
+                    <td key={i} style={{height: 30, textAlign: 'center', padding: 0}}>
+                        <input style={{ border: 'none', outline: 'none', width: '100%', height: '100%'}}/>
+                    </td>
+                    <td key={i} style={{height: 30, textAlign: 'center', padding: 0}}>
+                        <input style={{ border: 'none', outline: 'none', width: '100%', height: '100%'}}/>
+                    </td>
+                    <td key={i} style={{height: 30, textAlign: 'center', padding: 0}}>
+                        <input style={{ border: 'none', outline: 'none', width: '100%', height: '100%'}}/>
+                    </td>
                 </tr>
             )
         }
@@ -144,13 +156,26 @@ const DailyWorkNote = () => {
                                 return <th key={item} width="100" style={{backgroundColor: '#96C7ED', textAlign: 'center'}}>{item}</th>;
                             }else if(item == "성별" || item == "NO") {
                                 return <th key={item} width="70" style={{backgroundColor: '#96C7ED', textAlign: 'center'}}>{item}</th>;
-                            }else if(item == "투약사항") {
-                                return <th key={item} width="200" style={{backgroundColor: '#96C7ED', textAlign: 'center'}}>{item}</th>;
+                            }else if(item == "투약사항") {//!
+                                return <th key={item} width="200" style={{backgroundColor: '#96C7ED', textAlign: 'center'}}>
+                                    {item}
+                                    <FiPlusSquare style={{ fontSize : 20, marginBottom : -4, marginLeft : 5 }} />
+                                </th>;
                             }else if(item == "처치사항") {
-                                return <th key={item} width="450" style={{backgroundColor: '#96C7ED', textAlign: 'center'}}>{item}</th>;
+                                return <th key={item} width="450" style={{backgroundColor: '#96C7ED', textAlign: 'center'}}>
+                                    {item}
+                                    <FiPlusSquare style={{ fontSize : 20, marginBottom : -4, marginLeft : 5 }} />
+                                </th>;
+                            }else if(item == "병명") {
+                                return <th key={item} style={{backgroundColor: '#96C7ED', textAlign: 'center'}}>
+                                    {item}
+                                    <FiPlusSquare style={{ fontSize : 20, marginBottom : -4, marginLeft : 5 }} />
+                                </th>;
                             }
-                            return <th key={item} style={{backgroundColor: '#96C7ED', textAlign: 'center'}}>{item}</th>;
-                        })}
+                            return <th key={item} style={{backgroundColor: '#96C7ED', textAlign: 'center'}}>
+                                {item}
+                            </th>;
+                        })}//!
                     </tr>
                 </thead>
                 <tbody>
@@ -180,7 +205,7 @@ const DailyWorkNote = () => {
             </div>
             <div style={{ float : 'right' }}>
                 <button className="button is-success is-outlined is-normal" style={{ marginRight : 10 }}>저장</button>
-                <button className="button is-success is-outlined is-normal" onClick={ finalSubmit() }>최종제출</button>
+                <button className="button is-success is-outlined is-normal" onClick={ finalSubmit }>최종제출</button>
             </div>
             <br></br>
             <br></br>
