@@ -4,7 +4,7 @@ import { getBookmarks, addBookmark, removeBookmark } from "../controllers/Bookma
 // import { getStudents, setStudents } from "../controllers/MyPage.js";
 import { verifyToken } from "../middleware/VerifyToken.js";
 import { refreshToken } from "../controllers/RefreshToken.js";
-import { getNameTable, addNameTable } from "../controllers/NameTable.js";
+import { getNameTable, addNameTable, removeNametable } from "../controllers/NameTable.js";
 import { getCalendarData, addCalendarData, removeCalendarData } from "../controllers/Calendar.js";
  
 const router = express.Router();
@@ -19,8 +19,10 @@ router.delete('/logout', Logout);
 router.get('/getBookmarks', getBookmarks);
 router.post('/addBookmarks', addBookmark);
 router.post('/removeBookmarks', removeBookmark);
+
 router.get('/getNametable', getNameTable);
 router.post('/addNametable', addNameTable);
+router.post('/removeNameTable', removeNametable);
 
 router.get('/getCalendar', getCalendarData);
 router.post('/addCalendar', addCalendarData);

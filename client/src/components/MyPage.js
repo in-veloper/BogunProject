@@ -223,6 +223,32 @@ const MyPage = () => {
         return buttonList;
     }
 
+    const removeNameTable = (event) => {
+        event.preventDefault();
+        debugger
+
+    }
+
+    // const onDeleteBookmark = (event) => {
+    //     event.preventDefault();
+    //     //! 여기부터 즐겨찾기 삭제 처리 로직 시작
+    //     const targetBookmarkName = event.target.parentElement.getElementsByTagName('span')[0].textContent;
+    //     bookmarkData.forEach(item => {
+    //         if(item.bookmarkName === targetBookmarkName) {
+    //             debugger
+    //             try {
+    //                 axios.post('http://localhost:8000/removeBookmarks', {
+    //                     id : item.id,
+    //                     bookmarkName : item.bookmarkName,
+    //                     bookmarkAddress : item.bookmarkAddress
+    //                 });
+    //             } catch (error) {
+    //                 console.log(error);
+    //             }
+    //         }
+    //     })
+    // }
+
     return (
         <div className="container mt-5" style={{display: "flex", flexDirection: 'column', height: '100vh'}}>
             <div className='field'>
@@ -277,7 +303,7 @@ const MyPage = () => {
                     </section>
                     <footer className='modal-card-foot' style={{ padding : 0 }}>
                         <div style={{ marginLeft : 500, marginTop : 10 }}>
-                            <button className='button is-info is-small'>삭제</button>
+                            <button className='button is-info is-small' onClick={removeNameTable}>삭제</button>
                             <button className='button is-small' onClick={ handleClose }>닫기</button>
                         </div>
                     </footer>

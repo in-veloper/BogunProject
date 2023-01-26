@@ -30,3 +30,20 @@ export const addNameTable = async(req, res) => {
         console.log(error);
     }
 }
+
+export const removeNametable = async(req, res) => {
+    const { id, userId, grade } = req.body;
+
+    try {
+        await NameTable.destroy({
+            where : {
+                id : id,
+                userId : userId,
+                grade : grade
+            }
+        });
+        res.json({ msg : "Delete NameTable Successful"});
+    } catch (error) {
+        console.log(error);
+    }
+}
