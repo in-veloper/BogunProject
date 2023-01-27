@@ -144,7 +144,6 @@ const DailyWorkNote = () => {
                 <input 
                     className='input is-info'
                     placeholder='검색어를 입력하세요'
-                    // onSearch={(value) => console.log(value)}
                     style={{ width: 200 }}
                 />
             </div>
@@ -156,7 +155,7 @@ const DailyWorkNote = () => {
                                 return <th key={item} width="100" style={{backgroundColor: '#96C7ED', textAlign: 'center'}}>{item}</th>;
                             }else if(item == "성별" || item == "NO") {
                                 return <th key={item} width="70" style={{backgroundColor: '#96C7ED', textAlign: 'center'}}>{item}</th>;
-                            }else if(item == "투약사항") {//!
+                            }else if(item == "투약사항") {
                                 return <th key={item} width="200" style={{backgroundColor: '#96C7ED', textAlign: 'center'}}>
                                     {item}
                                     <FiPlusSquare style={{ fontSize : 20, marginBottom : -4, marginLeft : 5 }} />
@@ -175,7 +174,7 @@ const DailyWorkNote = () => {
                             return <th key={item} style={{backgroundColor: '#96C7ED', textAlign: 'center'}}>
                                 {item}
                             </th>;
-                        })}//!
+                        })}
                     </tr>
                 </thead>
                 <tbody>
