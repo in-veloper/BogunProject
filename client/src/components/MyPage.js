@@ -15,11 +15,13 @@ import axios from 'axios';
 import * as XLSX from 'xlsx';
 import Excel from 'exceljs';
 import { ImUpload } from 'react-icons/im';
+import Toast from './Toast.js'
 import Neis from "@my-school.info/neis-api";
 import jwt_decode from "jwt-decode";
 
 const MyPage = () => {
     const [users, setUsers] = useState([]);
+    const [toast, setToast] = useState(false);
 
     useEffect(() => {
         getUsersInfo();
@@ -163,13 +165,15 @@ const MyPage = () => {
 
     const readNameTableFunc = async(event) => {
         event.preventDefault();
-        let selectedGrade = event.target.name;
+        const selectedGrade = event.target.name;
         try{
             const response = await axios.get('http://localhost:8000/getNametable');
             if(response.data) {
                 response.data.forEach(item => {
                     if(item.grade === selectedGrade) {
                         document.getElementById('excelResult').innerHTML = item.html;
+                        const removeButton = document.getElementById('removeButton');
+                        removeButton.setAttribute('value', selectedGrade);
                     }
                 })
             }
@@ -225,30 +229,22 @@ const MyPage = () => {
 
     const removeNameTable = (event) => {
         event.preventDefault();
-        debugger
-
+        const userId = users.userId;
+        const userName = users.name;
+        const toRemoveGrade = event.target.value;
+        try {
+            axios.post('http://localhost:8000/removeNameTable', {
+                userId : userId,
+                userName : userName,
+                grade : toRemoveGrade
+            });
+            setShow(false);
+            setToast(true);
+        } catch (error) {
+            console.log("명렬표 삭제 실패" + error);
+        }
     }
-
-    // const onDeleteBookmark = (event) => {
-    //     event.preventDefault();
-    //     //! 여기부터 즐겨찾기 삭제 처리 로직 시작
-    //     const targetBookmarkName = event.target.parentElement.getElementsByTagName('span')[0].textContent;
-    //     bookmarkData.forEach(item => {
-    //         if(item.bookmarkName === targetBookmarkName) {
-    //             debugger
-    //             try {
-    //                 axios.post('http://localhost:8000/removeBookmarks', {
-    //                     id : item.id,
-    //                     bookmarkName : item.bookmarkName,
-    //                     bookmarkAddress : item.bookmarkAddress
-    //                 });
-    //             } catch (error) {
-    //                 console.log(error);
-    //             }
-    //         }
-    //     })
-    // }
-
+    
     return (
         <div className="container mt-5" style={{display: "flex", flexDirection: 'column', height: '100vh'}}>
             <div className='field'>
@@ -288,7 +284,7 @@ const MyPage = () => {
             </div>
             
             <br></br>
-            
+            {toast && <Toast setToast={setToast} text="해당 명렬표 삭제가 정상적으로 처리되었습니다."></Toast>}
             <div className= {show ? 'modal is-active' : 'modal'}>
                 <div className='modal-background'></div>
                 <div className='modal-card'>
@@ -303,22 +299,14 @@ const MyPage = () => {
                     </section>
                     <footer className='modal-card-foot' style={{ padding : 0 }}>
                         <div style={{ marginLeft : 500, marginTop : 10 }}>
-                            <button className='button is-info is-small' onClick={removeNameTable}>삭제</button>
+                            <button className='button is-info is-small' id='removeButton' onClick={removeNameTable}>삭제</button>
                             <button className='button is-small' onClick={ handleClose }>닫기</button>
                         </div>
                     </footer>
-
-                    {/* <footer className='modal-card-foot' style={{ padding : 0 }}>
-                        <div style={{ marginLeft : 420, marginTop : 10 }}>
-                            <button className='button is-info is-small'>저장</button>
-                            <button className='button is-small' onClick={ handleClose }>닫기</button>
-                        </div>
-                    </footer> */}
-
                 </div>
             </div>
         </div>
     )
 }
 
-export default MyPage
+export default MyPage;
