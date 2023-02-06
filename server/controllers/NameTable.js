@@ -32,13 +32,12 @@ export const addNameTable = async(req, res) => {
 }
 
 export const removeNametable = async(req, res) => {
-    const { id, userId, grade } = req.body;
-
+    const { userId, userName, grade } = req.body;
     try {
         await NameTable.destroy({
             where : {
-                id : id,
                 userId : userId,
+                userName : userName,
                 grade : grade
             }
         });
