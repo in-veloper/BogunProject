@@ -12,6 +12,7 @@ import Footer from "./components/Footer";
 import MyPage from "./components/MyPage";
 import Calendar from "./components/Calendar";
 import Notification from "./components/Notification";
+import MedicalInfo from "./components/MedicalInfo";
  
 function App() {
   return (
@@ -22,7 +23,8 @@ function App() {
         <Route path="/dashboard" element={ <> <Navbar /> <Dashboard /> <Footer /> </> } />
         <Route path="/dailyWorkNote" element={ <> <Navbar/> <DailyWorkNote /> <Footer /> </> }></Route>
         <Route path="/myPage" element={ <> <Navbar /> <MyPage /> <Footer /> </> }></Route>
-        <Route path="/calendar" element={<> <Navbar /> <Notification /> <Calendar /> <Footer /> </>}></Route>
+        <Route path="/calendar" element={ <> <Navbar /> <Notification /> <Calendar /> <Footer /> </> }></Route>
+        <Route path="/medicalInfo" element={ <> <Navbar /> <MedicalInfo /> <Footer /> </> }></Route>
       </Routes>
     </BrowserRouter>
   );

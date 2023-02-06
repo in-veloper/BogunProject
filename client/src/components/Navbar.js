@@ -230,7 +230,7 @@ const Navbar = () => {
                         <a href="/calendar" className="navbar-item">
                             <b>보건일정</b>
                         </a>
-                        <a href="/" className="navbar-item">
+                        <a href="/medicalInfo" className="navbar-item">
                             <b>약품정보</b>
                         </a>
                         <div className="navbar-item">

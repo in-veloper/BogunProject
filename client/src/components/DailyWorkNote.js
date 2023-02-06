@@ -25,7 +25,7 @@ const DailyWorkNote = () => {
         return todayYear + '년 ' + todayMonth + '월 ' + todayDate + '일 ' + '[' + dayOfWeek + '요일]'
     }
 
-    const rowCount = 50;
+    const rowCount = 100;
     const tdCount = 7;
 
     const tableData = {
@@ -41,7 +41,7 @@ const DailyWorkNote = () => {
     const createTr = () => {
         const result = [];
 
-        for(let i = 1; i <= rowCount; i ++) {
+        for(let i = 1; i <= rowCount; i++) {
             result.push(
                 <tr key={i}>
                     <td key={i} style={{height: 30, textAlign: 'center', padding: 0}}>
@@ -112,6 +112,59 @@ const DailyWorkNote = () => {
         )
     }
 
+    const plusTen = (event) => {
+        event.preventDefault();
+        const toPlus = Number(event.target.getAttribute('value'));
+        addLine(toPlus);
+    }
+
+    const plusFifty = (event) => {
+        event.preventDefault();
+        const toPlus = Number(event.target.getAttribute('value'));
+        addLine(toPlus);
+    }
+
+    const plusHundred = (event) => {
+        event.preventDefault();
+        const toPlus = Number(event.target.getAttribute('value'));
+        addLine(toPlus);
+    }
+
+    const addLine = (toPlusLine) => {
+        const result = [];
+        if(toPlusLine) {
+            for(let i = 1; i <= toPlusLine; i++) {
+                result.push(
+                    <tr key={i}>
+                        <td key={i} style={{height: 30, textAlign: 'center', padding: 0}}>
+                            {i}
+                        </td>
+                        <td key={i} style={{height: 30, textAlign: 'center', padding: 0}}>
+                            <input style={{ border: 'none', outline: 'none', width: '100%', height: '100%'}}/>
+                        </td>
+                        <td key={i} style={{height: 30, textAlign: 'center', padding: 0}}>
+                            <input style={{ border: 'none', outline: 'none', width: '100%', height: '100%'}}/>
+                        </td>
+                        <td key={i} style={{height: 30, textAlign: 'center', padding: 0}}>
+                            <input style={{ border: 'none', outline: 'none', width: '100%', height: '100%'}}/>
+                        </td>
+                        <td key={i} style={{height: 30, textAlign: 'center', padding: 0}}>
+                            <input style={{ border: 'none', outline: 'none', width: '100%', height: '100%'}}/>
+                        </td>
+                        <td key={i} style={{height: 30, textAlign: 'center', padding: 0}}>
+                            <input style={{ border: 'none', outline: 'none', width: '100%', height: '100%'}}/>
+                        </td>
+                        <td key={i} style={{height: 30, textAlign: 'center', padding: 0}}>
+                            <input style={{ border: 'none', outline: 'none', width: '100%', height: '100%'}}/>
+                        </td>
+                    </tr>
+                )
+            }
+            debugger
+            return result;
+        }
+    }
+
     return (
         <div className="container mt-5" >
             <table className="table is-bordered is-fullwidth is-hoverable">
@@ -130,7 +183,7 @@ const DailyWorkNote = () => {
             <div style={{ float: 'left', marginLeft: 10, marginTop: 5 }}>
                 <span style={{ verticalAlign : 'middle', fontSize : 18 }}><b><Today /></b></span>
             </div>
-            <div style={{ float: 'right', marginBottom: 10 }}>
+            <div style={{ float: 'right' }}>
                 <button className='button is-info is-outlined' style={{ marginRight : 5 }}>
                     <span className='icon is-small'>
                         <AiOutlineSave style={{ fontSize : 20 }}/>
@@ -177,8 +230,9 @@ const DailyWorkNote = () => {
                         })}
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id='workNoteBody'>
                     {createTr()}
+                    {addLine()}
                 </tbody>
             </table>
             <div className="dropdown is-hoverable" style={{ float : 'left' }}>
@@ -190,13 +244,13 @@ const DailyWorkNote = () => {
                 </div>
                 <div className="dropdown-menu" id="dropdown-menu" role="menu">
                     <div className="dropdown-content">
-                        <a href="#" className="dropdown-item">
+                        <a className="dropdown-item" value='10' onClick={ plusTen }>
                             10줄 추가
                         </a>
-                        <a href="#" className="dropdown-item">
+                        <a className="dropdown-item" value='50' onClick={ plusFifty }>
                             50줄 추가
                         </a>
-                        <a href="#" className="dropdown-item">
+                        <a className="dropdown-item" value='100' onClick={ plusHundred }>
                             100줄 추가
                         </a>
                     </div>

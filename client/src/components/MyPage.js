@@ -163,6 +163,7 @@ const MyPage = () => {
 
     const readNameTableFunc = async(event) => {
         event.preventDefault();
+        const toRemoveGrade = '';
         let selectedGrade = event.target.name;
         try{
             const response = await axios.get('http://localhost:8000/getNametable');
@@ -321,4 +322,4 @@ const MyPage = () => {
     )
 }
 
-export default MyPage
+export default MyPage;
