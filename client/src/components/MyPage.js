@@ -266,7 +266,7 @@ const MyPage = () => {
                 </div>
             </div>
             <div className='field'>
-                <label className='label'>즐겨찾기 관리</label>
+                <label className='label'>즐겨찾기 목록</label>
                 <div className='box'>
                     <GetBookmarks/>
                 </div>

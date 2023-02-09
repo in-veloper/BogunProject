@@ -6,16 +6,15 @@ import axios from "axios";
 
 const MedicalInfo = () => {
     const [data, setData] = useState(null);
-    const URL = '/DrbEasyDrugInfoService';
+    const URL = '/1471000/DrbEasyDrugInfoService/getDrbEasyDrugList';
     const fetchData = async(request) => {
         try {
             setData(null);
-
             const response = await axios.get(URL, {
                 params : {
                     ServiceKey : process.env.REACT_APP_API_KEY,
-                    // pageNo : 1,
-                    // numOfRows : 3,
+                    pageNo : 1,
+                    numOfRows : 3,
                     entpName : '한미약품(주)',  // 업체명
                     // itemName : '타이레놀',  // 제품명
                     // itemSeq : '',   // 품목기준코드
