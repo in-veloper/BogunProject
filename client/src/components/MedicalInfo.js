@@ -7,7 +7,15 @@ import { FcSearch } from 'react-icons/fc';
 const MedicalInfo = () => {
     const [data, setData] = useState(null);
     const [searchCategory, setSearchCategory] = useState("");
-    const [toSearch, setToSearch] = useState(null);
+    const [toSearch, setToSearch] = useState({});
+
+    let toSearchCategory = "";
+    let toSearchText = "";
+
+    if(toSearch.hasOwnProperty('selectedCategory') && toSearch.hasOwnProperty('toSearchText')) {
+        toSearchCategory = toSearch.selectedCategory;
+        toSearchText = toSearch.toSearchText;
+    }
 
     const URL = '/1471000/DrbEasyDrugInfoService/getDrbEasyDrugList';
     const fetchData = async(request) => {
@@ -46,7 +54,7 @@ const MedicalInfo = () => {
 
 
     if(data) {
-        // debugger
+        debugger
         // 이제 값 잘 들어옴 data 안에 body에 있음
     }
     // const getEMedicalInfo = async() => {
@@ -92,7 +100,6 @@ const MedicalInfo = () => {
             selectedCategory : selectedCategory,
             toSearchText : toSearchText 
         });
-        debugger
     }
 
     return (
