@@ -60,6 +60,7 @@ const Navbar = () => {
         setShow(true)
     };
     
+    //해야 할 일 : 즐겨찾기 User별로 분리해줘야 함
     const AddBookmark = (event) => {
         event.preventDefault();
         const registeredBookmarks = [];

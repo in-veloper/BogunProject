@@ -18,15 +18,20 @@ const MedicalInfo = () => {
     }
 
     const URL = '/1471000/DrbEasyDrugInfoService/getDrbEasyDrugList';
-    const fetchData = async(request) => {
+    const getMedicalInfo = () => {
         try {
             setData(null);
-            const response = await axios.get(URL, {
+            if(toSearchCategory && toSearchText) {
+                debugger
+                // 여기서 카테고리별로 어떻게 Text 들어오는거로 적용해서 검사할지 구현하면 됨
+            }
+            const response = axios.get(URL, {
                 params : {
-                    ServiceKey : process.env.REACT_APP_API_KEY,
+                    // serviceKey : process.env.REACT_APP_API_KEY,
+                    serviceKey : 'keLWlFS+rObBs8V1oJnzhsON3lnDtz5THBBLn0pG/2bSG4iycOwJfIf5fx8Vl7SiOtsgsat2374sDmkU6bA7Zw==',
                     pageNo : 1,
                     numOfRows : 3,
-                    entpName : '한미약품(주)',  // 업체명
+                    entpName : '대웅',  // 업체명
                     // itemName : '타이레놀',  // 제품명
                     // itemSeq : '',   // 품목기준코드
                     // efcyQesitm : '', // 약 효능
@@ -40,7 +45,9 @@ const MedicalInfo = () => {
                 }
             });
 
-            setData(response.data);
+            if(response.data.hasOwnProperty('body')) {
+                setData(response.data.body);
+            }
         } catch (error) {
             console.log(error);
         }
@@ -49,15 +56,41 @@ const MedicalInfo = () => {
 
     useEffect(() => {
         // getEMedicalInfo();
-        fetchData();
+        getMedicalInfo();
     }, []);
 
+    const renderSearchResult = () => {
+        const result = [];
 
-    if(data) {
-        debugger
-        // 이제 값 잘 들어옴 data 안에 body에 있음
+        if(data) {
+            if(data.hasOwnProperty('items')) {
+                for(let i = 0; i < data.items.length; i++) {
+                    result.push(
+                        <tr key={i}>
+                            <td>{ data.items[i].itemName != null ? data.items[i].itemName.replace(/(<([^>]+)>)/ig,"") : data.items[i].itemName }</td>
+                            <td>{ data.items[i].entpName != null ? data.items[i].entpName.replace(/(<([^>]+)>)/ig,"") : data.items[i].entpName }</td>
+                            <td>{ data.items[i].itemSeq != null ? data.items[i].itemSeq.replace(/(<([^>]+)>)/ig,"") : data.items[i].itemSeq }</td>
+                            <td>{ data.items[i].efcyQesitm != null ? data.items[i].efcyQesitm.replace(/(<([^>]+)>)/ig,"") : data.items[i].efcyQesitm }</td>
+                            <td>{ data.items[i].useMethodQesitm != null ? data.items[i].useMethodQesitm.replace(/(<([^>]+)>)/ig,"") : data.items[i].useMethodQesitm }</td>
+                            <td>{ data.items[i].atpnQesitm != null ? data.items[i].atpnQesitm.replace(/(<([^>]+)>)/ig,"") : data.items[i].atpnQesitm }</td>
+                            <td>{ data.items[i].intrcQesitm != null ? data.items[i].intrcQesitm.replace(/(<([^>]+)>)/ig,"") : data.items[i].intrcQesitm }</td>
+                            <td>{ data.items[i].seQesitm != null ? data.items[i].seQesitm.replace(/(<([^>]+)>)/ig,"") : data.items[i].seQesitm }</td>
+                            <td>{ data.items[i].depositMethodQesitm != null ? data.items[i].depositMethodQesitm.replace(/(<([^>]+)>)/ig,"") : data.items[i].depositMethodQesitm }</td>
+                        </tr>
+                    )
+                }
+            }
+        }
+
+        return result;
     }
-    // const getEMedicalInfo = async() => {
+
+    // if(data) {
+    //     renderSearchResult(data);
+    //     // debugger
+    //     // 이제 값 잘 들어옴 data 안에 body에 있음
+    // }
+    // // const getEMedicalInfo = async() => {
     //     const URL = '/1471000/DrbEasyDrugInfoService';
 
     //     const response = axios.get(URL, {
@@ -100,6 +133,11 @@ const MedicalInfo = () => {
             selectedCategory : selectedCategory,
             toSearchText : toSearchText 
         });
+
+        getMedicalInfo();
+        // if(data) {
+        //     renderSearchResult(data);
+        // }
     }
 
     return (
@@ -125,7 +163,29 @@ const MedicalInfo = () => {
                 </div>
                 <FcSearch style={{ fontSize : 20, marginBottom : -6, marginLeft : 5 }} onClick={handleSearch}/>
             </div>
-            
+            <div>
+                <div style={{ display : 'inline-block' }}>
+                    <p style={{ float : 'left', marginTop : 20 }}>검색결과</p>
+                </div>
+                <table className='table is-fullwidth' style={{ marginTop : 20, overflow: 'scroll' }}>
+                    <thead style={{ fontSize : 13, fontWeight : 'bold' }}>
+                        <tr>
+                            <td>제품명</td>
+                            <td style={{ width : 70 }}>업체명</td>
+                            <td>품목코드</td>
+                            <td>효능</td>
+                            <td>사용법</td>
+                            <td>주의사항</td>
+                            <td>상호작용</td>
+                            <td>부작용</td>
+                            <td>보관법</td>
+                        </tr>
+                    </thead>
+                    <tbody style={{ fontSize : 13 }}>
+                        { renderSearchResult() }
+                    </tbody>
+                </table>
+            </div>
         </div>
     )
 }

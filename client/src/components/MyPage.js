@@ -148,6 +148,7 @@ const MyPage = () => {
 
     const [registeredGrade, setRegisteredGrade] = useState([]);
 
+    // 해야 할 일 : 명렬표 가져오는 부분도 유저별로 나눠줘야 함
     const getNameTableData = async() => {
         const registeredGrade = [];
         try {
@@ -191,11 +192,11 @@ const MyPage = () => {
             if(userSchoolName.includes('초등학교')) {
                 for(let i = 1; i < 7; i++) {
                     buttonList.push(
-                        <button key={i} className='button' style={{padding : 0, border : 'none'}}>
+                        <button key={i} className='button' style={{padding : 0, border : 'none', marginRight : 5}}>
                             <div className='file'>
                                 <label className='file-label'>
                                     <input className='file-input' type='file' name={i} onClick={registeredGrade.includes(String(i)) ? readNameTableFunc : undefined} onChange={registeredGrade.includes(String(i)) ? undefined : setNameTableFunc}/>
-                                    <span className='file-cta' style={registeredGrade.includes(String(i)) ? {backgroundColor : '#96C7ED', border : 'none', marginRight : 5} : {}}>
+                                    <span className='file-cta' style={registeredGrade.includes(String(i)) ? {backgroundColor : '#96C7ED', border : 'none'} : {}}>
                                         <span className='file-label'>
                                             <b>{i}</b>
                                         </span>
