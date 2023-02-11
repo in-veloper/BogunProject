@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 
 const Toast = ({ setToast, text }) => {
-    debugger
     useEffect(() => {
         const timer = setTimeout(() => {
             setToast(false);

@@ -52,12 +52,12 @@ const Navbar = () => {
     
     const handleClose = (event) => {
         event.preventDefault();
-        setShow(false)
+        setShow(false);
     };
     
     const handleShow = (event) => {
         event.preventDefault();
-        setShow(true)
+        setShow(true);
     };
     
     //해야 할 일 : 즐겨찾기 User별로 분리해줘야 함
@@ -250,29 +250,6 @@ const Navbar = () => {
                                             <AiOutlinePlusSquare style={{ marginRight : 5, marginTop : -5, fontSize : 17, verticalAlign : 'middle', fontWeight : 'bold' }}/>
                                             추가등록
                                         </a>
-                                        {/* 즐겨찾기 추가 Modal */}
-                                        <div className= {show ? 'modal is-active' : 'modal'}>
-                                            <form onSubmit={AddBookmark}>
-                                                <div className='modal-background'></div>
-                                                    <div className='modal-card' style={{ width : 550}}>
-                                                    <header className='modal-card-head'>
-                                                        <p className='modal-card-title' style={{ fontSize : 20, fontWeight : 'bold' }}>즐겨찾기 목록 관리</p>
-                                                        <button className='delete' aria-label='close' onClick={ handleClose }></button>
-                                                    </header>
-                                                    <section className='modal-card-body'>
-                                                        <ul style={{ marginLeft : 20}}>
-                                                            <BookmarkFormData />
-                                                        </ul>
-                                                    </section>
-                                                    <footer className='modal-card-foot' style={{ padding : 0 }}>
-                                                        <div style={{ marginLeft : 420, marginTop : 10 }}>
-                                                            <button className='button is-info is-small'>저장</button>
-                                                            <button className='button is-small' onClick={ handleClose }>닫기</button>
-                                                        </div>
-                                                    </footer>
-                                                </div>
-                                            </form>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -280,6 +257,29 @@ const Navbar = () => {
                         <a href="/myPage" className="navbar-item">
                             <b>내정보</b>
                         </a>
+                    </div>
+                    {/* 즐겨찾기 추가 Modal */}
+                    <div className= {show ? 'modal is-active' : 'modal'}>
+                        <form onSubmit={AddBookmark}>
+                            <div className='modal-background'></div>
+                                <div className='modal-card' style={{ width : 550}}>
+                                <header className='modal-card-head'>
+                                    <p className='modal-card-title' style={{ fontSize : 20, fontWeight : 'bold' }}>즐겨찾기 목록 관리</p>
+                                    <button className='delete' aria-label='close' onClick={ handleClose }></button>
+                                </header>
+                                <section className='modal-card-body'>
+                                    <ul style={{ marginLeft : 20}}>
+                                        <BookmarkFormData />
+                                    </ul>
+                                </section>
+                                <footer className='modal-card-foot' style={{ padding : 0 }}>
+                                    <div style={{ marginLeft : 420, marginTop : 10 }}>
+                                        <button className='button is-info is-small'>저장</button>
+                                        <button className='button is-small' onClick={ handleClose }>닫기</button>
+                                    </div>
+                                </footer>
+                            </div>
+                        </form>
                     </div>
  
                     <div className="navbar-end">

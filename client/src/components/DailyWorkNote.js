@@ -11,8 +11,12 @@
 import { FaAngleDown } from 'react-icons/fa';
 import { AiOutlinePrinter, AiOutlineSave } from 'react-icons/ai';
 import { FiPlusSquare } from 'react-icons/fi';
+import React, { useState, useEffect } from 'react';
 
 const DailyWorkNote = () => {
+
+    const [treatModalshow, setTreatModalShow] = useState(false);
+    const [medicineModalShow, setMedicineModalShow] = useState(false);
 
     const Today = () => {
         let now = new Date();   // 현재 날짜 및 시간
@@ -160,9 +164,48 @@ const DailyWorkNote = () => {
                     </tr>
                 )
             }
-            debugger
             return result;
         }
+    }
+
+    const handleTreatModalShow = (event) => {
+        event.preventDefault();
+        setTreatModalShow(true);
+    }
+
+    const handleTreatModalClose = (event) => {
+        event.preventDefault();
+        setTreatModalShow(false);
+    }
+
+    const handleMedicineModalShow = (event) => {
+        event.preventDefault();
+        setMedicineModalShow(true);
+    }
+
+    const handleMedicineModalClose = (event) => {
+        event.preventDefault();
+        setMedicineModalShow(false);
+    }
+
+    const plusTreatItem = (event) => {
+        event.preventDefault();
+        const inp = document.createElement('input');
+        inp.className = 'input';
+        inp.placeholder = '문구를 입력해주세요'
+        inp.setAttribute('style', 'height : 30px; fontSize : 15px; width : 100%;');
+
+        document.getElementById('treatItemList').appendChild(inp); 
+    }
+
+    const plusMedicineItem = (event) => {
+        event.preventDefault();
+        const inp = document.createElement('input');
+        inp.className = 'input';
+        inp.placeholder = '문구를 입력해주세요'
+        inp.setAttribute('style', 'height : 30px; fontSize : 15px; width : 100%;');
+
+        document.getElementById('medicineItemList').appendChild(inp); 
     }
 
     return (
@@ -211,12 +254,12 @@ const DailyWorkNote = () => {
                             }else if(item == "투약사항") {
                                 return <th key={item} width="200" style={{backgroundColor: '#96C7ED', textAlign: 'center'}}>
                                     {item}
-                                    <FiPlusSquare style={{ fontSize : 20, marginBottom : -4, marginLeft : 5 }} />
+                                    <FiPlusSquare style={{ color : 'blue', fontSize : 20, marginBottom : -4, marginLeft : 5 }} onClick={handleMedicineModalShow} />
                                 </th>;
                             }else if(item == "처치사항") {
                                 return <th key={item} width="450" style={{backgroundColor: '#96C7ED', textAlign: 'center'}}>
                                     {item}
-                                    <FiPlusSquare style={{ fontSize : 20, marginBottom : -4, marginLeft : 5 }} />
+                                    <FiPlusSquare style={{ color : 'blue', fontSize : 20, marginBottom : -4, marginLeft : 5 }} onClick={handleTreatModalShow}/>
                                 </th>;
                             }else if(item == "병명") {
                                 return <th key={item} style={{backgroundColor: '#96C7ED', textAlign: 'center'}}>
@@ -259,6 +302,58 @@ const DailyWorkNote = () => {
             <div style={{ float : 'right' }}>
                 <button className="button is-success is-outlined is-normal" style={{ marginRight : 10 }}>저장</button>
                 <button className="button is-success is-outlined is-normal" onClick={ finalSubmit }>최종제출</button>
+            </div>
+
+            <div className= {treatModalshow ? 'modal is-active' : 'modal'}>
+                <form>
+                    <div className='modal-background'></div>
+                        <div className='modal-card' style={{ width : 550}}>
+                        <header className='modal-card-head'>
+                            <p className='modal-card-title' style={{ fontSize : 20, fontWeight : 'bold' }}>자주 사용하는 처치사항 등록</p>
+                            <button className='delete' aria-label='close' onClick={ handleTreatModalClose }></button>
+                        </header>
+                        <section className='modal-card-body' style={{ maxHeight : 300 }}>
+                            <ul id='treatItemList'>
+                                <input className='input' name='treatItem' type='text' placeholder='문구를 입력해주세요' style={{ width : '100%', height : 30, fontSize : 15 }}/>
+                            </ul>
+                            <div style={{ display : 'flex', justifyContent : 'center', alignItems : 'center' }}>
+                                <button className='button is-small' onClick={plusTreatItem}>항목 추가</button>
+                            </div>
+                        </section>
+                        <footer className='modal-card-foot' style={{ padding : 0 }}>
+                            <div style={{ marginLeft : 420, marginTop : 10 }}>
+                                <button className='button is-info is-small'>저장</button>
+                                <button className='button is-small' onClick={ handleTreatModalClose }>닫기</button>
+                            </div>
+                        </footer>
+                    </div>
+                </form>
+            </div>
+
+            <div className= {medicineModalShow ? 'modal is-active' : 'modal'}>
+                <form>
+                    <div className='modal-background'></div>
+                        <div className='modal-card' style={{ width : 550}}>
+                        <header className='modal-card-head'>
+                            <p className='modal-card-title' style={{ fontSize : 20, fontWeight : 'bold' }}>자주 사용하는 투약사항 등록</p>
+                            <button className='delete' aria-label='close' onClick={ handleMedicineModalClose }></button>
+                        </header>
+                        <section className='modal-card-body'>
+                            <ul id='medicineItemList'>
+                                <input className='input' name='medicineItem' type='text' placeholder='문구를 입력해주세요.' style={{ width : '100%', height : 30, fontSize : 15 }}/>
+                            </ul>
+                            <div style={{ display : 'flex', justifyContent : 'center', alignItems : 'center' }}>
+                                <button className='button is-small' onClick={plusMedicineItem}>항목 추가</button>
+                            </div>
+                        </section>
+                        <footer className='modal-card-foot' style={{ padding : 0 }}>
+                            <div style={{ marginLeft : 420, marginTop : 10 }}>
+                                <button className='button is-info is-small'>저장</button>
+                                <button className='button is-small' onClick={ handleMedicineModalClose }>닫기</button>
+                            </div>
+                        </footer>
+                    </div>
+                </form>
             </div>
             <br></br>
             <br></br>
