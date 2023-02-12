@@ -22,7 +22,7 @@ const Navbar = () => {
 
     
     const getUserName = async () => {
-        try{
+        try {
             if(name.length === 0) {
                 const response = await axios.get('http://localhost:8000/token');
                 const decoded = jwt_decode(response.data.accessToken);

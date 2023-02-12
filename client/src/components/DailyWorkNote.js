@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-useless-concat */
 /* eslint-disable eqeqeq */
 /* eslint-disable jsx-a11y/anchor-is-valid */
@@ -12,11 +13,41 @@ import { FaAngleDown } from 'react-icons/fa';
 import { AiOutlinePrinter, AiOutlineSave } from 'react-icons/ai';
 import { FiPlusSquare } from 'react-icons/fi';
 import React, { useState, useEffect } from 'react';
+import Toast from './Toast.js';
+import axios from 'axios';
+import jwt_decode from "jwt-decode";
 
 const DailyWorkNote = () => {
 
+    const [user, setUser] = useState(null);
     const [treatModalshow, setTreatModalShow] = useState(false);
     const [medicineModalShow, setMedicineModalShow] = useState(false);
+    const [toast, setToast] = useState(false);
+    const [registTreatSuccessToast, setRegistTreatSuccessToast] = useState(false);
+    const [registTreatFailedToast, setRegistTreatFailedToast] = useState(false);
+    const [treatItemData, setTreatItemData] = useState([]);
+
+    useEffect(() => {
+        getUser();
+        getTreats();
+    }, []);
+
+    const getUser = async () => {
+        try {
+            if(!user) {
+                const response = await axios.get('http://localhost:8000/token');
+                const decoded = jwt_decode(response.data.accessToken);
+                setUser({
+                    userId : decoded.email,
+                    userName : decoded.name
+                });
+            }
+        } catch (error) {
+            if(error.response) {
+                console.log(error);
+            }
+        }
+    }
 
     const Today = () => {
         let now = new Date();   // 현재 날짜 및 시간
@@ -44,29 +75,28 @@ const DailyWorkNote = () => {
 
     const createTr = () => {
         const result = [];
-
         for(let i = 1; i <= rowCount; i++) {
             result.push(
                 <tr key={i}>
-                    <td key={i} style={{height: 30, textAlign: 'center', padding: 0}}>
+                    <td key={i + 1} style={{height: 30, textAlign: 'center', padding: 0}}>
                         {i}
                     </td>
-                    <td key={i} style={{height: 30, textAlign: 'center', padding: 0}}>
+                    <td key={i + 2} style={{height: 30, textAlign: 'center', padding: 0}}>
                         <input style={{ border: 'none', outline: 'none', width: '100%', height: '100%'}}/>
                     </td>
-                    <td key={i} style={{height: 30, textAlign: 'center', padding: 0}}>
+                    <td key={i + 3} style={{height: 30, textAlign: 'center', padding: 0}}>
                         <input style={{ border: 'none', outline: 'none', width: '100%', height: '100%'}}/>
                     </td>
-                    <td key={i} style={{height: 30, textAlign: 'center', padding: 0}}>
+                    <td key={i + 4} style={{height: 30, textAlign: 'center', padding: 0}}>
                         <input style={{ border: 'none', outline: 'none', width: '100%', height: '100%'}}/>
                     </td>
-                    <td key={i} style={{height: 30, textAlign: 'center', padding: 0}}>
+                    <td key={i + 5} style={{height: 30, textAlign: 'center', padding: 0}}>
                         <input style={{ border: 'none', outline: 'none', width: '100%', height: '100%'}}/>
                     </td>
-                    <td key={i} style={{height: 30, textAlign: 'center', padding: 0}}>
+                    <td key={i + 6} style={{height: 30, textAlign: 'center', padding: 0}}>
                         <input style={{ border: 'none', outline: 'none', width: '100%', height: '100%'}}/>
                     </td>
-                    <td key={i} style={{height: 30, textAlign: 'center', padding: 0}}>
+                    <td key={i + 7} style={{height: 30, textAlign: 'center', padding: 0}}>
                         <input style={{ border: 'none', outline: 'none', width: '100%', height: '100%'}}/>
                     </td>
                 </tr>
@@ -94,6 +124,16 @@ const DailyWorkNote = () => {
         }
         return result;
     }
+
+    // Enter 시 자주 사용하는 문구 등록하는 Modal이 닫기는 현상 막기 위해 Enter 이벤트 막음
+    document.addEventListener('keydown', (event) => {
+        const e = event || window.event;
+        
+        if(e.key === 'Enter') {
+            event.preventDefault();
+            return;
+        }
+    });
 
     const finalSubmit = () => {
         return (
@@ -170,6 +210,7 @@ const DailyWorkNote = () => {
 
     const handleTreatModalShow = (event) => {
         event.preventDefault();
+        getTreats();
         setTreatModalShow(true);
     }
 
@@ -188,24 +229,101 @@ const DailyWorkNote = () => {
         setMedicineModalShow(false);
     }
 
+    const getTreats = async () => {
+        let treatItemList = [];
+        if(user) {
+            const response = await axios.get('http://localhost:8000/getTreatItems', {
+                params : {
+                    userId : user.userId,
+                    userName : user.userName
+                }
+            });
+            
+            if(response.data) {
+                for(let i = 0; i < response.data.length; i++) {
+                    treatItemList.push(response.data[i]);
+                }
+            }
+        }
+        setTreatItemData(treatItemList);
+    }
+
+
+    const GetTreatItems = () => {
+        const registeredTreatItems = [];
+        if(treatItemData.length > 0) {
+            for(let i = 0; i < treatItemData.length; i++) {
+                registeredTreatItems.push(
+                    <input key={i} className='input' name='treatItem' type='text' value={treatItemData[i].treatText || ''} readOnly={true} style={{ width : '100%', height : 30, fontSize : 15 }}/>
+                )
+            }
+        }
+
+        return registeredTreatItems;
+    }
+
     const plusTreatItem = (event) => {
         event.preventDefault();
         const inp = document.createElement('input');
-        inp.className = 'input';
-        inp.placeholder = '문구를 입력해주세요'
-        inp.setAttribute('style', 'height : 30px; fontSize : 15px; width : 100%;');
-
-        document.getElementById('treatItemList').appendChild(inp); 
+        const renderedInput = event.target.parentElement.parentElement.getElementsByTagName('input');
+        const registedCharCount = renderedInput[renderedInput.length - 1].value.length;
+        
+        if(registedCharCount === 0) {
+            setToast(true);
+            return;
+        }else{
+            inp.className = 'input';
+            inp.placeholder = '문구를 입력해주세요'
+            inp.setAttribute('style', 'height : 30px; fontSize : 15px; width : 100%;');
+    
+            document.getElementById('treatItemList').appendChild(inp); 
+        }
     }
 
     const plusMedicineItem = (event) => {
         event.preventDefault();
         const inp = document.createElement('input');
-        inp.className = 'input';
-        inp.placeholder = '문구를 입력해주세요'
-        inp.setAttribute('style', 'height : 30px; fontSize : 15px; width : 100%;');
+        const renderedInput = event.target.parentElement.parentElement.getElementsByTagName('input');
+        const registedCharCount = renderedInput[renderedInput.length - 1].value.length;
 
-        document.getElementById('medicineItemList').appendChild(inp); 
+        if(registedCharCount === 0) {
+            setToast(true);
+            return;
+        }else{
+            inp.className = 'input';
+            inp.placeholder = '문구를 입력해주세요'
+            inp.setAttribute('style', 'height : 30px; fontSize : 15px; width : 100%;');
+    
+            document.getElementById('medicineItemList').appendChild(inp); 
+        }
+    }
+
+    const addTreatItem = (event) => {
+        event.preventDefault();
+        const registeredTreatItems = [];
+        let treatItems = event.target.getElementsByTagName('input');
+        treatItemData.forEach(item => { registeredTreatItems.push(item.treatText) });
+        
+        for(let i = 0; i < treatItems.length; i++) {
+            if(!registeredTreatItems.includes(treatItems[i].value)) {
+                if(treatItems[i].value.length > 0) {
+                    try {
+                        axios.post('http://localhost:8000/addTreatItem', {
+                            userId : user.userId,
+                            userName : user.userName,
+                            treatText : treatItems[i].value
+                    });
+                    
+                    setRegistTreatSuccessToast(true);
+                    }catch (error) {
+                        console.log(error);
+                    }
+                }
+            }else{
+                setRegistTreatFailedToast(true);
+                return;
+            }
+        }
     }
 
     return (
@@ -305,7 +423,10 @@ const DailyWorkNote = () => {
             </div>
 
             <div className= {treatModalshow ? 'modal is-active' : 'modal'}>
-                <form>
+            {toast && <Toast setToast={setToast} text="작성하지 않은 항목이 있습니다. 모든 항목을 작성 후 추가 항목을 생성하실 수 있습니다."></Toast>}
+            {registTreatSuccessToast && <Toast setToast={setRegistTreatSuccessToast} text="작성하신 처치사항이 정상적으로 등록되었습니다."></Toast>}
+            {registTreatFailedToast && <Toast setToast={setRegistTreatFailedToast} text="동일하게 작성하신 처치사항이 이미 존재합니다."></Toast>}
+                <form onSubmit={addTreatItem}>
                     <div className='modal-background'></div>
                         <div className='modal-card' style={{ width : 550}}>
                         <header className='modal-card-head'>
@@ -314,6 +435,7 @@ const DailyWorkNote = () => {
                         </header>
                         <section className='modal-card-body' style={{ maxHeight : 300 }}>
                             <ul id='treatItemList'>
+                                <GetTreatItems/>
                                 <input className='input' name='treatItem' type='text' placeholder='문구를 입력해주세요' style={{ width : '100%', height : 30, fontSize : 15 }}/>
                             </ul>
                             <div style={{ display : 'flex', justifyContent : 'center', alignItems : 'center' }}>
@@ -331,6 +453,7 @@ const DailyWorkNote = () => {
             </div>
 
             <div className= {medicineModalShow ? 'modal is-active' : 'modal'}>
+            {toast && <Toast setToast={setToast} text="작성하지 않은 항목이 있습니다. 모든 항목을 작성 후 추가 항목을 생성하실 수 있습니다."></Toast>}
                 <form>
                     <div className='modal-background'></div>
                         <div className='modal-card' style={{ width : 550}}>
