@@ -1,15 +1,15 @@
 import TreatItems from "../models/TreatItemModel.js";
 
 export const getTreatItems = async(req, res) => {
-    // const { userId, userName } = req.body;
+    const { userId, userName } = req.body;
     try {
         const treatItems = await TreatItems.findAll({
-            // where : {
-            //     userId : userId,
-            //     userName : userName
-            // }
+            where : {
+                userId : userId,
+                userName : userName
+            }
         });
-
+        
         res.json(treatItems);
     } catch (error) {
         console.log(error);
