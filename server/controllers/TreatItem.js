@@ -1,13 +1,14 @@
 import TreatItems from "../models/TreatItemModel.js";
 
 export const getTreatItems = async(req, res) => {
-    const { userId, userName } = req.body;
+    // 정상 동작 원인 : Sequelize 에서 문법 오류 인듯 findAll인지 Where 절인지 문법 확인 후 처리하면 될듯 [현재 서비스 호출시 params 제외, where절 제외]
+    // const { userId, userName } = req.body;
     try {
         const treatItems = await TreatItems.findAll({
-            where : {
-                userId : userId,
-                userName : userName
-            }
+            // where : {
+            //     userId : userId,
+            //     userName : userName
+            // }
         });
         
         res.json(treatItems);

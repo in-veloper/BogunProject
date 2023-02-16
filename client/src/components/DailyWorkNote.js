@@ -231,12 +231,12 @@ const DailyWorkNote = () => {
 
     const getTreats = async () => {
         let treatItemList = [];
-        if(user) {
+        // if(user) {
             const response = await axios.get('http://localhost:8000/getTreatItems', {
-                params : {
-                    userId : user.userId,
-                    userName : user.userName
-                }
+                // params : {
+                //     userId : user.userId,
+                //     userName : user.userName
+                // }
             });
             
             if(response.data) {
@@ -244,7 +244,7 @@ const DailyWorkNote = () => {
                     treatItemList.push(response.data[i]);
                 }
             }
-        }
+        // }
         setTreatItemData(treatItemList);
     }
 
