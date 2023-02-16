@@ -25,6 +25,7 @@ const DailyWorkNote = () => {
     const [toast, setToast] = useState(false);
     const [registTreatSuccessToast, setRegistTreatSuccessToast] = useState(false);
     const [registTreatFailedToast, setRegistTreatFailedToast] = useState(false);
+    const [removeTreatToast, setRemoveTreatToast] = useState(false);
     const [treatItemData, setTreatItemData] = useState([]);
 
     useEffect(() => {
@@ -231,12 +232,12 @@ const DailyWorkNote = () => {
 
     const getTreats = async () => {
         let treatItemList = [];
-        // if(user) {
+        if(user) {
             const response = await axios.get('http://localhost:8000/getTreatItems', {
-                // params : {
-                //     userId : user.userId,
-                //     userName : user.userName
-                // }
+                params : {
+                    userId : user.userId,
+                    userName : user.userName
+                }
             });
             
             if(response.data) {
@@ -244,17 +245,44 @@ const DailyWorkNote = () => {
                     treatItemList.push(response.data[i]);
                 }
             }
-        // }
+        }
         setTreatItemData(treatItemList);
     }
 
+    const removeTreatItem = (event) => {
+        event.preventDefault();
+        const userId = user.userId;
+        const userName = user.userName;
+        const treatText = event.target.parentElement.getElementsByTagName('input')[0].value;
+
+        try {
+            axios.post('http://localhost:8000/removeTreatItem', {
+                userId : userId,
+                userName : userName,
+                treatText : treatText
+            });
+
+            setRemoveTreatToast(true);
+        } catch (error) {
+            console.log(error);
+        }
+        
+    }
 
     const GetTreatItems = () => {
         const registeredTreatItems = [];
         if(treatItemData.length > 0) {
+            // const existViewItems = document.getElementById('treatItemList').getElementsByTagName('input');
+            // for(let i = 0; i < existViewItems.length; i++) {
+            //     document.getElementById('treatItemList').removeChild(existViewItems[i]);
+            // }
+
             for(let i = 0; i < treatItemData.length; i++) {
                 registeredTreatItems.push(
-                    <input key={i} className='input' name='treatItem' type='text' value={treatItemData[i].treatText || ''} readOnly={true} style={{ width : '100%', height : 30, fontSize : 15 }}/>
+                    <div>
+                        <input key={i} className='input' name='treatItem' type='text' value={treatItemData[i].treatText || ''} readOnly={true} style={{ width : '85%', height : 30, fontSize : 15 }}/>
+                        <button key={i} className='button is-small is-danger' style={{ marginLeft : 20 }} onClick={removeTreatItem}>삭제</button>
+                    </div>
                 )
             }
         }
@@ -426,6 +454,7 @@ const DailyWorkNote = () => {
             {toast && <Toast setToast={setToast} text="작성하지 않은 항목이 있습니다. 모든 항목을 작성 후 추가 항목을 생성하실 수 있습니다."></Toast>}
             {registTreatSuccessToast && <Toast setToast={setRegistTreatSuccessToast} text="작성하신 처치사항이 정상적으로 등록되었습니다."></Toast>}
             {registTreatFailedToast && <Toast setToast={setRegistTreatFailedToast} text="동일하게 작성하신 처치사항이 이미 존재합니다."></Toast>}
+            {removeTreatToast && <Toast setToast={setRemoveTreatToast} text="처치사항 삭제가 정상적으로 처리되었습니다."></Toast>}
                 <form onSubmit={addTreatItem}>
                     <div className='modal-background'></div>
                         <div className='modal-card' style={{ width : 550}}>
