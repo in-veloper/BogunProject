@@ -21,4 +21,4 @@ const TreatItems = db.define('treatItems', {
     await db.sync();
 })();
 
-export default TreatItems;
+export default TreatItems; 
