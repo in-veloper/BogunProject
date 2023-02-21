@@ -31,6 +31,10 @@ const DailyWorkNote = () => {
     useEffect(() => {
         getUser();
         getTreats();
+
+        return () => {
+            
+        }
     }, []);
 
     const getUser = async () => {
@@ -260,6 +264,8 @@ const DailyWorkNote = () => {
                 userId : userId,
                 userName : userName,
                 treatText : treatText
+            }).then((response) => {
+                getTreats();
             });
 
             setRemoveTreatToast(true);
@@ -280,7 +286,7 @@ const DailyWorkNote = () => {
             for(let i = 0; i < treatItemData.length; i++) {
                 registeredTreatItems.push(
                     <div>
-                        <input key={i} className='input' name='treatItem' type='text' value={treatItemData[i].treatText || ''} readOnly={true} style={{ width : '85%', height : 30, fontSize : 15 }}/>
+                        <input className='input' name='treatItem' type='text' value={treatItemData[i].treatText || ''} readOnly={true} style={{ width : '85%', height : 30, fontSize : 15 }}/>
                         <button key={i} className='button is-small is-danger' style={{ marginLeft : 20 }} onClick={removeTreatItem}>삭제</button>
                     </div>
                 )
@@ -340,17 +346,23 @@ const DailyWorkNote = () => {
                             userId : user.userId,
                             userName : user.userName,
                             treatText : treatItems[i].value
-                    });
+                        }).then((response) => {
+                            getTreats();
+                        });
                     
-                    setRegistTreatSuccessToast(true);
+                        setRegistTreatSuccessToast(true);
                     }catch (error) {
                         console.log(error);
                     }
                 }
-            }else{
-                setRegistTreatFailedToast(true);
-                return;
             }
+            // 할 일 : 항목 추가 후 저장 시 저장된 내용도 input 그대로 남아있는 부분 제거
+
+            // else{
+            //     // for문을 수행하지 않고 바로 Fail로 빠지는데 이유를 알 수가 없음
+            //     setRegistTreatFailedToast(true);
+            //     // return;
+            // }
         }
     }
 
@@ -463,7 +475,7 @@ const DailyWorkNote = () => {
                             <button className='delete' aria-label='close' onClick={ handleTreatModalClose }></button>
                         </header>
                         <section className='modal-card-body' style={{ maxHeight : 300 }}>
-                            <ul id='treatItemList'>
+                            <ul id='treatItemList' key={1}>
                                 <GetTreatItems/>
                                 <input className='input' name='treatItem' type='text' placeholder='문구를 입력해주세요' style={{ width : '100%', height : 30, fontSize : 15 }}/>
                             </ul>
