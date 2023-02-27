@@ -12,6 +12,7 @@
 import { FaAngleDown } from 'react-icons/fa';
 import { AiOutlinePrinter, AiOutlineSave } from 'react-icons/ai';
 import { FiPlusSquare } from 'react-icons/fi';
+import { FaStar } from 'react-icons/fa';
 import React, { useState, useEffect } from 'react';
 import Toast from './Toast.js';
 import axios from 'axios';
@@ -286,7 +287,7 @@ const DailyWorkNote = () => {
             for(let i = 0; i < treatItemData.length; i++) {
                 registeredTreatItems.push(
                     <div key={i}>
-                        <input className='input' name='treatItem' type='text' value={treatItemData[i].treatText || ''} readOnly={true} style={{ width : '85%', height : 30, fontSize : 15 }}/>
+                        <input className='input' name='registeredTreatItem' type='text' value={treatItemData[i].treatText || ''} readOnly={true} style={{ width : '85%', height : 30, fontSize : 15 }}/>
                         <button key={i} className='button is-small is-danger' style={{ marginLeft : 20 }} onClick={removeTreatItem}>삭제</button>
                     </div>
                 )
@@ -412,17 +413,17 @@ const DailyWorkNote = () => {
                             }else if(item == "투약사항") {
                                 return <th key={item} width="200" style={{backgroundColor: '#96C7ED', textAlign: 'center'}}>
                                     {item}
-                                    <FiPlusSquare style={{ color : 'blue', fontSize : 20, marginBottom : -4, marginLeft : 5 }} onClick={handleMedicineModalShow} />
+                                    <FaStar style={{ color : 'gold', fontSize : 17, marginBottom : -3, marginLeft : 5, cursor : 'pointer' }} onClick={handleMedicineModalShow} />
                                 </th>;
                             }else if(item == "처치사항") {
                                 return <th key={item} width="450" style={{backgroundColor: '#96C7ED', textAlign: 'center'}}>
                                     {item}
-                                    <FiPlusSquare style={{ color : 'blue', fontSize : 20, marginBottom : -4, marginLeft : 5 }} onClick={handleTreatModalShow}/>
+                                    <FaStar style={{ color : 'gold', fontSize : 17, marginBottom : -3, marginLeft : 5, cursor : 'pointer' }} onClick={handleTreatModalShow}/>
                                 </th>;
                             }else if(item == "병명") {
                                 return <th key={item} style={{backgroundColor: '#96C7ED', textAlign: 'center'}}>
                                     {item}
-                                    <FiPlusSquare style={{ fontSize : 20, marginBottom : -4, marginLeft : 5 }} />
+                                    <FaStar style={{ color : 'gold', fontSize : 17, marginBottom : -3, marginLeft : 5 }} />
                                 </th>;
                             }
                             return <th key={item} style={{backgroundColor: '#96C7ED', textAlign: 'center'}}>
@@ -475,7 +476,7 @@ const DailyWorkNote = () => {
                             <button className='delete' aria-label='close' onClick={ handleTreatModalClose }></button>
                         </header>
                         <section className='modal-card-body' style={{ maxHeight : 300 }}>
-                            <ul id='treatItemList' key={1}>
+                            <ul id='treatItemList'>
                                 <GetTreatItems/>
                                 <input className='input' name='treatItem' type='text' placeholder='문구를 입력해주세요' style={{ width : '100%', height : 30, fontSize : 15 }}/>
                             </ul>

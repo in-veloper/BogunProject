@@ -211,7 +211,7 @@ const Navbar = () => {
                 <div className="navbar-brand">
                     <a className="navbar-item" href="https://bulma.io">
                         {/* 로고 작업 중 */}
-                        <img src={`${process.env.PUBLIC_URL}/image/teaform_logo8.png`} alt="logo" style={{ minHeight : 40 }}/>
+                        <img src={`${process.env.PUBLIC_URL}/image/teaform_logo12.png`} alt="logo" style={{ minHeight : 40 }}/>
                         {/* <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28" alt="logo" /> */}
                     </a>
  
