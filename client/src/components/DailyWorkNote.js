@@ -285,7 +285,7 @@ const DailyWorkNote = () => {
 
             for(let i = 0; i < treatItemData.length; i++) {
                 registeredTreatItems.push(
-                    <div>
+                    <div key={i}>
                         <input className='input' name='treatItem' type='text' value={treatItemData[i].treatText || ''} readOnly={true} style={{ width : '85%', height : 30, fontSize : 15 }}/>
                         <button key={i} className='button is-small is-danger' style={{ marginLeft : 20 }} onClick={removeTreatItem}>삭제</button>
                     </div>
@@ -372,7 +372,7 @@ const DailyWorkNote = () => {
                 <thead>
                     <tr>
                         {statData.header.map((item) => {
-                            return <th key={item} style={{backgroundColor: '#96C7ED', textAlign: 'center' }}>{item}</th>
+                            return <th key={item} style={{backgroundColor: '#96C7ED', textAlign: 'center', fontSize : 15 }}>{item}</th>
                         })}
                     </tr>
                 </thead>
@@ -382,7 +382,7 @@ const DailyWorkNote = () => {
             </table>
             <hr/>
             <div style={{ float: 'left', marginLeft: 10, marginTop: 5 }}>
-                <span style={{ verticalAlign : 'middle', fontSize : 18 }}><b><Today /></b></span>
+                <span style={{ verticalAlign : 'middle', fontSize : 17 }}><b><Today /></b></span>
             </div>
             <div style={{ float: 'right' }}>
                 <button className='button is-info is-outlined' style={{ marginRight : 5 }}>
@@ -398,11 +398,11 @@ const DailyWorkNote = () => {
                 <input 
                     className='input is-info'
                     placeholder='검색어를 입력하세요'
-                    style={{ width: 200 }}
+                    style={{ width: 200, fontSize : 15 }}
                 />
             </div>
             <table className="table is-bordered is-fullwidth is-hoverable">
-                <thead>
+                <thead style={{ fontSize : 15 }}>
                     <tr>
                         {tableData.header.map((item) => {
                             if(item == "학년/반") {

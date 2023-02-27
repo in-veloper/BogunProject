@@ -210,7 +210,9 @@ const Navbar = () => {
             <div className="container">
                 <div className="navbar-brand">
                     <a className="navbar-item" href="https://bulma.io">
-                        <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28" alt="logo" />
+                        {/* 로고 작업 중 */}
+                        <img src={`${process.env.PUBLIC_URL}/image/teaform_logo8.png`} alt="logo" style={{ minHeight : 40 }}/>
+                        {/* <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28" alt="logo" /> */}
                     </a>
  
                     <a href="/" role="button" className="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">

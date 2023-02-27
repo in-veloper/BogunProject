@@ -63,7 +63,7 @@ const Dashboard = () => {
             <div className='tile is-ancestor'>
                 <div className='tile is-vertical is-12 mt-5'>
                     <div className='panel is-info'>
-                        <p class="panel-heading" style={{ fontSize : 17 }}>
+                        <p class="panel-heading" style={{ fontSize : 15 }}>
                             공지사항
                             <button className='button is-text is-normal' style={{ padding : 0, float : 'right', verticalAlign: 'center', marginLeft : -35, marginTop : -8, marginBottom : -10, color : 'white', background : 'transparent' }}>
                                 More
@@ -72,7 +72,7 @@ const Dashboard = () => {
                         <div class="panel-block">
                             <table className='table is-fullwidth is-striped is-hoverable' style={{ textAlign : 'center' }}>
                                 <thead>
-                                    <tr style={{ fontSize : 15 }}>
+                                    <tr style={{ fontSize : 13 }}>
                                         <th style={{ textAlign : 'center', width : 50 }}>No</th>
                                         <th style={{ textAlign : 'center', width : 300 }}>제목</th>
                                         <th style={{ textAlign : 'center', width : 450 }}>내용</th>
@@ -120,8 +120,8 @@ const Dashboard = () => {
                             </table>
                         </div>
                         <div className='panel-block'>
-                            <div style={{ marginLeft : '33%'}}>
-                                <nav className="pagination is-centered" role="navigation" aria-label="pagination">
+                            <div style={{ marginLeft : '33%' }}>
+                                <nav className="pagination is-centered" role="navigation" aria-label="pagination" style={{ fontSize : 13 }}>
                                     <a className="pagination-previous">Previous</a>
                                     <a className="pagination-next">Next page</a>
                                     <ul className="pagination-list">
@@ -141,7 +141,7 @@ const Dashboard = () => {
                     <div className='tile mt-5'>
                         <div className='tile is-parent is-vertical mr-5'>
                             <div class="panel is-info" style={{ marginLeft : -12, marginTop : -10}}>
-                                <p class="panel-heading" style={{ fontSize : 17 }}>
+                                <p class="panel-heading" style={{ fontSize : 15 }}>
                                     이번 달 보건일정
                                 </p>
                                 <div class="panel-block">
@@ -174,7 +174,7 @@ const Dashboard = () => {
                                 </a>
                             </div>
                             <div class="panel is-info mt-3" style={{ marginLeft : -12, marginTop : -10}}>
-                                <p class="panel-heading" style={{ fontSize : 17 }}>
+                                <p class="panel-heading" style={{ fontSize : 15 }}>
                                     미정
                                 </p>
                                 <div class="panel-block">
@@ -210,7 +210,7 @@ const Dashboard = () => {
                         
                         <div className='tile is-child' style={{ padding : 0 }}>
                             <div className='panel is-info' style={{ paddingBottom : 45}}>
-                                <p className='panel-heading' style={{ fontSize : 17 }}>
+                                <p className='panel-heading' style={{ fontSize : 15 }}>
                                     문의 & 요청
                                     <button className='button is-text is-normal' style={{ padding : 0, float : 'right', verticalAlign: 'center', marginLeft : -35, marginTop : -8, marginBottom : -10, color : 'white', background : 'transparent' }}>
                                         More
@@ -218,7 +218,7 @@ const Dashboard = () => {
                                 </p>
                                 <div className='panel-block'>
                                     <table className='table is-fullwidth is-striped is-hoverable' style={{ textAlign : 'center', margin : 10 }}>
-                                        <thead style={{ fontSize : 15 }}>
+                                        <thead style={{ fontSize : 13 }}>
                                             <tr>
                                                 <th style={{ textAlign : 'center', width : 50 }}>No</th>
                                                 <th style={{ textAlign : 'center', width : 350 }}>제목</th>
@@ -273,8 +273,8 @@ const Dashboard = () => {
                                     </table>
                                 </div>
                                 <div className='panel-block'>
-                                    <div style={{ marginLeft : '11%'}}>
-                                        <nav className="pagination is-centered" role="navigation" aria-label="pagination">
+                                    <div style={{ marginLeft : '18%'}}>
+                                        <nav className="pagination is-centered" role="navigation" aria-label="pagination" style={{ fontSize : 13 }}>
                                             <a className="pagination-previous">Previous</a>
                                             <a className="pagination-next">Next page</a>
                                             <ul className="pagination-list">
