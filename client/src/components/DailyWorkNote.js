@@ -22,6 +22,7 @@ import './style/toggleButton.css';
 const DailyWorkNote = () => {
 
     const [user, setUser] = useState(null);
+    const [bedModalshow, setBedModalShow] = useState(false);
     const [treatModalshow, setTreatModalShow] = useState(false);
     const [medicineModalShow, setMedicineModalShow] = useState(false);
     const [toast, setToast] = useState(false);
@@ -233,6 +234,11 @@ const DailyWorkNote = () => {
         }
     }
 
+    const handleBedModalClose = (event) => {
+        event.preventDefault();
+        setBedModalShow(false);
+    }
+
     const handleTreatModalShow = (event) => {
         event.preventDefault();
         getTreats();
@@ -415,6 +421,8 @@ const DailyWorkNote = () => {
             }
         }else{
             // Toggle 스위치 켤때 걸림
+            //침상안정 등록 위한 Modal Show
+            setBedModalShow(true);
         }
     }
 
@@ -523,6 +531,26 @@ const DailyWorkNote = () => {
             <div style={{ float : 'right' }}>
                 <button className="button is-success is-outlined is-normal" style={{ marginRight : 10 }}>저장</button>
                 <button className="button is-success is-outlined is-normal" onClick={ finalSubmit }>최종제출</button>
+            </div>
+
+            <div className= {bedModalshow ? 'modal is-active' : 'modal'}>
+                <form>
+                    <div className='modal-background'></div>
+                        <div className='modal-card' style={{ width : 550}}>
+                        <header className='modal-card-head'>
+                            <p className='modal-card-title' style={{ fontSize : 17, fontWeight : 'bold' }}>침상안정 등록</p>
+                            <button className='delete' aria-label='close' onClick={handleBedModalClose}></button>
+                        </header>
+                        <section className='modal-card-body' style={{ maxHeight : 300 }}>
+                        </section>
+                        <footer className='modal-card-foot' style={{ padding : 0 }}>
+                            <div style={{ marginLeft : 420, marginTop : 10 }}>
+                                <button className='button is-info is-small'>저장</button>
+                                <button className='button is-small' onClick={handleBedModalClose}>닫기</button>
+                            </div>
+                        </footer>
+                    </div>
+                </form>
             </div>
 
             <div className= {treatModalshow ? 'modal is-active' : 'modal'}>
