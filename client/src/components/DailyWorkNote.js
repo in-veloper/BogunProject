@@ -71,7 +71,7 @@ const DailyWorkNote = () => {
     const tdCount = 9;
 
     const tableData = {
-        header: ["NO", "학년/반", "이름", "성별", "병명", "처치사항", "투약사항", "특이사항", "입실여부"],
+        header: ["NO", "학년/반", "이름", "성별", "병명", "처치사항", "투약사항", "특이사항", "침상안정"],
         data: []
     }; 
 
@@ -399,7 +399,7 @@ const DailyWorkNote = () => {
         event.preventDefault();
         
         const inputText = event.target.value;
-
+        
         if(event.target.id != 'toggle') {
             const isBedDiv = event.target.parentElement.parentElement.getElementsByTagName('td')[8].firstChild;
             if(inputText.length > 0) {
@@ -413,6 +413,15 @@ const DailyWorkNote = () => {
             }else{
                 isBedDiv.hidden = true;
             }
+        }else{
+            // Toggle 스위치 켤때 걸림
+        }
+    }
+
+    const onInputForm = (event) => {
+        if(event.target.id == 'toggle') {
+            // Toggle 스위치 끌때 걸림
+            debugger
         }
     }
 
@@ -451,7 +460,7 @@ const DailyWorkNote = () => {
                     style={{ width: 200, fontSize : 15 }}
                 />
             </div>
-            <form onChange={onChangeForm}>
+            <form onChange={onChangeForm} onInput={onInputForm}>
                 <table className="table is-bordered is-fullwidth is-hoverable">
                     <thead style={{ fontSize : 15 }}>
                         <tr>
@@ -460,7 +469,7 @@ const DailyWorkNote = () => {
                                     return <th key={item} width="100" style={{backgroundColor: '#96C7ED', textAlign: 'center'}}>{item}</th>;
                                 }else if(item == "이름" || item == "성별" || item == "NO") {
                                     return <th key={item} width="70" style={{backgroundColor: '#96C7ED', textAlign: 'center'}}>{item}</th>;
-                                }else if(item == "입실여부") {
+                                }else if(item == "침상안정") {
                                     return <th key={item} width="90" style={{backgroundColor: '#96C7ED', textAlign: 'center'}}>{item}</th>;
                                 }else if(item == "투약사항") {
                                     return <th key={item} width="200" style={{backgroundColor: '#96C7ED', textAlign: 'center'}}>
