@@ -17,6 +17,7 @@ import React, { useState, useEffect } from 'react';
 import Toast from './Toast.js';
 import axios from 'axios';
 import jwt_decode from "jwt-decode";
+import './style/toggleButton.css';
 
 const DailyWorkNote = () => {
 
@@ -67,10 +68,10 @@ const DailyWorkNote = () => {
     }
 
     const rowCount = 100;
-    const tdCount = 7;
+    const tdCount = 9;
 
     const tableData = {
-        header: ["NO", "학년/반", "성별", "병명", "처치사항", "투약사항", "특이사항"],
+        header: ["NO", "학년/반", "이름", "성별", "병명", "처치사항", "투약사항", "특이사항", "입실여부"],
         data: []
     }; 
 
@@ -104,6 +105,18 @@ const DailyWorkNote = () => {
                     </td>
                     <td key={i + 7} style={{height: 30, textAlign: 'center', padding: 0}}>
                         <input style={{ border: 'none', outline: 'none', width: '100%', height: '100%'}}/>
+                    </td>
+                    <td key={i + 8} style={{height: 30, textAlign: 'center', padding: 0}}>
+                        <input style={{ border: 'none', outline: 'none', width: '100%', height: '100%'}}/>
+                    </td>
+                    <td key={i + 9} style={{height: 30, textAlign: 'center', padding: 0}}>
+                        {/* <input style={{ border: 'none', outline: 'none', width: '100%', height: '100%'}}/> */}
+                        <div name="isBedToggleDiv" hidden={true}>
+                            <input type="checkbox" id="toggle" hidden/> 
+                            <label htmlFor="toggle" className="toggleSwitch">
+                                <span className="toggleButton"></span>
+                            </label>
+                        </div>
                     </td>
                 </tr>
             )
@@ -188,6 +201,12 @@ const DailyWorkNote = () => {
                     <tr key={i}>
                         <td key={i} style={{height: 30, textAlign: 'center', padding: 0}}>
                             {i}
+                        </td>
+                        <td key={i} style={{height: 30, textAlign: 'center', padding: 0}}>
+                            <input style={{ border: 'none', outline: 'none', width: '100%', height: '100%'}}/>
+                        </td>
+                        <td key={i} style={{height: 30, textAlign: 'center', padding: 0}}>
+                            <input style={{ border: 'none', outline: 'none', width: '100%', height: '100%'}}/>
                         </td>
                         <td key={i} style={{height: 30, textAlign: 'center', padding: 0}}>
                             <input style={{ border: 'none', outline: 'none', width: '100%', height: '100%'}}/>
@@ -297,6 +316,7 @@ const DailyWorkNote = () => {
         return registeredTreatItems;
     }
 
+    // [자주 사용하는 처치사항 문구 등록] -> 하단 항목 추가 시 Input 추가 Function
     const plusTreatItem = (event) => {
         event.preventDefault();
         const inp = document.createElement('input');
@@ -333,12 +353,17 @@ const DailyWorkNote = () => {
         }
     }
 
+    // [자주 사용하는 처치사항 문구 등록] -> 문구 입력 후 저장 시 호출 Function
     const addTreatItem = (event) => {
         event.preventDefault();
+        // 이미 등록된 문구 담을 Empty Array
         const registeredTreatItems = [];
+        // 문구 상위에서 전체를 감싸고 있는 Form 하위의 Input 태그 
         let treatItems = event.target.getElementsByTagName('input');
+        // [treatItemData = Server에서 받아온 이미 등록되어 있는 문구] -> registeredTreatItems에 담음
         treatItemData.forEach(item => { registeredTreatItems.push(item.treatText) });
         
+        // 현재 전체 Input 태그들을 돌면서 등록된 문구에 포함되어 있지 않을 시에 Add Service 호출
         for(let i = 0; i < treatItems.length; i++) {
             if(!registeredTreatItems.includes(treatItems[i].value)) {
                 if(treatItems[i].value.length > 0) {
@@ -348,14 +373,17 @@ const DailyWorkNote = () => {
                             userName : user.userName,
                             treatText : treatItems[i].value
                         }).then((response) => {
+                            // Add 하고 난 뒤 목록 불러오는 Service 다시 호출하여 목록 Reload
                             getTreats();
                         });
-                    
+                        // 등록 성공 Toast 출력
                         setRegistTreatSuccessToast(true);
                     }catch (error) {
                         console.log(error);
                     }
                 }
+            }else{
+                debugger
             }
             // 할 일 : 항목 추가 후 저장 시 저장된 내용도 input 그대로 남아있는 부분 제거
 
@@ -364,6 +392,27 @@ const DailyWorkNote = () => {
             //     setRegistTreatFailedToast(true);
             //     // return;
             // }
+        }
+    }
+
+    const onChangeForm = (event) => {
+        event.preventDefault();
+        
+        const inputText = event.target.value;
+
+        if(event.target.id != 'toggle') {
+            const isBedDiv = event.target.parentElement.parentElement.getElementsByTagName('td')[8].firstChild;
+            if(inputText.length > 0) {
+                isBedDiv.hidden = false;
+                const toggleList = document.querySelectorAll(".toggleSwitch");
+                toggleList.forEach(($toggle) => {
+                    $toggle.onclick = () => {
+                        $toggle.classList.toggle('active');
+                    }
+                })
+            }else{
+                isBedDiv.hidden = true;
+            }
         }
     }
 
@@ -402,41 +451,45 @@ const DailyWorkNote = () => {
                     style={{ width: 200, fontSize : 15 }}
                 />
             </div>
-            <table className="table is-bordered is-fullwidth is-hoverable">
-                <thead style={{ fontSize : 15 }}>
-                    <tr>
-                        {tableData.header.map((item) => {
-                            if(item == "학년/반") {
-                                return <th key={item} width="100" style={{backgroundColor: '#96C7ED', textAlign: 'center'}}>{item}</th>;
-                            }else if(item == "성별" || item == "NO") {
-                                return <th key={item} width="70" style={{backgroundColor: '#96C7ED', textAlign: 'center'}}>{item}</th>;
-                            }else if(item == "투약사항") {
-                                return <th key={item} width="200" style={{backgroundColor: '#96C7ED', textAlign: 'center'}}>
-                                    {item}
-                                    <FaStar style={{ color : 'gold', fontSize : 17, marginBottom : -3, marginLeft : 5, cursor : 'pointer' }} onClick={handleMedicineModalShow} />
-                                </th>;
-                            }else if(item == "처치사항") {
-                                return <th key={item} width="450" style={{backgroundColor: '#96C7ED', textAlign: 'center'}}>
-                                    {item}
-                                    <FaStar style={{ color : 'gold', fontSize : 17, marginBottom : -3, marginLeft : 5, cursor : 'pointer' }} onClick={handleTreatModalShow}/>
-                                </th>;
-                            }else if(item == "병명") {
+            <form onChange={onChangeForm}>
+                <table className="table is-bordered is-fullwidth is-hoverable">
+                    <thead style={{ fontSize : 15 }}>
+                        <tr>
+                            {tableData.header.map((item) => {
+                                if(item == "학년/반") {
+                                    return <th key={item} width="100" style={{backgroundColor: '#96C7ED', textAlign: 'center'}}>{item}</th>;
+                                }else if(item == "이름" || item == "성별" || item == "NO") {
+                                    return <th key={item} width="70" style={{backgroundColor: '#96C7ED', textAlign: 'center'}}>{item}</th>;
+                                }else if(item == "입실여부") {
+                                    return <th key={item} width="90" style={{backgroundColor: '#96C7ED', textAlign: 'center'}}>{item}</th>;
+                                }else if(item == "투약사항") {
+                                    return <th key={item} width="200" style={{backgroundColor: '#96C7ED', textAlign: 'center'}}>
+                                        {item}
+                                        <FaStar style={{ color : 'gold', fontSize : 17, marginBottom : -3, marginLeft : 5, cursor : 'pointer' }} onClick={handleMedicineModalShow} />
+                                    </th>;
+                                }else if(item == "처치사항") {
+                                    return <th key={item} width="450" style={{backgroundColor: '#96C7ED', textAlign: 'center'}}>
+                                        {item}
+                                        <FaStar style={{ color : 'gold', fontSize : 17, marginBottom : -3, marginLeft : 5, cursor : 'pointer' }} onClick={handleTreatModalShow}/>
+                                    </th>;
+                                }else if(item == "병명") {
+                                    return <th key={item} style={{backgroundColor: '#96C7ED', textAlign: 'center'}}>
+                                        {item}
+                                        <FaStar style={{ color : 'gold', fontSize : 17, marginBottom : -3, marginLeft : 5 }} />
+                                    </th>;
+                                }
                                 return <th key={item} style={{backgroundColor: '#96C7ED', textAlign: 'center'}}>
                                     {item}
-                                    <FaStar style={{ color : 'gold', fontSize : 17, marginBottom : -3, marginLeft : 5 }} />
                                 </th>;
-                            }
-                            return <th key={item} style={{backgroundColor: '#96C7ED', textAlign: 'center'}}>
-                                {item}
-                            </th>;
-                        })}
-                    </tr>
-                </thead>
-                <tbody id='workNoteBody'>
-                    {createTr()}
-                    {addLine()}
-                </tbody>
-            </table>
+                            })}
+                        </tr>
+                    </thead>
+                    <tbody id='workNoteBody'>
+                        {createTr()}
+                        {addLine()}
+                    </tbody>
+                </table>
+            </form>
             <div className="dropdown is-hoverable" style={{ float : 'left' }}>
                 <div className="dropdown-trigger">
                     <button className="button is-success is-outlined is-normal" aria-haspopup="true" aria-controls="dropdown-menu">
