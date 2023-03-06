@@ -816,7 +816,7 @@ const DailyWorkNote = () => {
                                 <input className='input' name='diseaseItem' onChange={inputTextHandler} value={inputText} type='text' placeholder='문구를 입력해주세요' style={{ width : '100%', height : 30, fontSize : 15 }}/>
                             </ul>
                             <div style={{ display : 'flex', justifyContent : 'center', alignItems : 'center' }}>
-                                <button className='button is-small' onClick={plusDiseaseItem}>항목 추가</button>
+                                {/* <button className='button is-small' onClick={plusDiseaseItem}>항목 추가</button> */}
                             </div>
                         </section>
                         <footer className='modal-card-foot' style={{ padding : 0 }}>
@@ -847,7 +847,7 @@ const DailyWorkNote = () => {
                                 <input className='input' name='treatItem' onChange={inputTextHandler} value={inputText} type='text' placeholder='문구를 입력해주세요' style={{ width : '100%', height : 30, fontSize : 15 }}/>
                             </ul>
                             <div style={{ display : 'flex', justifyContent : 'center', alignItems : 'center' }}>
-                                <button className='button is-small' onClick={plusTreatItem}>항목 추가</button>
+                                {/* <button className='button is-small' onClick={plusTreatItem}>항목 추가</button> */}
                             </div>
                         </section>
                         <footer className='modal-card-foot' style={{ padding : 0 }}>
@@ -878,7 +878,7 @@ const DailyWorkNote = () => {
                                 <input className='input' name='medicineItem' onChange={inputTextHandler} value={inputText} type='text' placeholder='문구를 입력해주세요.' style={{ width : '100%', height : 30, fontSize : 15 }}/>
                             </ul>
                             <div style={{ display : 'flex', justifyContent : 'center', alignItems : 'center' }}>
-                                <button className='button is-small' onClick={plusMedicineItem}>항목 추가</button>
+                                {/* <button className='button is-small' onClick={plusMedicineItem}>항목 추가</button> */}
                             </div>
                         </section>
                         <footer className='modal-card-foot' style={{ padding : 0 }}>
