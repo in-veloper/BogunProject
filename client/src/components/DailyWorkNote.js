@@ -752,30 +752,32 @@ const DailyWorkNote = () => {
                     </tbody>
                 </table>
             </form>
-            <div className="dropdown is-hoverable" style={{ float : 'left' }}>
-                <div className="dropdown-trigger">
-                    <button className="button is-success is-outlined is-normal" aria-haspopup="true" aria-controls="dropdown-menu">
-                        <span>행 추가</span>&nbsp;
-                        <FaAngleDown />
-                    </button>
-                </div>
-                <div className="dropdown-menu" id="dropdown-menu" role="menu">
-                    <div className="dropdown-content">
-                        <a className="dropdown-item" value='10' onClick={ plusTen }>
-                            10줄 추가
-                        </a>
-                        <a className="dropdown-item" value='50' onClick={ plusFifty }>
-                            50줄 추가
-                        </a>
-                        <a className="dropdown-item" value='100' onClick={ plusHundred }>
-                            100줄 추가
-                        </a>
+            <div style={{ marginTop : 20 }}>
+                <div className="dropdown is-hoverable" style={{ float : 'left' }}>
+                    <div className="dropdown-trigger">
+                        <button className="button is-success is-outlined is-normal" aria-haspopup="true" aria-controls="dropdown-menu">
+                            <span>행 추가</span>&nbsp;
+                            <FaAngleDown />
+                        </button>
+                    </div>
+                    <div className="dropdown-menu" id="dropdown-menu" role="menu">
+                        <div className="dropdown-content">
+                            <a className="dropdown-item" value='10' onClick={ plusTen }>
+                                10줄 추가
+                            </a>
+                            <a className="dropdown-item" value='50' onClick={ plusFifty }>
+                                50줄 추가
+                            </a>
+                            <a className="dropdown-item" value='100' onClick={ plusHundred }>
+                                100줄 추가
+                            </a>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div style={{ float : 'right' }}>
-                <button className="button is-success is-outlined is-normal" style={{ marginRight : 10 }}>저장</button>
-                <button className="button is-success is-outlined is-normal" onClick={ finalSubmit }>최종제출</button>
+                <div style={{ float : 'right' }}>
+                    <button className="button is-success is-outlined is-normal" style={{ marginRight : 10 }}>저장</button>
+                    <button className="button is-success is-outlined is-normal" onClick={ finalSubmit }>최종제출</button>
+                </div>
             </div>
 
             <div className= {bedModalshow ? 'modal is-active' : 'modal'}>
