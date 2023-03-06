@@ -1,51 +1,51 @@
-import TreatItems from "../models/TreatItemModel.js";
+import DiseaseItems from "../models/DiseaseItemModel.js";
 
-export const getTreatItems = async(req, res) => {
+export const getDiseaseItems = async(req, res) => {
     // body가 아니라 query에 값이 들어가 있었음 -> Debugging 환경 설정 했기 때문에 앞으로 Debugging 하면 쉽게 찾을 수 있을 듯
     const { userId, userName } = req.query;
     try {
-        const treatItems = await TreatItems.findAll({
+        const diseaseItems = await DiseaseItems.findAll({
             where : {
                 userId : userId,
                 userName : userName
             }
         });
         
-        res.json(treatItems);
+        res.json(diseaseItems);
     } catch (error) {
         console.log(error);
     }
 }
 
-export const addTreatItem = async(req, res) => {
-    const { userId, userName, treatText } = req.body;
+export const addDiseaseItem = async(req, res) => {
+    const { userId, userName, diseaseText } = req.body;
 
     try {
-        await TreatItems.create({
+        await DiseaseItems.create({
             userId : userId,
             userName : userName,
-            treatText : treatText
+            diseaseText : diseaseText
         });
 
-        res.json({ msg : "Add Treat Item Successful"});
+        res.json({ msg : "Add Disease Item Successful"});
     } catch (error) {
         console.log(error);
     }
 }
 
-export const removeTreatItem = async(req, res) => {
-    const { userId, userName, treatText } = req.body;
+export const removeDiseaseItem = async(req, res) => {
+    const { userId, userName, diseaseText } = req.body;
 
     try {
-        await TreatItems.destroy({
+        await DiseaseItems.destroy({
             where : {
                 userId : userId,
                 userName : userName,
-                treatText : treatText
+                diseaseText : diseaseText
             }
         });
 
-        res.json({ msg : "Delete Treat Item Successful"});
+        res.json({ msg : "Delete Disease Item Successful"});
     } catch (error) {
         console.log(error);
     }

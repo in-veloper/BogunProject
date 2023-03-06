@@ -1,51 +1,51 @@
-import TreatItems from "../models/TreatItemModel.js";
+import MedicineItems from "../models/MedicineItemModel.js";
 
-export const getTreatItems = async(req, res) => {
+export const getMedicineItems = async(req, res) => {
     // body가 아니라 query에 값이 들어가 있었음 -> Debugging 환경 설정 했기 때문에 앞으로 Debugging 하면 쉽게 찾을 수 있을 듯
     const { userId, userName } = req.query;
     try {
-        const treatItems = await TreatItems.findAll({
+        const medicineItems = await MedicineItems.findAll({
             where : {
                 userId : userId,
                 userName : userName
             }
         });
         
-        res.json(treatItems);
+        res.json(medicineItems);
     } catch (error) {
         console.log(error);
     }
 }
 
-export const addTreatItem = async(req, res) => {
-    const { userId, userName, treatText } = req.body;
+export const addMedicineItem = async(req, res) => {
+    const { userId, userName, medicineText } = req.body;
 
     try {
-        await TreatItems.create({
+        await MedicineItems.create({
             userId : userId,
             userName : userName,
-            treatText : treatText
+            medicineText : medicineText
         });
 
-        res.json({ msg : "Add Treat Item Successful"});
+        res.json({ msg : "Add Medicine Item Successful"});
     } catch (error) {
         console.log(error);
     }
 }
 
-export const removeTreatItem = async(req, res) => {
-    const { userId, userName, treatText } = req.body;
+export const removeMedicineItem = async(req, res) => {
+    const { userId, userName, medicineText } = req.body;
 
     try {
-        await TreatItems.destroy({
+        await MedicineItems.destroy({
             where : {
                 userId : userId,
                 userName : userName,
-                treatText : treatText
+                medicineText : medicineText
             }
         });
 
-        res.json({ msg : "Delete Treat Item Successful"});
+        res.json({ msg : "Delete Medicine Item Successful"});
     } catch (error) {
         console.log(error);
     }

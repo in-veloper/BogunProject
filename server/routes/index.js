@@ -6,7 +6,9 @@ import { verifyToken } from "../middleware/VerifyToken.js";
 import { refreshToken } from "../controllers/RefreshToken.js";
 import { getNameTable, addNameTable, removeNametable } from "../controllers/NameTable.js";
 import { getCalendarData, addCalendarData, removeCalendarData } from "../controllers/Calendar.js";
+import { getDiseaseItems, addDiseaseItem, removeDiseaseItem } from "../controllers/DiseaseItem.js";
 import { getTreatItems, addTreatItem, removeTreatItem } from "../controllers/TreatItem.js";
+import { getMedicineItems, addMedicineItem, removeMedicineItem } from "../controllers/MedicineItem.js";
  
 const router = express.Router();
  
@@ -29,9 +31,17 @@ router.get('/getCalendar', getCalendarData);
 router.post('/addCalendar', addCalendarData);
 router.post('/removeCalendar', removeCalendarData);
 
+router.get('/getDiseaseItems', getDiseaseItems);
+router.post('/addDiseaseItem', addDiseaseItem);
+router.post('/removeDiseaseItem', removeDiseaseItem);
+
 router.get('/getTreatItems', getTreatItems);
 router.post('/addTreatItem', addTreatItem);
 router.post('/removeTreatItem', removeTreatItem);
+
+router.get('/getMedicineItems', getMedicineItems);
+router.post('/addMedicineItem', addMedicineItem);
+router.post('/removeMedicineItem', removeMedicineItem);
 
  
 export default router;  
