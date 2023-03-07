@@ -1,3 +1,4 @@
+/* eslint-disable array-callback-return */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-useless-concat */
 /* eslint-disable eqeqeq */
@@ -41,6 +42,7 @@ const DailyWorkNote = () => {
     const [medicineItemData, setMedicineItemData] = useState([]);
 
     const [inputText, setInputText] = useState('');
+    const [diseaseTextArray, setDiseaseTextArray] = useState([]);
 
     useEffect(() => {
         getUser();
@@ -94,6 +96,54 @@ const DailyWorkNote = () => {
         data: []
     }
 
+    const DiseaseSelectBox = () => {
+        const textArray = [];
+        
+        // 추가 처리 부분 : 아래 부분 타기 전에 서비스 여러번 호출하는 문제 처리해야 함
+        if(user && diseaseTextArray.length == 0) {
+            axios.get('http://localhost:8000/getDiseaseItems', {
+                params : {
+                    userId : user.userId,
+                    userName : user.userName
+                }
+            }).then((response) => {
+                response.data.map((item) => {
+                    textArray.push(item.diseaseText);
+                })
+                setDiseaseTextArray(textArray);
+            });
+        }
+        
+        if(diseaseTextArray.length > 0) {
+            const optionArray = [];
+            for(let i = 0; i < diseaseTextArray.length; i++) {
+                optionArray.push(
+                    <option key={i} value={diseaseTextArray[i]}>{diseaseTextArray[i]}</option>
+                )
+            }
+            return (
+                <div>
+                    <div name='hiddenInput' hidden={true}>
+                        <input style={{ border: 'none', outline: 'none', width: '100%', height: '100%'}}/>
+                    </div>
+                    <div hidden={false} className='select is-small' style={{ margin: 1 }}>
+                        <select id='selectBox' onChange={handleChangeSelect}>
+                            <option>항목 선택</option>
+                            <option value='directInput'>직접 입력</option>
+                            {optionArray}
+                        </select>
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    const handleChangeSelect = (event) => {
+        if(event.target.value == 'directInput') {
+            debugger
+        }
+    }
+
     const createTr = () => {
         const result = [];
         for(let i = 1; i <= rowCount; i++) {
@@ -112,7 +162,8 @@ const DailyWorkNote = () => {
                         <input style={{ border: 'none', outline: 'none', width: '100%', height: '100%'}}/>
                     </td>
                     <td key={i + 5} style={{height: 30, textAlign: 'center', padding: 0}}>
-                        <input style={{ border: 'none', outline: 'none', width: '100%', height: '100%'}}/>
+                        {/* <input name='directInput' hidden={true} style={{ border: 'none', outline: 'none', width: '100%', height: 30}}/> */}
+                        <DiseaseSelectBox/>
                     </td>
                     <td key={i + 6} style={{height: 30, textAlign: 'center', padding: 0}}>
                         <input style={{ border: 'none', outline: 'none', width: '100%', height: '100%'}}/>
@@ -645,9 +696,15 @@ const DailyWorkNote = () => {
         event.preventDefault();
         
         const inputText = event.target.value;
-        
+        debugger
         if(event.target.id != 'toggle') {
-            const isBedDiv = event.target.parentElement.parentElement.getElementsByTagName('td')[8].firstChild;
+            let isBedDiv = null;
+            if(event.target.id == 'selectBox') 
+                isBedDiv = event.target.parentElement.parentElement.parentElement.getElementsByTagName('td')[8].firstChild;
+            else
+                isBedDiv = event.target.parentElement.parentElement.getElementsByTagName('td')[8].firstChild;
+            
+
             if(inputText.length > 0) {
                 isBedDiv.hidden = false;
                 const toggleList = document.querySelectorAll(".toggleSwitch");
