@@ -13,7 +13,7 @@
 import { FaAngleDown } from 'react-icons/fa';
 import { AiOutlinePrinter, AiOutlineSave } from 'react-icons/ai';
 import { FiPlusSquare } from 'react-icons/fi';
-import { FaStar } from 'react-icons/fa';
+import { FaStar, FaBed } from 'react-icons/fa';
 import React, { useState, useEffect } from 'react';
 import Toast from './Toast.js';
 import axios from 'axios';
@@ -846,6 +846,9 @@ const DailyWorkNote = () => {
                             <button className='delete' aria-label='close' onClick={handleBedModalClose}></button>
                         </header>
                         <section className='modal-card-body' style={{ maxHeight : 300 }}>
+                            <FaBed/>
+                            <FaBed/>
+                            <FaBed/>
                         </section>
                         <footer className='modal-card-foot' style={{ padding : 0 }}>
                             <div style={{ marginLeft : 420, marginTop : 10 }}>
