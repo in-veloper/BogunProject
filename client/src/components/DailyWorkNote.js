@@ -23,6 +23,7 @@ import './style/toggleButton.css';
 const DailyWorkNote = () => {
 
     const [user, setUser] = useState(null);
+    const [bedSettingModalShow, setBedSettingModalShow] = useState(false);
     const [bedModalshow, setBedModalShow] = useState(false);
     const [diseaseModalshow, setDiseaseModalShow] = useState(false);
     const [treatModalshow, setTreatModalShow] = useState(false);
@@ -44,11 +45,20 @@ const DailyWorkNote = () => {
     const [inputText, setInputText] = useState('');
     const [diseaseTextArray, setDiseaseTextArray] = useState([]);
 
+    const [stateSelectBox, setStateSelectBox] = useState(false);
+
+    const [bedCount, setBedCount] = useState('');
+    const [registeredBedCount, setRegisteredBedCount] = useState(0);
+    const [bedCountSuccessToast, setBedCountSuccessToast] = useState(false);
+    const [bedCountFailedToast, setBedCountFailedToast] = useState(false);
+    const [bedCountUpdateToast, setBedCountUpdateToast] = useState(false);
+
     useEffect(() => {
         getUser();
         getDisease();
         getTreats();
         getMedicine();
+        getBedCount();
 
         return () => {
             
@@ -87,7 +97,7 @@ const DailyWorkNote = () => {
     const tdCount = 9;
 
     const tableData = {
-        header: ["NO", "학년/반", "이름", "성별", "병명", "처치사항", "투약사항", "특이사항", "침상안정"],
+        header: ["NO", "학년/반", "이름", "성별", "증상", "처치사항", "투약사항", "조치사항", "침상안정"],
         data: []
     }; 
 
@@ -121,27 +131,45 @@ const DailyWorkNote = () => {
                     <option key={i} value={diseaseTextArray[i]}>{diseaseTextArray[i]}</option>
                 )
             }
-            return (
-                <div>
-                    <div name='hiddenInput' hidden={true}>
-                        <input style={{ border: 'none', outline: 'none', width: '100%', height: '100%'}}/>
+
+            // 현재 모든 Select Box가 동시 적용되는 문제 있음 -> 수정 필요
+            if(stateSelectBox) {
+                return (
+                    <input style={{ border: 'none', outline: 'none', width: '100%', height: '100%'}}/>
+                )
+            }else{
+
+                return (
+                    <div>
+                        <div name='hiddenInput' hidden={true}>
+                            <input style={{ border: 'none', outline: 'none', width: '100%', height: '100%'}}/>
+                        </div>
+                        <div hidden={false} className='select is-small' style={{ margin: 1 }}>
+                            <select id='selectBox' onChange={handleChangeSelect}>
+                                <option>항목 선택</option>
+                                <option value='directInput'>직접 입력</option>
+                                {optionArray}
+                            </select>
+                        </div>
                     </div>
-                    <div hidden={false} className='select is-small' style={{ margin: 1 }}>
-                        <select id='selectBox' onChange={handleChangeSelect}>
-                            <option>항목 선택</option>
-                            <option value='directInput'>직접 입력</option>
-                            {optionArray}
-                        </select>
-                    </div>
-                </div>
-            )
+                )
+            }
         }
     }
 
     const handleChangeSelect = (event) => {
         if(event.target.value == 'directInput') {
             debugger
+            setStateSelectBox(true);
         }
+    }
+
+    const clickInput = (event) => {
+        debugger
+    }
+
+    const handleRightClick = (event) => {
+        event.preventDefault();
     }
 
     const createTr = () => {
@@ -162,7 +190,7 @@ const DailyWorkNote = () => {
                         <input style={{ border: 'none', outline: 'none', width: '100%', height: '100%'}}/>
                     </td>
                     <td key={i + 5} style={{height: 30, textAlign: 'center', padding: 0}}>
-                        {/* <input name='directInput' hidden={true} style={{ border: 'none', outline: 'none', width: '100%', height: 30}}/> */}
+                        {/* <input name='directInput' style={{ border: 'none', outline: 'none', width: '100%', height: 30}} onClick={clickInput} onContextMenu={handleRightClick}/> */}
                         <DiseaseSelectBox/>
                     </td>
                     <td key={i + 6} style={{height: 30, textAlign: 'center', padding: 0}}>
@@ -176,7 +204,7 @@ const DailyWorkNote = () => {
                     </td>
                     <td key={i + 9} style={{height: 30, textAlign: 'center', padding: 0}}>
                         {/* <input style={{ border: 'none', outline: 'none', width: '100%', height: '100%'}}/> */}
-                        <div name="isBedToggleDiv" hidden={true}>
+                        <div id='isBedToggle' name="isBedToggleDiv" hidden={true}>
                             <input type="checkbox" id="toggle" hidden/> 
                             <label htmlFor="toggle" className="toggleSwitch">
                                 <span className="toggleButton"></span>
@@ -296,6 +324,15 @@ const DailyWorkNote = () => {
             }
             return result;
         }
+    }
+
+    const handleBedSettingModalShow = (event) => {
+        
+    }
+
+    const handleBedSettingModalClose = (event) => {
+        event.preventDefault();
+        setBedSettingModalShow(false);
     }
 
     const handleBedModalClose = (event) => {
@@ -553,7 +590,7 @@ const DailyWorkNote = () => {
             document.getElementById('treatItemList').appendChild(inp); 
         }
     }
-
+    // [자주 사용하는 투약사항 문구 등록] -> 하단 항목 추가 시 Input 추가 Function
     const plusMedicineItem = (event) => {
         event.preventDefault();
         const inp = document.createElement('input');
@@ -735,6 +772,93 @@ const DailyWorkNote = () => {
         setInputText(inputText);
     } 
 
+    const BedBox = (event) => {
+        const bedBox = [];
+        const isBedToggle = document.getElementById('isBedToggle');
+        if(isBedToggle) {
+            getBedCount();
+
+            if(registeredBedCount) {
+                for(let i = 0; i < Number(registeredBedCount); i++) {
+                    bedBox.push(
+                        <div key={i} className='box ml-2' style={{ float : 'left'}}>
+                            <FaBed style={{ fontSize : 50 }}/>
+                        </div>
+                    )
+                }
+            }
+        }
+        
+        return (
+            <div>
+                {bedBox}
+            </div>
+        )
+    }
+
+    const handleBedCount = (event) => {
+        const selectedCount = event.target.value;
+        debugger
+        if(selectedCount) {
+            setBedCount(selectedCount);
+        }
+    }
+
+    const handleBedSetting = (event) => {
+        event.preventDefault();
+        getBedCount();
+        setBedSettingModalShow(true);
+    }
+
+    const submitBedSetting = (event) => {
+        event.preventDefault();
+        const bedCount = Number(event.target.getElementsByTagName('input')[0].value);
+        if(user) {
+            if(!registeredBedCount) {
+                axios.post('http://localhost:8000/setBedCount', {
+                    userId : user.userId,
+                    userName : user.userName,
+                    bedCount : bedCount
+                }).then((response) => {
+                    setBedCountSuccessToast(true);
+                    getBedCount();
+                });
+            }else{
+                if(bedCount == registeredBedCount) {
+                    // 이미 설정된 침상 수이다 토스트
+                    setBedCountFailedToast(true);
+                }else{
+                    // 침상 수 업데이트
+                    axios.post('http://localhost:8000/updateBedCount', {
+                        userId : user.userId,
+                        userName : user.userName,
+                        bedCount : bedCount
+                    }).then((response) => {
+                        setBedCountUpdateToast(true);
+                        getBedCount();
+                    });
+                }
+            }
+        }
+    }
+
+    const getBedCount = () => {
+        if(user) {
+            axios.get('http://localhost:8000/getBedCount', {
+                params : {
+                    userId : user.userId,
+                    userName : user.userName
+                }
+            }).then((response) => {
+                if(response.data.length > 0) {
+                    const bedCountInput = document.getElementById('bedCountInput');
+                    bedCountInput.setAttribute('value', response.data[0].bedCount);
+                    setRegisteredBedCount(response.data[0].bedCount);
+                }
+            });
+        }
+    }
+
     return (
         <div className="container mt-5" >
             <table className="table is-bordered is-fullwidth is-hoverable">
@@ -754,20 +878,25 @@ const DailyWorkNote = () => {
                 <span style={{ verticalAlign : 'middle', fontSize : 17 }}><b><Today /></b></span>
             </div>
             <div style={{ float: 'right' }}>
-                <button className='button is-info is-outlined' style={{ marginRight : 5 }}>
+                <button className='button is-small is-info is-outlined' style={{ marginRight : 5 }} onClick={handleBedSetting}>
                     <span className='icon is-small'>
-                        <AiOutlineSave style={{ fontSize : 20 }}/>
+                        <FaBed style={{ fontSize : 17 }}/>
                     </span>
                 </button>
-                <button className='button is-info is-outlined' style={{ marginRight : 5 }}>
+                <button className='button is-small is-info is-outlined' style={{ marginRight : 5 }}>
                     <span className='icon is-small'>
-                        <AiOutlinePrinter style={{ fontSize : 20 }}/>
+                        <AiOutlineSave style={{ fontSize : 17 }}/>
+                    </span>
+                </button>
+                <button className='button is-small is-info is-outlined' style={{ marginRight : 5 }}>
+                    <span className='icon is-small'>
+                        <AiOutlinePrinter style={{ fontSize : 17 }}/>
                     </span>
                 </button>
                 <input 
                     className='input is-info'
                     placeholder='검색어를 입력하세요'
-                    style={{ width: 200, fontSize : 15 }}
+                    style={{ width: 200, fontSize : 13 }}
                 />
             </div>
             <form onChange={onChangeForm} onInput={onInputForm}>
@@ -791,7 +920,7 @@ const DailyWorkNote = () => {
                                         {item}
                                         <FaStar style={{ color : 'gold', fontSize : 17, marginBottom : -3, marginLeft : 5, cursor : 'pointer' }} onClick={handleTreatModalShow}/>
                                     </th>;
-                                }else if(item == "병명") {
+                                }else if(item == "증상") {
                                     return <th key={item} style={{backgroundColor: '#96C7ED', textAlign: 'center'}}>
                                         {item}
                                         <FaStar style={{ color : 'gold', fontSize : 17, marginBottom : -3, marginLeft : 5, cursor : 'pointer' }} onClick={handleDiseaseModalShow}/>
@@ -837,6 +966,33 @@ const DailyWorkNote = () => {
                 </div>
             </div>
 
+            <div className= {bedSettingModalShow ? 'modal is-active' : 'modal'}>
+                {bedCountSuccessToast && <Toast setToast={setBedCountSuccessToast} text="침상 수 설정이 정상적으로 저장되었습니다."></Toast>}
+                {bedCountFailedToast && <Toast setToast={setBedCountFailedToast} text="이미 설정된 침상 수입니다."></Toast>}
+                {bedCountUpdateToast && <Toast setToast={setBedCountUpdateToast} text="침상 수 수정이 정상적으로 처리되었습니다."></Toast>}
+                <form onSubmit={submitBedSetting}>
+                    <div className='modal-background'></div>
+                        <div className='modal-card' style={{ width : 250}}>
+                        <header className='modal-card-head'>
+                            <p className='modal-card-title' style={{ fontSize : 15, fontWeight : 'bold' }}>침상 설정</p>
+                            <button className='delete' aria-label='close' onClick={handleBedSettingModalClose}></button>
+                        </header>
+                        <section className='modal-card-body'>
+                            <div style={{ marginLeft : 35, marginBottom : -10 }}>
+                                <span style={{ fontSize : 15 }}><b>침상 수 : </b></span>
+                                <input id='bedCountInput' className='input is-small' type='number' style={{ width : 70, marginLeft : 10, marginTop : -2 }} />
+                            </div>
+                        </section>
+                        <footer className='modal-card-foot' style={{ padding : 0 }}>
+                            <div style={{ marginLeft : 130, marginTop : 10 }}>
+                                <button className='button is-info is-small'>저장</button>
+                                <button className='button is-small' onClick={handleBedSettingModalClose}>닫기</button>
+                            </div>
+                        </footer>
+                    </div>
+                </form>
+            </div>
+
             <div className= {bedModalshow ? 'modal is-active' : 'modal'}>
                 <form>
                     <div className='modal-background'></div>
@@ -846,9 +1002,7 @@ const DailyWorkNote = () => {
                             <button className='delete' aria-label='close' onClick={handleBedModalClose}></button>
                         </header>
                         <section className='modal-card-body' style={{ maxHeight : 300 }}>
-                            <FaBed/>
-                            <FaBed/>
-                            <FaBed/>
+                            <BedBox/>
                         </section>
                         <footer className='modal-card-foot' style={{ padding : 0 }}>
                             <div style={{ marginLeft : 420, marginTop : 10 }}>
@@ -862,9 +1016,9 @@ const DailyWorkNote = () => {
 
             <div className= {diseaseModalshow ? 'modal is-active' : 'modal'}>
             {toast && <Toast setToast={setToast} text="작성하지 않은 항목이 있습니다. 모든 항목을 작성 후 추가 항목을 생성하실 수 있습니다."></Toast>}
-            {registDiseaseSuccessToast && <Toast setToast={setRegistDiseaseSuccessToast} text="작성하신 병명이 정상적으로 등록되었습니다."></Toast>}
-            {registDiseaseFailedToast && <Toast setToast={setRegistDiseaseFailedToast} text="동일하게 작성하신 병명이 이미 존재합니다."></Toast>}
-            {removeDiseaseToast && <Toast setToast={setRemoveDiseaseToast} text="병명 삭제가 정상적으로 처리되었습니다."></Toast>}
+            {registDiseaseSuccessToast && <Toast setToast={setRegistDiseaseSuccessToast} text="작성하신 증상명이 정상적으로 등록되었습니다."></Toast>}
+            {registDiseaseFailedToast && <Toast setToast={setRegistDiseaseFailedToast} text="동일하게 작성하신 증상명이 이미 존재합니다."></Toast>}
+            {removeDiseaseToast && <Toast setToast={setRemoveDiseaseToast} text="증상명 삭제가 정상적으로 처리되었습니다."></Toast>}
                 <form onSubmit={addDiseaseItem}>
                     <div className='modal-background'></div>
                         <div className='modal-card' style={{ width : 550}}>

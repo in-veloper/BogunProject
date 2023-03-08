@@ -9,6 +9,7 @@ import { getCalendarData, addCalendarData, removeCalendarData } from "../control
 import { getDiseaseItems, addDiseaseItem, removeDiseaseItem } from "../controllers/DiseaseItem.js";
 import { getTreatItems, addTreatItem, removeTreatItem } from "../controllers/TreatItem.js";
 import { getMedicineItems, addMedicineItem, removeMedicineItem } from "../controllers/MedicineItem.js";
+import { getBedCount, setBedCount, updateBedCount } from "../controllers/BedSetting.js";
  
 const router = express.Router();
  
@@ -42,6 +43,10 @@ router.post('/removeTreatItem', removeTreatItem);
 router.get('/getMedicineItems', getMedicineItems);
 router.post('/addMedicineItem', addMedicineItem);
 router.post('/removeMedicineItem', removeMedicineItem);
+
+router.get('/getBedCount', getBedCount);
+router.post('/setBedCount', setBedCount);
+router.post('/updateBedCount', updateBedCount);
 
  
 export default router;  
