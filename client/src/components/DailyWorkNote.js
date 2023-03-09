@@ -53,6 +53,11 @@ const DailyWorkNote = () => {
     const [bedCountFailedToast, setBedCountFailedToast] = useState(false);
     const [bedCountUpdateToast, setBedCountUpdateToast] = useState(false);
 
+    const [studentName, setStudentName] = useState('');
+    // const [registBedStatus, setRegistBedStatus] = useState(false);
+    const [usingBedNumber, setUsingBedNumber] = useState('');
+    const [bedNotificationModal, setBedNotificationModal] = useState(false);
+
     useEffect(() => {
         getUser();
         getDisease();
@@ -159,13 +164,12 @@ const DailyWorkNote = () => {
 
     const handleChangeSelect = (event) => {
         if(event.target.value == 'directInput') {
-            debugger
             setStateSelectBox(true);
         }
     }
 
     const clickInput = (event) => {
-        debugger
+        // debugger
     }
 
     const handleRightClick = (event) => {
@@ -181,10 +185,10 @@ const DailyWorkNote = () => {
                         {i}
                     </td>
                     <td key={i + 2} style={{height: 30, textAlign: 'center', padding: 0}}>
-                        <input style={{ border: 'none', outline: 'none', width: '100%', height: '100%'}}/>
+                        <input id='gradeClass' style={{ border: 'none', outline: 'none', width: '100%', height: '100%'}}/>
                     </td>
                     <td key={i + 3} style={{height: 30, textAlign: 'center', padding: 0}}>
-                        <input style={{ border: 'none', outline: 'none', width: '100%', height: '100%'}}/>
+                        <input id='studentName' style={{ border: 'none', outline: 'none', width: '100%', height: '100%'}}/>
                     </td>
                     <td key={i + 4} style={{height: 30, textAlign: 'center', padding: 0}}>
                         <input style={{ border: 'none', outline: 'none', width: '100%', height: '100%'}}/>
@@ -324,6 +328,16 @@ const DailyWorkNote = () => {
             }
             return result;
         }
+    }
+
+    // const handleRegistBedStatusClose = (event) => {
+    //     event.preventDefault();
+    //     setRegistBedStatus(false);
+    // }
+ 
+    const handleUseBedNotificationClose = (event) => {
+        event.preventDefault();
+        setBedNotificationModal(false);
     }
 
     const handleBedSettingModalShow = (event) => {
@@ -733,9 +747,9 @@ const DailyWorkNote = () => {
         event.preventDefault();
         
         const inputText = event.target.value;
-        debugger
+        let isBedDiv = null;
+        
         if(event.target.id != 'toggle') {
-            let isBedDiv = null;
             if(event.target.id == 'selectBox') 
                 isBedDiv = event.target.parentElement.parentElement.parentElement.getElementsByTagName('td')[8].firstChild;
             else
@@ -746,7 +760,13 @@ const DailyWorkNote = () => {
                 isBedDiv.hidden = false;
                 const toggleList = document.querySelectorAll(".toggleSwitch");
                 toggleList.forEach(($toggle) => {
-                    $toggle.onclick = () => {
+                    $toggle.onclick = (e) => {
+                        let studentName = null;
+                        if(!e.target.parentElement.parentElement.parentElement.getElementsByTagName('input')['studentName']) 
+                            studentName = e.target.parentElement.parentElement.parentElement.parentElement.getElementsByTagName('input')['studentName'].value;
+                        else
+                            studentName = e.target.parentElement.parentElement.parentElement.getElementsByTagName('input')['studentName'].value;
+                        setStudentName(studentName);
                         $toggle.classList.toggle('active');
                     }
                 })
@@ -754,16 +774,22 @@ const DailyWorkNote = () => {
                 isBedDiv.hidden = true;
             }
         }else{
-            // Toggle 스위치 켤때 걸림
             //침상안정 등록 위한 Modal Show
-            setBedModalShow(true);
+            if(event.target.parentElement.getElementsByClassName('toggleSwitch active')[0]) {
+                setBedModalShow(true);
+            }else{
+                setBedModalShow(false);
+            }
         }
     }
 
     const onInputForm = (event) => {
         if(event.target.id == 'toggle') {
-            // Toggle 스위치 끌때 걸림
-            debugger
+            if(event.target.parentElement.getElementsByClassName('toggleSwitch active')[0]) {
+                setBedModalShow(true);
+            }else{
+                setBedModalShow(false);
+            }
         }
     }
 
@@ -781,9 +807,12 @@ const DailyWorkNote = () => {
             if(registeredBedCount) {
                 for(let i = 0; i < Number(registeredBedCount); i++) {
                     bedBox.push(
-                        <div key={i} className='box ml-2' style={{ float : 'left'}}>
-                            <FaBed style={{ fontSize : 50 }}/>
+                        <div key={i} id={'bed' + (i + 1)} className='box ml-2' style={{ float : 'left', padding : 15, paddingBottom : 0 }}>
+                            <p id='bedUseStatus'><span className='tag'>미사용중</span></p>
+                            <p id={'bed' + (i + 1)}><FaBed style={{ fontSize : 50 }}/></p>
+                            <button className='button is-small is-info is-light' status='notUse' onClick={handleBedUseStatus}>침상 사용</button>
                         </div>
+                        
                     )
                 }
             }
@@ -796,9 +825,44 @@ const DailyWorkNote = () => {
         )
     }
 
+    const handleBedUseStatus = (event) => {
+        event.preventDefault();
+
+        const bedUseStatus = event.target.parentElement.children['bedUseStatus'];
+        const iconTag = event.target.parentElement.children[1];
+        const bedButton = event.target.parentElement.children[2];
+        
+        if(studentName) {
+            if(bedButton.getAttribute('status') == 'notUse') {
+                bedButton.setAttribute('status', 'use');
+                bedButton.className = 'button is-small is-danger is-light';
+                bedButton.innerHTML = '침상 미사용';
+
+                bedUseStatus.children[0].className = 'tag is-info';
+                bedUseStatus.children[0].innerHTML = studentName;
+                
+                iconTag.style.color = 'lightblue';
+
+                handleUseBedNotification();
+            }else{
+                bedButton.setAttribute('status', 'notUse');
+                bedButton.className = 'button is-small is-info is-light';
+                bedButton.innerHTML = '침상 사용';
+
+                bedUseStatus.children[0].className = 'tag';
+                bedUseStatus.children[0].innerHTML = '미사용중';
+                
+                iconTag.style.color = '';
+            }
+        }
+    }
+
+    const handleUseBedNotification = () => {
+        setBedNotificationModal(true);
+    }
+
     const handleBedCount = (event) => {
         const selectedCount = event.target.value;
-        debugger
         if(selectedCount) {
             setBedCount(selectedCount);
         }
@@ -899,6 +963,7 @@ const DailyWorkNote = () => {
                     style={{ width: 200, fontSize : 13 }}
                 />
             </div>
+
             <form onChange={onChangeForm} onInput={onInputForm}>
                 <table className="table is-bordered is-fullwidth is-hoverable">
                     <thead style={{ fontSize : 15 }}>
@@ -938,6 +1003,7 @@ const DailyWorkNote = () => {
                     </tbody>
                 </table>
             </form>
+
             <div style={{ marginTop : 20 }}>
                 <div className="dropdown is-hoverable" style={{ float : 'left' }}>
                     <div className="dropdown-trigger">
@@ -994,18 +1060,42 @@ const DailyWorkNote = () => {
             </div>
 
             <div className= {bedModalshow ? 'modal is-active' : 'modal'}>
+                
+                <div className= {bedNotificationModal ? 'modal is-active' : 'modal'}>
+                    <form>
+                        <div className='modal-background'></div>
+                            <div className='modal-card' style={{ display : 'inline' }}>
+                            <header className='modal-card-head'>
+                                <p className='modal-card-title' style={{ fontSize : 15, fontWeight : 'bold' }}>침상 사용 알림</p>
+                                <button className='delete' aria-label='close' onClick={handleBedModalClose}></button>
+                            </header>
+                            <section className='modal-card-body' style={{ maxHeight : 300 }}>
+
+                            </section>
+                            <footer className='modal-card-foot' style={{ padding : 0 }}>
+                                {/* 버튼 우측 정렬하는 방법 */}
+                                <div style={{ marginTop : 10, marginLeft : 'auto', marginRight : 10 }}>
+                                    <button className='button is-info is-small'>저장</button>
+                                    <button className='button is-small' onClick={handleBedModalClose}>닫기</button>
+                                </div>
+                            </footer>
+                        </div>
+                    </form>
+                </div>
+
                 <form>
                     <div className='modal-background'></div>
-                        <div className='modal-card' style={{ width : 550}}>
+                        <div className='modal-card' style={{ display : 'inline' }}>
                         <header className='modal-card-head'>
-                            <p className='modal-card-title' style={{ fontSize : 17, fontWeight : 'bold' }}>침상안정 등록</p>
+                            <p className='modal-card-title' style={{ fontSize : 15, fontWeight : 'bold' }}>침상안정 등록</p>
                             <button className='delete' aria-label='close' onClick={handleBedModalClose}></button>
                         </header>
                         <section className='modal-card-body' style={{ maxHeight : 300 }}>
                             <BedBox/>
                         </section>
                         <footer className='modal-card-foot' style={{ padding : 0 }}>
-                            <div style={{ marginLeft : 420, marginTop : 10 }}>
+                            {/* 버튼 우측 정렬하는 방법 */}
+                            <div style={{ marginTop : 10, marginLeft : 'auto', marginRight : 10 }}>
                                 <button className='button is-info is-small'>저장</button>
                                 <button className='button is-small' onClick={handleBedModalClose}>닫기</button>
                             </div>
