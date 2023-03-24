@@ -149,7 +149,7 @@ const MedicalInfo = () => {
                         style={{ width: 300 }}
                     />
                 </div>
-                <FcSearch style={{ fontSize : 20, marginBottom : -6, marginLeft : 5 }} onClick={handleSearch}/>
+                <FcSearch style={{ fontSize : 20, marginBottom : -6, marginLeft : 5, cursor : 'pointer' }} onClick={handleSearch}/>
             </div>
             <div>
                 <div style={{ display : 'inline-block', float : 'right', marginBottom : 20, marginRight : 20, marginTop : 20 }}>

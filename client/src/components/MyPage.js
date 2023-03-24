@@ -1,3 +1,4 @@
+/* eslint-disable eqeqeq */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/no-unknown-property */
@@ -22,6 +23,8 @@ import jwt_decode from "jwt-decode";
 const MyPage = () => {
     const [users, setUsers] = useState([]);
     const [toast, setToast] = useState(false);
+    const [nameData, setNameData] = useState(null);
+    const [previewData, setPreviewData] = useState(null);
 
     useEffect(() => {
         getUsersInfo();
@@ -114,37 +117,123 @@ const MyPage = () => {
 
     const neis = new Neis({ KEY : "1addcd8b3de24aa5920d79df1bbe2ece", Type : "json" });
 
-    const setNameTableFunc = (event) => {
-        event.preventDefault();
-        const targetGrade = Number(event.target.name);
+    const setNameTableFunc = (e) => {
+        const reader = new FileReader();
+        const targetGrade = e.target.name;
         
-        const [file] = event.target.files;
-        const reader =  new FileReader();
+        reader.onload = (event) => {
+            const binaryData = event.target.result;
+            const workBook = XLSX.read(binaryData, { type : 'binary' });
+            const sheetName = workBook.SheetNames[0];
+            const workSheet = workBook.Sheets[sheetName];
+            const parsedData = XLSX.utils.sheet_to_json(workSheet, { header : 1 });
+            const nameJsonArray = [];
 
-        reader.readAsArrayBuffer(event.target.files[0]);
-        reader.onload = function(e) {
-            const data = new Uint8Array(reader.result);
-            const wb = XLSX.read(data, {type : 'array'});
-            const wsname = wb.SheetNames[0];
-
-            const jsonData = XLSX.utils.sheet_to_json(wb.Sheets[wsname]);
-            let htmlstr = XLSX.write(wb, {sheet : wsname, type : 'string', bookType : 'html'});
-            htmlstr = htmlstr.split('검사명: 전체</td></tr><tr><td id="sjs-B7"></td><td id="sjs-C7"></td><td id="sjs-D7"></td><td id="sjs-E7"></td><td id="sjs-F7"></td><td id="sjs-G7"></td><td id="sjs-H7"></td></tr>')[1];
+            // 데이터 가공 코드
+            // const newData = addColumn(addRow(parsedData, 0), 0, 'ID');
+            let targetRow = null;
+            for(let i = 0; i < parsedData.length; i++) {
+                if(parsedData[i].includes("반") && parsedData[i].includes("번호")) {
+                    targetRow = i + 1;
+                }
+            }
             
-            if(htmlstr && users.userId && users.name) {
+            for(let i = targetRow; i < parsedData.length; i++) {
+                const studentInfo = {
+                    'class' : parsedData[i][0],
+                    'number' : parsedData[i][1],
+                    'name' : parsedData[i][2],
+                    'gender' : parsedData[i][3]
+                };
+                nameJsonArray.push(studentInfo);
+            }
+            
+            const studentsJsonArray = JSON.stringify(nameJsonArray);
+            
+            if(users.userId && users.name && nameJsonArray.length > 0) {
                 try {
                     axios.post('http://localhost:8000/addNametable', {
                         userId : users.userId,
                         userName : users.name,
                         grade : targetGrade,
-                        html : htmlstr
+                        studentsJsonArray : studentsJsonArray
                     });
                 } catch(error) {
                     console.log(error);
                 }
             }
-        }
+
+            setNameData(parsedData);
+        };
+
+        reader.readAsBinaryString(e.target.files[0]);
     }
+
+    // 열 추가 함수
+    const addColumn = (rows, columnIndex, columnTitle) => {
+        return rows.map((row, index) => {
+            if(index === 0) {
+                return [...row.slice(0, columnIndex), columnTitle, ...row.slice(columnIndex)];
+            }else{
+                return [...row.slice(0, columnIndex), '', ...row.slice(columnIndex)];
+            }
+        });
+    }
+
+    // 행 추가 함수
+    const addRow = (rows, rowIndex) => {
+        const newRow = rows[0].map(() => '');
+        return [...rows.slice(0, rowIndex), newRow, ...rows.slice(rowIndex)];
+    }
+
+    // const setNameTableFunc = (event) => {
+    //     event.preventDefault();
+
+
+    //     const targetGrade = Number(event.target.name);
+        
+    //     const [file] = event.target.files;
+    //     const reader =  new FileReader();
+
+    //     reader.readAsArrayBuffer(event.target.files[0]);
+    //     reader.onload = function(e) {
+
+    //         const binaryData = e.target.result;
+    //         const workBook = XLSX.read(binaryData, { type: 'binary'});
+    //         const workSheet = workBook.Sheets[workBook.SheetNames[0]];
+    //         const parsedData = XLSX.utils.sheet_to_json(workSheet, { header : 1 });
+    //         setData(parsedData);
+    //         debugger
+
+
+
+
+
+
+
+
+    //         // const data = new Uint8Array(reader.result);
+    //         // const wb = XLSX.read(data, {type : 'array'});
+    //         // const wsname = wb.SheetNames[0];
+
+    //         // const jsonData = XLSX.utils.sheet_to_json(wb.Sheets[wsname]);
+    //         // let htmlstr = XLSX.write(wb, {sheet : wsname, type : 'string', bookType : 'html'});
+    //         // htmlstr = htmlstr.split('검사명: 전체</td></tr><tr><td id="sjs-B7"></td><td id="sjs-C7"></td><td id="sjs-D7"></td><td id="sjs-E7"></td><td id="sjs-F7"></td><td id="sjs-G7"></td><td id="sjs-H7"></td></tr>')[1];
+            
+    //         // if(htmlstr && users.userId && users.name) {
+    //         //     try {
+    //         //         axios.post('http://localhost:8000/addNametable', {
+    //         //             userId : users.userId,
+    //         //             userName : users.name,
+    //         //             grade : targetGrade,
+    //         //             html : htmlstr
+    //         //         });
+    //         //     } catch(error) {
+    //         //         console.log(error);
+    //         //     }
+    //         // }
+    //     }
+    // }
 
     const [registeredGrade, setRegisteredGrade] = useState([]);
 
@@ -170,18 +259,45 @@ const MyPage = () => {
         try{
             const response = await axios.get('http://localhost:8000/getNametable');
             if(response.data) {
-                response.data.forEach(item => {
-                    if(item.grade === selectedGrade) {
-                        document.getElementById('excelResult').innerHTML = item.html;
-                        const removeButton = document.getElementById('removeButton');
-                        removeButton.setAttribute('value', selectedGrade);
-                    }
-                })
+                if(response.data[0].grade == selectedGrade) {
+                    const jsonStudentData = JSON.parse(response.data[0].studentsJsonArray);
+                    setPreviewData(jsonStudentData);
+                }
+
+                if(response.data[0].grade == selectedGrade) {
+                    const removeButton = document.getElementById('removeButton');
+                    removeButton.setAttribute('value', selectedGrade);
+                }
             }
         } catch(error) {
             console.log(error);
         }
         handleShow();
+    }
+
+    const PreviewNameTable = () => {
+        if(previewData) {
+            return (
+                <table className='table is-bordered is-fullwidth is-hoverable' style={{ textAlign : 'center', fontSize : 13 }}>
+                    <thead>
+                        <tr>
+                            <th style={{ textAlign : 'center' }}>반</th>
+                            <th style={{ textAlign : 'center' }}>번호</th>
+                            <th style={{ textAlign : 'center' }}>이름</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {previewData.map((row, index) => (
+                            <tr key={index}>
+                                <td>{row['class']}</td>
+                                <td>{row['number']}</td>
+                                <td>{row['name']}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            )
+        }
     }
 
     const AddNameTableButtons = () => {
@@ -195,7 +311,7 @@ const MyPage = () => {
                         <button key={i} className='button' style={{padding : 0, border : 'none', marginRight : 5}}>
                             <div className='file'>
                                 <label className='file-label'>
-                                    <input className='file-input' type='file' name={i} onClick={registeredGrade.includes(String(i)) ? readNameTableFunc : undefined} onChange={registeredGrade.includes(String(i)) ? undefined : setNameTableFunc}/>
+                                    <input className='file-input' type='file' name={i} onClick={registeredGrade.includes(String(i)) ? readNameTableFunc : undefined} onChange={(e) => registeredGrade.includes(String(i)) ? undefined : setNameTableFunc(e.target.files[0])}/>
                                     <span className='file-cta' style={registeredGrade.includes(String(i)) ? {backgroundColor : '#96C7ED', border : 'none'} : {}}>
                                         <span className='file-label'>
                                             <b>{i}</b>
@@ -288,18 +404,16 @@ const MyPage = () => {
             {toast && <Toast setToast={setToast} text="해당 명렬표 삭제가 정상적으로 처리되었습니다."></Toast>}
             <div className= {show ? 'modal is-active' : 'modal'}>
                 <div className='modal-background'></div>
-                <div className='modal-card'>
-                    <header className='modal-card-head'>
-                        <p className='modal-card-title' style={{ fontSize : 20, fontWeight : 'bold' }}>명렬표 미리보기</p>
+                <div className='modal-card' style={{ height : 500, width : 400 }}>
+                    <header className='modal-card-head' style={{ height : 50}}>
+                        <p className='modal-card-title' style={{ fontSize : 17, fontWeight : 'bold' }}>명렬표 미리보기</p>
                         <button className='delete' aria-label='close' onClick={handleClose}></button>
                     </header>
                     <section className='modal-card-body'>
-                        <table className='table is-bordered is-fullwidth is-hoverable' id='excelResult'>
-
-                        </table>
+                        <PreviewNameTable/>
                     </section>
                     <footer className='modal-card-foot' style={{ padding : 0 }}>
-                        <div style={{ marginLeft : 500, marginTop : 10 }}>
+                        <div style={{ marginLeft : 'auto', marginRight : 20, marginTop : 10 }}>
                             <button className='button is-info is-small' id='removeButton' onClick={removeNameTable}>삭제</button>
                             <button className='button is-small' onClick={ handleClose }>닫기</button>
                         </div>

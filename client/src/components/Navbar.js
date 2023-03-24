@@ -223,12 +223,18 @@ const Navbar = () => {
                 </div>
  
                 <div id="navbarBasicExample" className="navbar-menu">
-                    <div className="navbar-start">
+                    <div className="navbar-start" style={{ fontSize : 14}}>
                         <a href="/dashboard" className="navbar-item">
                             <b>메인</b>
                         </a>
+                        <a href="#" className="navbar-item">
+                            <b>건강검진</b>
+                        </a>
                         <a href="/dailyWorkNote" className="navbar-item" onClick={goDailyWorkNote}>
                             <b>보건일지</b>
+                        </a>
+                        <a href="#" className="navbar-item">
+                            <b>현황/증명서</b>
                         </a>
                         <a href="/calendar" className="navbar-item">
                             <b>보건일정</b>
@@ -285,7 +291,7 @@ const Navbar = () => {
                     </div>
  
                     <div className="navbar-end">
-                        <div className="navbar-item">
+                        <div className="navbar-item" style={{ fontSize : 13 }}>
                             <span style={{ marginRight: 20, color: 'gray' }}><b><u><a href='/myPage' style={{color: 'gray'}}>{name} 보건교사님</a></u></b></span>
                             <div className="buttons are-small">
                                 <button onClick={Logout} className="button is-info">

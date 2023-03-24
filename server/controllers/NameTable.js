@@ -16,14 +16,14 @@ export const getNameTable = async(req, res) => {
 }
 
 export const addNameTable = async(req, res) => {
-    const { userId, userName, grade, html } = req.body;
+    const { userId, userName, grade, studentsJsonArray } = req.body;
 
     try {
         await NameTable.create({
             userId : userId,
             userName : userName,
             grade : grade,
-            html :  html
+            studentsJsonArray : studentsJsonArray
         });
         res.json({ msg : "Add Name Table Successful" });
     } catch(error) {

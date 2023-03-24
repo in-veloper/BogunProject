@@ -13,8 +13,8 @@ const NameTable = db.define('nameTable', {
     grade : {
         type : DataTypes.STRING
     },
-    html : {
-        type : DataTypes.STRING
+    studentsJsonArray : {
+        type : DataTypes.TEXT
     }
 },{
     freezeTableName : true
