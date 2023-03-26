@@ -140,6 +140,7 @@ const MyPage = () => {
             
             for(let i = targetRow; i < parsedData.length; i++) {
                 const studentInfo = {
+                    'grade' : targetGrade,
                     'class' : parsedData[i][0],
                     'number' : parsedData[i][1],
                     'name' : parsedData[i][2],
