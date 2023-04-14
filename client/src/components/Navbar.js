@@ -3,38 +3,28 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable no-undef */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import jwt_decode from "jwt-decode";
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { FaAngleDown } from 'react-icons/fa';
 import { AiOutlinePlusSquare } from 'react-icons/ai';
- 
+import { UserContext } from '../store/User';
+
 const Navbar = () => {
     const [name, setName] = useState('');
     const [bookmarkData, setBookmarkData] = useState([]);
     const navigate = useNavigate();
-
+    
     useEffect(() => {
-        getUserName();
         getBookmarkData();
     }, []);
 
-    
-    const getUserName = async () => {
-        try {
-            if(name.length === 0) {
-                const response = await axios.get('http://localhost:8000/token');
-                const decoded = jwt_decode(response.data.accessToken);
-                setName(decoded.name);
-            }
-        } catch (error) {
-            if(error.response) {
-                console.log(error);
-            }
-        }
+    const context = useContext(UserContext);
+    if(context && name.length == 0) {
+        setName(context.userName);
     }
-    
+
     const Logout = async () => {
         try {
             await axios.delete('http://localhost:8000/logout');
@@ -214,14 +204,14 @@ const Navbar = () => {
                         <img src={`${process.env.PUBLIC_URL}/image/teaform_logo12.png`} alt="logo" style={{ minHeight : 40 }}/>
                         {/* <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28" alt="logo" /> */}
                     </a>
- 
+
                     <a href="/" role="button" className="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
                         <span aria-hidden="true"></span>
                         <span aria-hidden="true"></span>
                         <span aria-hidden="true"></span>
                     </a>
                 </div>
- 
+
                 <div id="navbarBasicExample" className="navbar-menu">
                     <div className="navbar-start" style={{ fontSize : 14}}>
                         <a href="/dashboard" className="navbar-item">
@@ -305,5 +295,5 @@ const Navbar = () => {
         </nav>
     )
 }
- 
+
 export default Navbar

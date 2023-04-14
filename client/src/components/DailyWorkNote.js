@@ -14,20 +14,26 @@ import { FaAngleDown, FaDAndDBeyond } from 'react-icons/fa';
 import { AiOutlinePrinter, AiOutlineSave, AiOutlineNotification } from 'react-icons/ai';
 import { FiPlusSquare } from 'react-icons/fi';
 import { FaStar, FaBed } from 'react-icons/fa';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Toast from './Toast.js';
 import axios from 'axios';
 import jwt_decode from "jwt-decode";
 import './style/toggleButton.css';
+import Moment from 'moment';
+import "moment/locale/ko";
+import { UserContext } from '../store/User.js';
 
 const DailyWorkNote = () => {
 
+    // const [time, setTime] = useState('');
+    // const [convertTime, setConvertTime] = useState('');
     const [user, setUser] = useState(null);
     const [studentJsonData, setStudentJsonData] = useState(null);
     const [searchResult, setSearchResult] = useState([]);
     const [diseaseModalshow, setDiseaseModalShow] = useState(false);
     const [treatModalshow, setTreatModalShow] = useState(false);
     const [medicineModalShow, setMedicineModalShow] = useState(false);
+    const [reactModalShow, setReactModalShow] = useState(false);
     const [toast, setToast] = useState(false);
     const [registDiseaseSuccessToast, setRegistDiseaseSuccessToast] = useState(false);
     const [registDiseaseFailedToast, setRegistDiseaseFailedToast] = useState(false);
@@ -35,34 +41,72 @@ const DailyWorkNote = () => {
     const [registTreatFailedToast, setRegistTreatFailedToast] = useState(false);
     const [registMedicineSuccessToast, setRegistMedicineSuccessToast] = useState(false);
     const [registMedicineFailedToast, setRegistMedicineFailedToast] = useState(false);
+    const [registReactSuccessToast, setRegistReactSuccessToast] = useState(false);
+    const [registReactFailedToast, setRegistReactFailedToast] = useState(false);
     const [removeDiseaseToast, setRemoveDiseaseToast] = useState(false);
     const [removeTreatToast, setRemoveTreatToast] = useState(false);
     const [removeMedicineToast, setRemoveMedicineToast] = useState(false);
+    const [removeReactToast, setRemoveReactToast] = useState(false);
     const [diseaseItemData, setDiseaseItemData] = useState([]);
     const [treatItemData, setTreatItemData] = useState([]);
     const [medicineItemData, setMedicineItemData] = useState([]);
+    const [reactItemData, setReactItemData] = useState([]);
     const [diseaseTextArray, setDiseaseTextArray] = useState([]);
     const [treatTextArray, setTreatTextArray] = useState([]);
     const [medicineTextArray, setMedicineTextArray] = useState([]);
+    const [reactTextArray, setReactTextArray] = useState([]);
     const [inputText, setInputText] = useState('');
 
-    const [registeredBedCount, setRegisteredBedCount] = useState('');
+    const [registeredBedCount, setRegisteredBedCount] = useState(-1);
     const [bedCountSuccessToast, setBedCountSuccessToast] = useState(false);
     const [bedCountFailedToast, setBedCountFailedToast] = useState(false);
     const [bedCountUpdateToast, setBedCountUpdateToast] = useState(false);
 
+    const [bedSettingModalShow, setBedSettingModalShow] = useState(false);
+    const [bedModalshow, setBedModalShow] = useState(false);
+    
+    const [bedCountUpdateStatus, setBedCountUpdateStatus] = useState(false);
+    const [drawBoxStatus, setDrawBoxStatus] = useState(false);
+    const [bedCount, setBedCount] = useState(null);
+
+    const [workNoteTargetStudentResult, setWorkNoteTargetStudentResult] = useState([]);
+    const [workNoteDayState, setWorkNoteDayState] = useState(false);
+    const [workNoteDayResult, setWorkNoteDayResult] = useState([]);
+
+    const [workNoteTargetState, setWorkNoteTargetState] = useState(false);
+    const [workNoteTargetResult, setWorkNoteTargetResult] = useState([]);
+
+    const [workNoteNoNameToast, setWorkNoteNoNameToast] = useState(false);
+    const [workSubmitSuccessToast, setWorkSubmitSuccessToast] = useState(false);
+
+    const [reactGetStatus, setReactGetStatus] = useState(false);
+
     useEffect(() => {
-        getUser();
         getStudentData();
         getDisease();
         getTreats();
         getMedicine();
+        getReact();
         getBedCount();
-
-        return () => {
-            
-        }
+        getDayWorkNote();   // bedCount때처럼 계속 상시적으로 안받아옴 확인 후 동일하게 상시 받아올 수 있도록 처리
     }, []);
+
+    // useEffect(() => {
+    //     const interval = setInterval(() => {
+    //         let time = new Date();
+    //         let hour = time.toLocaleTimeString().split(':')[0];
+    //         let minutes = time.toLocaleTimeString().split(':')[1];
+            
+    //         setTime(hour + ":" + minutes);
+    //         setConvertTime((time.getHours() + ":" + time.getMinutes()).toString());
+    //     }, 1000);
+    //     return (() => clearInterval(interval));
+    // }, []);
+
+    const context = useContext(UserContext);
+    if(context && !user) {
+        setUser(context);
+    }
 
     const handleDiseaseModalShow = (event) => {
         event.preventDefault();
@@ -97,40 +141,36 @@ const DailyWorkNote = () => {
         setMedicineModalShow(false);
     }
 
-    const getUser = async () => {
-        try {
-            if(!user) {
-                const response = await axios.get('http://localhost:8000/token');
-                const decoded = jwt_decode(response.data.accessToken);
-                
-                setUser({
-                    userId : decoded.email,
-                    userName : decoded.name,
-                    schoolName : decoded.schoolName
-                });
-            }
-        } catch (error) {
-            if(error.response) {
-                console.log(error);
-            }
-        }
+    const handleReactModalShow = (event) => {
+        event.preventDefault();
+        getReact();
+        setReactModalShow(true);
     }
 
-    const getBedCount = () => {
-        if(user) {
-            axios.get('http://localhost:8000/getBedCount', {
+    const handleReactModalClose = (event) => {
+        event.preventDefault();
+        setReactModalShow(false);
+    }
+
+    const handleBedSettingModalClose = (event) => {
+        event.preventDefault();
+        setBedSettingModalShow(false);
+    }
+
+    const getBedCount = async () => {
+        if(user && !bedCount) {
+            const response = await axios.get('http://localhost:8000/getBedCount', {
                 params : {
                     userId : user.userId,
                     userName : user.userName
                 }
-            }).then((response) => {
-                if(response.data.length > 0) {
-                    // const bedCountInput = document.getElementById('bedCountInput');
-                    // bedCountInput.setAttribute('value', response.data[0].bedCount);
-                }
-
-                setRegisteredBedCount(response.data[0].bedCount);
             });
+            
+            if(response.data) {
+                const bedCountInput = document.getElementById('bedCountInput');
+                bedCountInput.setAttribute('value', response.data[0].bedCount);
+                setBedCount(response.data[0].bedCount);
+            }
         }
     }
 
@@ -191,6 +231,25 @@ const DailyWorkNote = () => {
         setMedicineItemData(medicineItemList);
     }
 
+    const getReact = async () => {
+        let reactItemList = [];
+        if(user) {
+            const response = await axios.get('http://localhost:8000/getReactItems', {
+                params : {
+                    userId : user.userId,
+                    userName : user.userName
+                }
+            });
+
+            if(response.data) {
+                for(let i = 0; i < response.data.length; i++) {
+                    reactItemList.push(response.data[i]);
+                }
+            }
+        }
+        setReactItemData(reactItemList);
+    }
+
     const GetDiseaseItems = () => {
         const registeredDiseaseItems = [];
         if(diseaseItemData.length > 0) {
@@ -243,6 +302,22 @@ const DailyWorkNote = () => {
         }
 
         return registeredMedicineItems;
+    }
+
+    const GetReactItems = () => {
+        const registeredReactItems = [];
+        if(reactItemData.length > 0) {
+            for(let i = 0; i < reactItemData.length; i++) {
+                registeredReactItems.push(
+                    <div key={i}>
+                        <input className='input' name='registeredReactItem' type='text' value={reactItemData[i].reactText || ''} readOnly={true} style={{ width : '85%', height : 30, fontSize : 15 }}/>
+                        <button key={i} className='button is-small is-danger' style={{ marginLeft : 20 }} onClick={removeReactItem}>삭제</button>
+                    </div>
+                )
+            }
+        }
+
+        return registeredReactItems;
     }
 
     const addDiseaseItem = (event) => {
@@ -364,6 +439,46 @@ const DailyWorkNote = () => {
         }
     }
 
+    // [자주 사용하는 조치사항 문구 등록] -> 문구 입력 후 저장 시 호출 Function
+    const addReactItem = (event) => {
+        event.preventDefault();
+        // 이미 등록된 문구 담을 Empty Array
+        const registeredReactItems = [];
+        // 현재 입력한 Input Text
+        const currentInputValue = event.target.getElementsByTagName('input')['reactItem'].value;
+        // 문구 상위에서 전체를 감싸고 있는 Form 하위의 Input 태그 
+        let reactItems = event.target.getElementsByTagName('input');
+        // [treatItemData = Server에서 받아온 이미 등록되어 있는 문구] -> registeredTreatItems에 담음
+        reactItemData.forEach(item => { registeredReactItems.push(item.reactText) });
+        
+        // 현재 전체 Input 태그들을 돌면서 등록된 문구에 포함되어 있지 않을 시에 Add Service 호출
+        for(let i = 0; i < reactItems.length; i++) {
+            if(!registeredReactItems.includes(reactItems[i].value)) {
+                if(reactItems[i].value.length > 0) {
+                    try {
+                        axios.post('http://localhost:8000/addReactItem', {
+                            userId : user.userId,
+                            userName : user.userName,
+                            reactText : reactItems[i].value
+                        }).then((response) => {
+                            // Add 하고 난 뒤 목록 불러오는 Service 다시 호출하여 목록 Reload
+                            getReact();
+                        });
+                        // 등록 성공 Toast 출력
+                        setRegistReactSuccessToast(true);
+                        setInputText('');
+                    }catch (error) {
+                        console.log(error);
+                    }
+                }
+            }else{
+                if(registeredReactItems.includes(currentInputValue)) {
+                    setRegistReactFailedToast(true);
+                }
+            }
+        }
+    }
+
     const inputTextHandler = (event) => {
         const inputText = event.target.value;
         setInputText(inputText);
@@ -428,6 +543,27 @@ const DailyWorkNote = () => {
             });
 
             setRemoveMedicineToast(true);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const removeReactItem = (event) => {
+        event.preventDefault();
+        const userId = user.userId;
+        const userName = user.userName;
+        const reactText = event.target.parentElement.getElementsByTagName('input')[0].value;
+
+        try {
+            axios.post('http://localhost:8000/removeReactItem', {
+                userId : userId,
+                userName : userName,
+                reactText : reactText
+            }).then((response) => {
+                getReact();
+            });
+
+            setRemoveReactToast(true);
         } catch (error) {
             console.log(error);
         }
@@ -543,6 +679,74 @@ const DailyWorkNote = () => {
         )
     }
 
+    // const getWorkNote = (grade, classNum, num, gender, studentName) => {
+    //     if(user) {
+    //         axios.get('http://localhost:8000/getWorkNote', {
+    //             params : {
+    //                 userId : user.userId,
+    //                 userName : user.userName,
+    //                 schoolName : user.schoolName,
+    //                 grade : grade,
+    //                 classNum : classNum,
+    //                 num : num,
+    //                 gender : gender,
+    //                 studentName : studentName
+    //             }
+    //         }).then((response) => {
+    //             setWorkNoteTargetStudentResult(response.data);
+    //         });
+    //     }
+    // }
+
+    const getTargetWorkNote = async (Grade, Class, Number, Gender, Name) => {
+        // 학생당 등록된 보건일지 불러오는 부분부터 처리하면 됨!!!
+        const targetName = document.getElementById('targetNameInput');
+        
+        if(user && targetName && targetName.value.length > 0) {
+            const targetGrade = document.getElementById('targetGradeInput').value;
+            const targetClass = document.getElementById('targetClassInput').value;
+            const targetNumber = document.getElementById('targetNumberInput').value;
+            const targetGender = document.getElementById('targetGenderInput').value;
+            
+            const response = await axios.get('http://localhost:8000/getTargetWorkNote', {
+                params : {
+                    schoolName : user.schoolName,
+                    grade : targetGrade,
+                    classNum : targetClass,
+                    num : targetNumber,
+                    gender : targetGender,
+                    studentName : targetName.value
+                }
+            });
+            
+            if(response.data) {
+                setWorkNoteTargetResult(response.data);
+                setWorkNoteTargetState(true);
+            }
+        }
+    }
+
+    const getDayWorkNote = async () => {
+        const targetTime = Moment().format('YYYY-MM-DD');
+        
+        if(user) {
+            const response = await axios.get('http://localhost:8000/getDayWorkNote', {
+                params : {
+                    userId : user.userId,
+                    userName : user.userName,
+                    schoolName : user.schoolName,
+                    registDate : targetTime
+                }
+            });
+
+            if(response.data) {
+                setWorkNoteDayResult(response.data);
+                setWorkNoteDayState(true);
+            }
+        }
+    }
+
+    // 학생 조회 결과 Table에서 Target 학생 Row 클릭 시 발생 Event
     const onSelectStudent = (event) => {
         event.preventDefault();
 
@@ -563,6 +767,8 @@ const DailyWorkNote = () => {
         targetNumberInput.value = targetNumber;
         targetNameInput.value = targetName;
         targetGenderInput.value = targetGender;
+        
+        getTargetWorkNote();
     }
 
     const StudentSearchResult = () => {
@@ -598,14 +804,86 @@ const DailyWorkNote = () => {
 
     const TargetWorkNoteResult = () => {
         // 검색 대상 학생 보건일지 등록 내용이 있을 경우 리스트 Table로 뿌려주고 없을 시 아래 문구 출력
+        if(!workNoteTargetState) {
+            getTargetWorkNote();
+            
+            return (
+                <tbody>
+                    <tr>
+                        <td style={{ textAlign : 'center' }} colSpan={6}>조회 결과가 없습니다.</td>
+                    </tr>
+                </tbody>
+            )
+        }else{
+            if(workNoteTargetResult.length > 0) {
+                const resultArray = [];
 
-        return (
-            <tbody>
-                <tr>
-                    <td style={{ textAlign : 'center' }} colSpan={6}>조회 결과가 없습니다.</td>
-                </tr>
-            </tbody>
-        )
+                workNoteTargetResult.map((item, index) => {
+                    resultArray.push(
+                        <tr key={index} style={{ textAlign : 'center' }}>
+                            <td>{item.createdAt.split('T')[0]}</td>
+                            <td>{item.disease}</td>
+                            <td>{item.treat}</td>
+                            <td>{item.medicine}</td>
+                            <td>{item.reactThing}</td>
+                            <td>{item.bedStartTime} ~ {item.bedEndTime}</td>
+                        </tr>
+                    )
+                });
+
+                return (
+                    <tbody>
+                        {resultArray}
+                    </tbody>
+                )
+            }else{
+                return (
+                    <tbody>
+                        <tr>
+                            <td style={{ textAlign : 'center' }} colSpan={6}>조회 결과가 없습니다.</td>
+                        </tr>
+                    </tbody>
+                )
+            }
+        }
+    }
+
+    const DayWorkNoteResult = (props) => {
+        if(!workNoteDayState) {
+            getDayWorkNote();
+        }else{
+            if(workNoteDayResult.length > 0) {
+                const resultArray = [];
+                workNoteDayResult.map((item, index) => {
+                    resultArray.push(
+                        <tr key={index} style={{ textAlign : 'center' }}>
+                            {/* <td>{item.createdAt.split('T')[0]}</td> */}
+                            <td>{item.registDate}</td>
+                            <td>{item.studentName}</td>
+                            <td>{item.disease}</td>
+                            <td>{item.treat}</td>
+                            <td>{item.medicine}</td>
+                            <td>{item.reactThing}</td>
+                            <td>{item.bedStartTime} ~ {item.bedEndTime}</td>
+                        </tr>
+                    )
+                });
+
+                return (
+                    <tbody>
+                        {resultArray}
+                    </tbody>
+                )
+            }else{
+                return (
+                    <tbody>
+                        <tr>
+                            <td style={{ textAlign : 'center' }} colSpan={7}>조회 결과가 없습니다.</td>
+                        </tr>
+                    </tbody>
+                )
+            }
+        }
     }
 
     const onSearchStudent = (event) => {
@@ -631,8 +909,9 @@ const DailyWorkNote = () => {
         setSearchResult(resultArray);
     }
 
-    const DiseaseSelectBox = () => {
+    const DiseaseBox = () => {
         const textArray = [];
+        const itemArray = [];
 
         if(user && diseaseTextArray.length == 0) {
             axios.get('http://localhost:8000/getDiseaseItems', {
@@ -650,26 +929,36 @@ const DailyWorkNote = () => {
         }
 
         if(diseaseTextArray.length > 0) {
-            const optionArray = [];
             for(let i = 0; i < diseaseTextArray.length; i++) {
-                optionArray.push(
-                    <option key={i} value={diseaseTextArray[i]} style={{ textAlign : 'center' }}>{diseaseTextArray[i]}</option>
+                itemArray.push(
+                    <a className='panel-block' key={i} value={diseaseTextArray[i]} style={{ textAlign : 'center', fontSize : 13 }}>{diseaseTextArray[i]}</a>
                 )
             }
-
-            return (
-                <div className='select is-small' style={{ marginLeft : 37 }}>
-                    <select style={{ width : 150}}>
-                        <option style={{ textAlign : 'center' }}>항목 선택</option>
-                        {optionArray}
-                    </select>
-                </div>
-            )
         }
+
+        return (
+            <nav className='panel ml-3 mb-3' style={{ width : '30vh', borderRadius : 0 }}>
+                <p className='panel-heading' style={{ fontSize : 15, padding : 3, borderRadius : 0 }}>
+                    증상
+                </p>
+                <div className='panel-block'>
+                    <input className='input is-small' style={{ margin : 0 }} type='text' placeholder='직접 입력'/>
+                </div>
+                <div style={{ height : 150, overflowY : 'auto'}}>
+                    {itemArray}
+                </div>
+                <hr style={{ margin : 0 }}/>
+                <div className='mt-1'>
+                    <button className='button is-small ml-1' style={{ marginBottom : 5, width : '48%' }} onClick={handleDiseaseModalShow}>증상 항목 관리</button>
+                    <button className='button is-small ml-1' style={{ marginBottom : 5, width : '48%' }}>초기화</button>
+                </div>
+            </nav>
+        )
     }
 
-    const TreatSelectBox = () => {
+    const TreatBox = () => {
         const textArray = [];
+        const itemArray = [];
 
         if(user && treatTextArray.length == 0) {
             axios.get('http://localhost:8000/getTreatItems', {
@@ -687,26 +976,36 @@ const DailyWorkNote = () => {
         }
 
         if(treatTextArray.length > 0) {
-            const optionArray = [];
             for(let i = 0; i < treatTextArray.length; i++) {
-                optionArray.push(
-                    <option key={i} value={treatTextArray[i]} style={{ textAlign : 'center' }}>{treatTextArray[i]}</option>
+                itemArray.push(
+                    <a className='panel-block' key={i} value={treatTextArray[i]} style={{ textAlign : 'center', fontSize : 13 }}>{treatTextArray[i]}</a>
                 )
             }
-
-            return (
-                <div className='select is-small ml-3'>
-                    <select style={{ width : 510}}>
-                        <option style={{ textAlign : 'center' }}>항목 선택</option>
-                        {optionArray}
-                    </select>
-                </div>
-            )
         }
+
+        return (
+            <nav className='panel ml-3 mb-3' style={{ width : '60vh', borderRadius : 0 }}>
+                <p className='panel-heading' style={{ fontSize : 15, padding : 3, borderRadius : 0 }}>
+                    처치사항
+                </p>
+                <div className='panel-block'>
+                    <input className='input is-small' style={{ margin : 0 }} type='text' placeholder='직접 입력'/>
+                </div>
+                <div style={{ height : 150, overflowY : 'auto'}}>
+                    {itemArray}
+                </div>
+                <hr style={{ margin : 0 }}/>
+                <div className='mt-1'>
+                    <button className='button is-small ml-1' style={{ marginBottom : 5, width : '49%' }} onClick={handleTreatModalShow}>처치사항 항목 관리</button>
+                    <button className='button is-small ml-1' style={{ marginBottom : 5, width : '49%' }}>초기화</button>
+                </div>
+            </nav>
+        )
     }
 
-    const MedicineSelectBox = () => {
+    const MedicineBox = () => {
         const textArray = [];
+        const itemArray = [];
 
         if(user && medicineTextArray.length == 0) {
             axios.get('http://localhost:8000/getMedicineItems', {
@@ -724,47 +1023,153 @@ const DailyWorkNote = () => {
         }
 
         if(medicineTextArray.length > 0) {
-            const optionArray = [];
             for(let i = 0; i < medicineTextArray.length; i++) {
-                optionArray.push(
-                    <option key={i} value={medicineTextArray[i]} style={{ textAlign : 'center' }}>{medicineTextArray[i]}</option>
+                itemArray.push(
+                    <a className='panel-block' key={i} value={medicineTextArray[i]} style={{ textAlign : 'center', fontSize : 13 }}>{medicineTextArray[i]}</a>
+                )
+            }
+        }
+
+        return (
+            <nav className='panel ml-3 mb-3' style={{ width : '30vh', borderRadius : 0 }}>
+                <p className='panel-heading' style={{ fontSize : 15, padding : 3, borderRadius : 0 }}>
+                    투약사항
+                </p>
+                <div className='panel-block'>
+                    <input className='input is-small' style={{ margin : 0 }} type='text' placeholder='직접 입력'/>
+                </div>
+                <div style={{ height : 175, overflowY : 'auto'}}>
+                    {itemArray}
+                </div>
+                <hr style={{ margin : 0 }}/>
+                <div className='mt-1'>
+                    <button className='button is-small ml-1' style={{ marginBottom : 5, width : '48%' }} onClick={handleMedicineModalShow}>투약사항 항목 관리</button>
+                    <button className='button is-small ml-1' style={{ marginBottom : 5, width : '48%' }}>초기화</button>
+                </div>
+            </nav>
+        )
+    }
+    
+    const ReactBox = () => {
+        const textArray = [];
+        const itemArray = [];
+
+        if(user && !reactGetStatus) {
+            axios.get('http://localhost:8000/getReactItems', {
+                params : {
+                    userId : user.userId,
+                    userName : user.userName
+                }
+            }).then((response) => {
+                response.data.map((item) => {
+                    textArray.push(item.reactText);
+                });
+
+                setReactTextArray(textArray);
+                setReactGetStatus(true);
+            });
+        }
+
+        if(reactTextArray.length > 0) {
+            for(let i = 0; i < reactTextArray.length; i++) {
+                itemArray.push(
+                    <a className='panel-block' key={i} value={reactTextArray[i]} style={{ textAlign : 'center', fontSize : 13 }}>{reactTextArray[i]}</a>
                 )
             }
 
-            return (
-                <div className='select is-small ml-3'>
-                    <select style={{ width : 300}}>
-                        <option style={{ textAlign : 'center' }}>항목 선택</option>
-                        {optionArray}
-                    </select>
-                </div>
-            )
         }
+
+        return (
+            <nav className='panel ml-3' style={{ width : '60vh', borderRadius : 0 }}>
+                <p className='panel-heading' style={{ fontSize : 15, padding : 3, borderRadius : 0 }}>
+                    조치사항
+                </p>
+                <div className='panel-block'>
+                    <input className='input is-small' style={{ margin : 0 }} type='text' placeholder='직접 입력'/>
+                </div>
+                <div style={{ height : 70, overflowY : 'auto'}}>
+                    {itemArray}
+                </div>
+                <hr style={{ margin : 0 }}/>
+                <div className='mt-1'>
+                    <button className='button is-small ml-1' style={{ marginBottom : 5, width : '48%' }} onClick={handleReactModalShow}>조치사항 항목 관리</button>
+                    <button className='button is-small ml-1' style={{ marginBottom : 5, width : '48%' }}>초기화</button>
+                </div>
+            </nav>
+        )
     }
 
     const BedBox = () => {
         const bedBox = [];
-
-        if(registeredBedCount > 0) {
-            for(let i = 0; i < Number(registeredBedCount); i++) {
-                bedBox.push(
-                    <div key={i} id={'bed' + (i + 1)} className='box ml-2' style={{ float : 'left', padding : 10, paddingBottom : 0 }}>
-                        <div style={{ float : 'left', marginTop : 3 }}>
-                            <span className='tag' id='bedUseStatus' style={{ margin : 'auto' }}>미사용중</span>
+        const messageBox = [];
+        
+        getBedCount();
+        
+        if(bedCount) {
+            if(bedCount > 0) {
+                for(let i = 0; i < Number(bedCount); i++) {
+                    if(bedCount > 1) {
+                        bedBox.push(
+                            <div key={i} id={'bed' + (i + 1)} className='box ml-2' style={{ float : 'left', padding : 10, paddingBottom : 0 }}>
+                                <div style={{ float : 'left', marginTop : 3 }}>
+                                    <span className='tag' id='bedUseStatus' style={{ margin : 'auto' }}>미사용중</span>
+                                </div>
+                                <div style={{ float : 'left' }}>
+                                    <span id={'bed' + (i + 1)}><FaBed style={{ fontSize : 20, marginLeft : 5, marginTop : 5 }}/></span>
+                                </div>
+                                <button disabled className='button is-small is-light ml-1' style={{ height : 20, marginTop : 5 }} status='notUse' onClick={handleBedUseStatus}>사용 해제</button>
+                            </div>
+                        )
+                    }else{
+                        bedBox.push(
+                            <div key={i} id={'bed' + (i + 1)} className='box ml-2 mb-5' style={{ float : 'left', padding : 10, paddingBottom : 0 }}>
+                                <div style={{ float : 'left', marginTop : 3 }}>
+                                    <span className='tag' id='bedUseStatus' style={{ margin : 'auto' }}>미사용중</span>
+                                </div>
+                                <div style={{ float : 'left' }}>
+                                    <span id={'bed' + (i + 1)}><FaBed style={{ fontSize : 20, marginLeft : 5, marginTop : 5 }}/></span>
+                                </div>
+                                <button disabled className='button is-small is-light ml-1' style={{ height : 20, marginTop : 5 }} status='notUse' onClick={handleBedUseStatus}>사용 해제</button>
+                            </div>
+                        )
+                    }
+                }
+    
+                return (
+                    <div>
+                        {bedBox}
+                    </div>
+                )
+            }else{
+                messageBox.push(
+                    <article className='message' key={1}>
+                        <div className='message-body' style={{ fontSize : 13, padding : 10 }}>
+                            설정된 침상 수가 없습니다. 보건실의 침상 수를 설정해 주세요.
                         </div>
-                        <div style={{ float : 'left' }}>
-                            <span id={'bed' + (i + 1)}><FaBed style={{ fontSize : 20, marginLeft : 5, marginTop : 5 }}/></span>
-                        </div>
-                        <button disabled className='button is-small is-light ml-1' style={{ height : 20, marginTop : 5 }} status='notUse' onClick={handleBedUseStatus}>사용 해제</button>
+                    </article>
+                );
+    
+                return (
+                    <div style={{ height : 30 }}>
+                        {messageBox}
                     </div>
                 )
             }
-        } 
-        return (
-            <div>
-                {bedBox}
-            </div>
-        )
+        }else{
+            messageBox.push(
+                <article className='message' key={1}>
+                    <div className='message-body' style={{ fontSize : 13, padding : 10 }}>
+                        설정된 침상 수가 없습니다. 보건실의 침상 수를 설정해 주세요.
+                    </div>
+                </article>
+            );
+
+            return (
+                <div style={{ height : 30 }}>
+                    {messageBox}
+                </div>
+            )
+        }
     }
 
     // 아래 Function에서 침상 사용 등록 시 사용해제 버튼 활성화 시켜주고 is-danger로 클래스 바꿔줌
@@ -802,9 +1207,113 @@ const DailyWorkNote = () => {
         }
     }
 
-    return (
-        <div className="container mt-5" style={{display: 'flex', flexDirection: 'column', height: '100vh', marginBottom : 25}}>
+    const handleBedSetting = (event) => {
+        event.preventDefault();
+        getBedCount();
+        setBedSettingModalShow(true);
+    }
 
+    const submitBedSetting = (event) => {
+        event.preventDefault();
+        const inputBedCount = Number(event.target.getElementsByTagName('input')[0].value);
+        
+        if(user) {
+            if(!bedCount) {
+                axios.post('http://localhost:8000/setBedCount', {
+                    userId : user.userId,
+                    userName : user.userName,
+                    bedCount : bedCount
+                }).then((response) => {
+                    setBedCountSuccessToast(true);
+                    getBedCount();
+                });
+            }else{
+                if(inputBedCount == bedCount) {
+                    // 이미 설정된 침상 수이다 토스트
+                    setBedCountFailedToast(true);
+                }else{
+                    // 침상 수 업데이트
+                    axios.post('http://localhost:8000/updateBedCount', {
+                        userId : user.userId,
+                        userName : user.userName,
+                        bedCount : inputBedCount
+                    }).then((response) => {
+                        setBedCountUpdateToast(true);
+                        getBedCount();
+                    });
+                }
+            }
+        }
+    }
+
+    const selectCurrentTime = (event) => {
+        event.preventDefault();
+
+        // let time = new Date();
+        const time = Moment().format('HH:mm');
+        
+        // const convertTime = (time.getHours() + ":" + time.toLocaleTimeString().split(' ')[1].split(':')[1]).toString();
+        if(time) {
+            const startTimeInput = document.getElementById('bedStartTime');
+            startTimeInput.setAttribute('value', time);
+        }
+    }
+
+    const onWorkNoteSubmit = (event) => {
+        event.preventDefault();
+
+        let time = new Date();
+        const registDate = Moment().format('YYYY-MM-DD').toString();
+        // const day = time.toLocaleDateString();
+        // const currentTime = (time.getHours() + ":" + time.getMinutes()).toString();
+        // const convertDate = day + " " + currentTime;
+
+        const targetGrade = document.getElementById('targetGradeInput').value;
+        const targetClass = document.getElementById('targetClassInput').value;
+        const targetNumber = document.getElementById('targetNumberInput').value;
+        const targetGender = document.getElementById('targetGenderInput').value;
+        const targetName = document.getElementById('targetNameInput').value;
+
+        const selectedDisease = document.getElementById('diseaseDiv').getElementsByTagName('select')[0].value;
+        const selectedtreat = document.getElementById('treatDiv').getElementsByTagName('select')[0].value;
+        const selectedMedicine = document.getElementById('medicineDiv').getElementsByTagName('select')[0].value;
+        const selectedReact = document.getElementById('reactDiv').getElementsByTagName('input')[0].value;
+
+        const selectedBedStartTime = document.getElementById('bedTimeDiv').getElementsByTagName('input')['bedStartTime'].value;
+        const selectedBedEndTime = document.getElementById('bedTimeDiv').getElementsByTagName('input')['bedEndTime'].value;
+
+        if(targetName.length === 0) {
+            setWorkNoteNoNameToast(true);
+        }else{
+            axios.post('http://localhost:8000/setWorkNote', {
+                userId : user.userId,
+                userName : user.userName,
+                schoolName : user.schoolName,
+                grade : targetGrade,
+                classNum : targetClass,
+                num : targetNumber,
+                gender : targetGender,
+                studentName : targetName,
+                disease : selectedDisease,
+                treat : selectedtreat,
+                medicine : selectedMedicine,
+                reactThing : selectedReact,
+                bedStartTime : selectedBedStartTime,
+                bedEndTime : selectedBedEndTime,
+                registDate : registDate
+            }).then((response) => {
+                // getWorkNote();
+                getTargetWorkNote(); 
+                getDayWorkNote();
+                setWorkSubmitSuccessToast(true);
+            });
+        }
+    }
+
+    return (
+        <div className="container mt-5" style={{display: 'flex', flexDirection: 'column', marginBottom : 50}}>
+            {workSubmitSuccessToast && <Toast setToast={setWorkSubmitSuccessToast} text="작성하신 보건일지가 정상적으로 등록되었습니다."></Toast>}
+            {workNoteNoNameToast && <Toast setToast={setWorkNoteNoNameToast} text="선택된 학생이 존재하지 않아 등록할 수 없습니다."></Toast>}
             <div className= {diseaseModalshow ? 'modal is-active' : 'modal'}>
                 {toast && <Toast setToast={setToast} text="작성하지 않은 항목이 있습니다. 모든 항목을 작성 후 추가 항목을 생성하실 수 있습니다."></Toast>}
                 {registDiseaseSuccessToast && <Toast setToast={setRegistDiseaseSuccessToast} text="작성하신 증상명이 정상적으로 등록되었습니다."></Toast>}
@@ -898,22 +1407,81 @@ const DailyWorkNote = () => {
                 </form>
             </div>
             
+            <div className= {reactModalShow ? 'modal is-active' : 'modal'}>
+            {toast && <Toast setToast={setToast} text="작성하지 않은 항목이 있습니다. 모든 항목을 작성 후 추가 항목을 생성하실 수 있습니다."></Toast>}
+            {registReactSuccessToast && <Toast setToast={setRegistReactSuccessToast} text="작성하신 조치사항이 정상적으로 등록되었습니다."></Toast>}
+            {registReactFailedToast && <Toast setToast={setRegistReactFailedToast} text="동일하게 작성하신 조치사항이 이미 존재합니다."></Toast>}
+            {removeReactToast && <Toast setToast={setRemoveReactToast} text="조치사항 삭제가 정상적으로 처리되었습니다."></Toast>}
+                <form onSubmit={addReactItem}>
+                    <div className='modal-background'></div>
+                        <div className='modal-card' style={{ width : 550}}>
+                        <header className='modal-card-head'>
+                            <p className='modal-card-title' style={{ fontSize : 20, fontWeight : 'bold' }}>자주 사용하는 조치사항 등록</p>
+                            <button className='delete' aria-label='close' onClick={ handleReactModalClose }></button>
+                        </header>
+                        <section className='modal-card-body'>
+                            <ul id='reactItemList'>
+                                <GetReactItems/>
+                                <input className='input' name='reactItem' onChange={inputTextHandler} value={inputText} type='text' placeholder='문구를 입력해주세요.' style={{ width : '100%', height : 30, fontSize : 15 }}/>
+                            </ul>
+                            <div style={{ display : 'flex', justifyContent : 'center', alignItems : 'center' }}>
+                                {/* <button className='button is-small' onClick={plusMedicineItem}>항목 추가</button> */}
+                            </div>
+                        </section>
+                        <footer className='modal-card-foot' style={{ padding : 0 }}>
+                            <div style={{ marginLeft : 420, marginTop : 10 }}>
+                                <button className='button is-info is-small'>저장</button>
+                                <button className='button is-small' onClick={ handleReactModalClose }>닫기</button>
+                            </div>
+                        </footer>
+                    </div>
+                </form>
+            </div>
+
+            <div className= {bedSettingModalShow ? 'modal is-active' : 'modal'}>
+                {bedCountSuccessToast && <Toast setToast={setBedCountSuccessToast} text="침상 수 설정이 정상적으로 저장되었습니다."></Toast>}
+                {bedCountFailedToast && <Toast setToast={setBedCountFailedToast} text="이미 설정된 침상 수입니다."></Toast>}
+                {bedCountUpdateToast && <Toast setToast={setBedCountUpdateToast} text="침상 수 수정이 정상적으로 처리되었습니다."></Toast>}
+                <form onSubmit={submitBedSetting}>
+                    <div className='modal-background'></div>
+                        <div className='modal-card' style={{ width : 250}}>
+                        <header className='modal-card-head'>
+                            <p className='modal-card-title' style={{ fontSize : 15, fontWeight : 'bold' }}>침상 설정</p>
+                            <button className='delete' aria-label='close' onClick={handleBedSettingModalClose}></button>
+                        </header>
+                        <section className='modal-card-body'>
+                            <div style={{ marginLeft : 35, marginBottom : -10 }}>
+                                <span style={{ fontSize : 13 }}><b>침상 수 : </b></span>
+                                <input id='bedCountInput' className='input is-small' type='number' style={{ width : 70, marginLeft : 10, marginTop : -2 }} />
+                            </div>
+                        </section>
+                        <footer className='modal-card-foot' style={{ padding : 0 }}>
+                            <div style={{ marginLeft : 130, marginTop : 10 }}>
+                                <button className='button is-info is-small'>저장</button>
+                                <button className='button is-small' onClick={handleBedSettingModalClose}>닫기</button>
+                            </div>
+                        </footer>
+                    </div>
+                </form>
+            </div>
+            
             <div style={{ marginBottom : -10 }}>
                 <div style={{ float : 'left'}}>
                     <BedBox/>
                 </div>
-                <div style={{ float : 'right', marginLeft : 'auto', marginTop : 12 }}>
-                    <button className='button is-small'>학생별 보건일지</button>
+                <div style={{ float : 'right', marginLeft : 'auto', marginTop : 10, marginBottom : 5 }}>
+                    <button className='button is-small' onClick={handleBedSetting}>침상 수 설정</button>
+                    <button className='button is-small ml-2'>학생별 보건일지</button>
                     <button className='button is-small ml-3'>기간별 보건일지</button>
                 </div>
             </div>
 
             <div className='tile is-ancestor'>
                 <div className='tile is-vertical is-12'>
-                    <div className='tile mt-3'>
+                    <div className='tile mt-3 mb-5'>
                         <div className='tile is-parent is-vertical'>
-                            <div className="panel" style={{ width : '50vh', marginTop : -10, height : '65vh', display : 'flex', flexDirection : 'column' }}>
-                                <p className="panel-heading" style={{ fontSize : 15 }}>
+                            <div className="panel" style={{ width : '50vh', marginTop : -10, height : '65vh', display : 'flex', flexDirection : 'column', borderRadius : 0 }}>
+                                <p className="panel-heading" style={{ fontSize : 15, borderRadius : 0 }}>
                                     학생 조회
                                 </p>
                                 <div className='mt-5 ml-3' id='studentSearchDiv'>
@@ -984,103 +1552,136 @@ const DailyWorkNote = () => {
                         </div>
                         
                         <div className='tile is-child' style={{ padding : 0 }}>
-                            <div className='panel' style={{ height : '65vh', width : '92vh'}}>
-                                <p className='panel-heading' style={{ fontSize : 15 }}>
-                                    보건일지 작성
-                                </p>
-                                <div className='panel-block' style={{ borderBottom : 'none' }}>
-                                    <div style={{ margin : 'auto' }}>
-                                        <span  style={{ fontSize : 13, fontWeight : 'bold' }}>학년</span>
-                                        <input 
-                                            className='input is-small ml-3'
-                                            id='targetGradeInput'
-                                            style={{ width: 50, textAlign : 'center' }}
-                                            readOnly
-                                        />
-                                        <span className='ml-5' style={{ fontSize : 13, fontWeight : 'bold' }}>반</span>
-                                        <input 
-                                            className='input is-small ml-3'
-                                            id='targetClassInput'
-                                            style={{ width: 50, textAlign : 'center' }}
-                                            readOnly
-                                        />
-                                        <span className='ml-5' style={{ fontSize : 13, fontWeight : 'bold' }}>번호</span>
-                                        <input 
-                                            className='input is-small ml-3'
-                                            id='targetNumberInput'
-                                            style={{ width: 50, textAlign : 'center' }}
-                                            readOnly
-                                        />
-                                        <span className='ml-5' style={{ fontSize : 13, fontWeight : 'bold' }}>성별</span>
-                                        <input 
-                                            className='input is-small ml-3'
-                                            id='targetGenderInput'
-                                            style={{ width: 50, textAlign : 'center' }}
-                                            readOnly
-                                        />
-                                        <span className='ml-5' style={{ fontSize : 13, fontWeight : 'bold' }}>이름</span>
-                                        <input 
-                                            className='input is-small ml-3'
-                                            id='targetNameInput'
-                                            style={{ width: 100, textAlign : 'center' }}
-                                            readOnly
-                                        />
+                            {/* <form onSubmit={onWorkNoteSubmit}> */}
+                            <form>
+                                <div className='panel' style={{ height : '98vh', width : '94vh', borderRadius : 0 }}>
+                                    <p className='panel-heading' style={{ fontSize : 15, borderRadius : 0 }}>
+                                        보건일지 작성
+                                    </p>
+                                    <div className='panel-block' style={{ borderBottom : 'none' }}>
+                                        <div style={{ margin : 'auto' }}>
+                                            <span  style={{ fontSize : 13, fontWeight : 'bold' }}>학년</span>
+                                            <input 
+                                                className='input is-small ml-3'
+                                                id='targetGradeInput'
+                                                style={{ width: 50, textAlign : 'center' }}
+                                                readOnly
+                                            />
+                                            <span className='ml-5' style={{ fontSize : 13, fontWeight : 'bold' }}>반</span>
+                                            <input 
+                                                className='input is-small ml-3'
+                                                id='targetClassInput'
+                                                style={{ width: 50, textAlign : 'center' }}
+                                                readOnly
+                                            />
+                                            <span className='ml-5' style={{ fontSize : 13, fontWeight : 'bold' }}>번호</span>
+                                            <input 
+                                                className='input is-small ml-3'
+                                                id='targetNumberInput'
+                                                style={{ width: 50, textAlign : 'center' }}
+                                                readOnly
+                                            />
+                                            <span className='ml-5' style={{ fontSize : 13, fontWeight : 'bold' }}>성별</span>
+                                            <input 
+                                                className='input is-small ml-3'
+                                                id='targetGenderInput'
+                                                style={{ width: 50, textAlign : 'center' }}
+                                                readOnly
+                                            />
+                                            <span className='ml-5' style={{ fontSize : 13, fontWeight : 'bold' }}>이름</span>
+                                            <input 
+                                                className='input is-small ml-3'
+                                                id='targetNameInput'
+                                                style={{ width: 100, textAlign : 'center' }}
+                                                readOnly
+                                            />
+                                        </div>
+                                    </div>
+                                    <div style={{ height : 151, overflowY : 'auto'}}>
+                                        <table className='table is-striped is-narrow is-hoverable ml-4' style={{ width : '96.5%', fontSize : 12 }}>
+                                            <thead>
+                                                <tr>
+                                                    <th style={{ textAlign : 'center' }}>등록일</th>
+                                                    <th style={{ textAlign : 'center' }}>증상</th>
+                                                    <th style={{ textAlign : 'center' }}>처치사항</th>
+                                                    <th style={{ textAlign : 'center' }}>투약사항</th>
+                                                    <th style={{ textAlign : 'center' }}>조치사항</th>
+                                                    <th style={{ textAlign : 'center' }}>침상안정</th>
+                                                </tr>
+                                            </thead>
+                                            <TargetWorkNoteResult/>
+                                        </table>
+                                    </div>
+                                    <hr style={{ marginLeft : 10, marginRight : 10, marginBottom : 10 }}/>
+                                    <div style={{ display : 'inline-flex', width : '100%' }}>
+                                        <div id='diseaseDiv'>
+                                            <DiseaseBox />
+                                        </div>
+                                        <div id='treatDiv'>
+                                            <TreatBox/>
+                                        </div>
+                                    </div>
+                                    <div style={{ display : 'inline-flex' }}>
+                                        <div id='medicineDiv'>
+                                            <MedicineBox/>
+                                        </div>
+                                        <div>
+                                            <div id='reactDiv'>
+                                                <ReactBox/>
+                                            </div>
+                                            <div className='mb-3 mt-3' id='bedTimeDiv'>
+                                                <nav className='panel ml-3 mb-3 mt-2' style={{ width : '60vh', borderRadius : 0 }}>
+                                                    <p className='panel-heading' style={{ fontSize : 15, padding : 3, borderRadius : 0 }}>
+                                                        침상안정
+                                                    </p>
+                                                    <div className='panel-block'>
+                                                        <span className='tag is-info is-light' style={{ fontSize : 12, marginTop : -10 }}>시작시간</span>
+                                                        <input className='input is-small ml-2'
+                                                            id='bedStartTime'
+                                                            type='time'
+                                                            style={{ width : '20%'}}
+                                                        />
+                                                        <button className='button is-small ml-2' style={{ marginTop : 5}} onClick={selectCurrentTime}>현재시간 선택</button>
+                                                        <span className='tag is-danger is-light ml-6' style={{ fontSize : 12, marginTop : -10 }}>종료시간</span>
+                                                        <input className='input is-small ml-3'
+                                                            id='bedEndTime'
+                                                            type='time'
+                                                            style={{ width : '20%'}}
+                                                        />
+                                                    </div>
+                                                </nav>
+                                                {/* <span className='tag mr-5 mt-1' style={{ float : 'right'}}>현재시간 &nbsp; <b>{time}</b></span> */}
+                                                {/* <button className='button is-small is-info is-light is-outlined ml-3'>사용 등록</button>
+                                                <button className='button is-small is-danger is-light is-outlined ml-2'>사용 해제</button> */}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className='panel-block'>
+                                        <div style={{ margin : 'auto' }}>
+                                            <button className='button is-info is-small' type='submit' id='registWorkNote' onClick={onWorkNoteSubmit}>등록</button>
+                                            <button className='button is-small ml-2' id='resetWorkNote'>초기화</button>
+                                        </div>
                                     </div>
                                 </div>
-                                <div style={{ overflowY : 'auto'}}>
-                                    <table className='table is-bordered is-striped is-narrow is-hoverable ml-4' style={{ width : '96.5%', fontSize : 12, height : 150 }}>
-                                        <thead>
-                                            <tr>
-                                                <th style={{ textAlign : 'center' }}>등록일</th>
-                                                <th style={{ textAlign : 'center' }}>증상</th>
-                                                <th style={{ textAlign : 'center' }}>처치사항</th>
-                                                <th style={{ textAlign : 'center' }}>투약사항</th>
-                                                <th style={{ textAlign : 'center' }}>조치사항</th>
-                                                <th style={{ textAlign : 'center' }}>침상안정</th>
-                                            </tr>
-                                        </thead>
-                                        <TargetWorkNoteResult/>
-                                    </table>
-                                </div>
-                                <div className='mt-5'>
-                                    <span className='ml-5' style={{ fontSize : 13, fontWeight : 'bold' }}>증상</span>
-                                    <DiseaseSelectBox/>
-                                    <button className='button is-small ml-5'>직접 입력</button>
-                                    <button className='button is-small ml-2' onClick={handleDiseaseModalShow}>증상 항목 관리</button>
-                                </div>
-                                <div>
-                                    <span className='ml-5' style={{ fontSize : 13, fontWeight : 'bold' }}>처치사항</span>
-                                    <TreatSelectBox/>
-                                    <button className='button is-small ml-5'>직접 입력</button>
-                                    <button className='button is-small ml-2' onClick={handleTreatModalShow}>처치사항 항목 관리</button>
-                                </div>
-                                <div>
-                                    <span className='ml-5' style={{ fontSize : 13, fontWeight : 'bold' }}>투약사항</span>
-                                    <MedicineSelectBox/>
-                                    <button className='button is-small ml-5'>직접 입력</button>
-                                    <button className='button is-small ml-2' onClick={handleMedicineModalShow}>투약사항 항목 관리</button>
-                                </div>
-                                <div>
-                                    <span className='ml-5' style={{ fontSize : 13, fontWeight : 'bold' }}>조치사항</span>
-                                    <input 
-                                        className='input is-small ml-3'
-                                        placeholder='조치사항을 입력하세요'
-                                        id='reactInput'
-                                        style={{ width: '88%' }}
-                                    />
-                                </div>
-                                <div className='mb-5'>
-                                    <span className='ml-5' style={{ fontSize : 13, fontWeight : 'bold' }}>침상안정</span>
-                                    <button className='button is-small is-info is-light is-outlined ml-3'>사용 등록</button>
-                                    <button className='button is-small is-danger is-light is-outlined ml-2'>사용 해제</button>
-                                </div>
-                                <div className='panel-block'>
-                                    <div style={{ margin : 'auto' }}>
-                                        <button className='button is-info is-small'>등록</button>
-                                        <button className='button is-small ml-2'>초기화</button>
-                                    </div>
-                                </div>
-                            </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div className='tile is-vertical is-12 ml-2 mt-1'>
+                        <div style={{ minHeight : 230, overflowY : 'auto'}}>
+                            <table className='table is-bordered is-striped is-narrow is-hoverable is-fullwidth' style={{ fontSize : 13 }}>
+                                <thead>
+                                    <tr>
+                                        <th style={{ textAlign : 'center', backgroundColor : 'lightblue' }}>등록일</th>
+                                        <th style={{ textAlign : 'center', backgroundColor : 'lightblue' }}>이름</th>
+                                        <th style={{ textAlign : 'center', backgroundColor : 'lightblue' }}>증상</th>
+                                        <th style={{ textAlign : 'center', backgroundColor : 'lightblue' }}>처치사항</th>
+                                        <th style={{ textAlign : 'center', backgroundColor : 'lightblue' }}>투약사항</th>
+                                        <th style={{ textAlign : 'center', backgroundColor : 'lightblue' }}>조치사항</th>
+                                        <th style={{ textAlign : 'center', backgroundColor : 'lightblue' }}>침상안정</th>
+                                    </tr>
+                                </thead>
+                                <DayWorkNoteResult/>
+                            </table>
                         </div>
                     </div>
                 </div>

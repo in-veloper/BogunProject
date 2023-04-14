@@ -10,7 +10,7 @@
             "request": "launch",
             "name": "Launch Chrome against localhost",
             "skipFiles": ["<node_internals>/**"],
-            "program": "${workspaceFolder}/app.js",
+            "program": "${workspaceFolder}/server/index.js",
             "runtimeExecutable": "nodemon", // 추가, 노드몬으로 실행가능하도록 설정
             "restart": true // 추가, 재시작 옵션을 true로 설정
         }

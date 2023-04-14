@@ -63,13 +63,13 @@ const Dashboard = () => {
             <div className='tile is-ancestor'>
                 <div className='tile is-vertical is-12 mt-5'>
                     <div className='panel is-info'>
-                        <p class="panel-heading" style={{ fontSize : 15 }}>
+                        <p className="panel-heading" style={{ fontSize : 15 }}>
                             공지사항
                             <button className='button is-text is-normal' style={{ padding : 0, float : 'right', verticalAlign: 'center', marginLeft : -35, marginTop : -8, marginBottom : -10, color : 'white', background : 'transparent' }}>
                                 More
                             </button>
                         </p>
-                        <div class="panel-block">
+                        <div className="panel-block">
                             <table className='table is-fullwidth is-striped is-hoverable' style={{ textAlign : 'center' }}>
                                 <thead>
                                     <tr style={{ fontSize : 13 }}>
@@ -140,68 +140,68 @@ const Dashboard = () => {
                     
                     <div className='tile mt-5'>
                         <div className='tile is-parent is-vertical mr-5'>
-                            <div class="panel is-info" style={{ marginLeft : -12, marginTop : -10}}>
-                                <p class="panel-heading" style={{ fontSize : 15 }}>
+                            <div className="panel is-info" style={{ marginLeft : -12, marginTop : -10}}>
+                                <p className="panel-heading" style={{ fontSize : 15 }}>
                                     이번 달 보건일정
                                 </p>
-                                <div class="panel-block">
-                                    <p class="control has-icons-left">
+                                <div className="panel-block">
+                                    <p className="control has-icons-left">
                                     </p>
                                 </div>
-                                <a class="panel-block is-active">
-                                    <span class="panel-icon">
-                                    <i class="fas fa-book" aria-hidden="true"></i>
+                                <a className="panel-block is-active">
+                                    <span className="panel-icon">
+                                    <i className="fas fa-book" aria-hidden="true"></i>
                                     </span>
                                     bulma
                                 </a>
-                                <a class="panel-block">
-                                    <span class="panel-icon">
-                                    <i class="fas fa-book" aria-hidden="true"></i>
+                                <a className="panel-block">
+                                    <span className="panel-icon">
+                                    <i className="fas fa-book" aria-hidden="true"></i>
                                     </span>
                                     marksheet
                                 </a>
-                                <a class="panel-block">
-                                    <span class="panel-icon">
-                                    <i class="fas fa-book" aria-hidden="true"></i>
+                                <a className="panel-block">
+                                    <span className="panel-icon">
+                                    <i className="fas fa-book" aria-hidden="true"></i>
                                     </span>
                                     minireset.css
                                 </a>
-                                <a class="panel-block">
-                                    <span class="panel-icon">
-                                    <i class="fas fa-book" aria-hidden="true"></i>
+                                <a className="panel-block">
+                                    <span className="panel-icon">
+                                    <i className="fas fa-book" aria-hidden="true"></i>
                                     </span>
                                     jgthms.github.io
                                 </a>
                             </div>
-                            <div class="panel is-info mt-3" style={{ marginLeft : -12, marginTop : -10}}>
-                                <p class="panel-heading" style={{ fontSize : 15 }}>
+                            <div className="panel is-info mt-3" style={{ marginLeft : -12, marginTop : -10}}>
+                                <p className="panel-heading" style={{ fontSize : 15 }}>
                                     미정
                                 </p>
-                                <div class="panel-block">
-                                    <p class="control has-icons-left">
+                                <div className="panel-block">
+                                    <p className="control has-icons-left">
                                     </p>
                                 </div>
-                                <a class="panel-block">
-                                    <span class="panel-icon">
-                                    <i class="fas fa-book" aria-hidden="true"></i>
+                                <a className="panel-block">
+                                    <span className="panel-icon">
+                                    <i className="fas fa-book" aria-hidden="true"></i>
                                     </span>
                                     bulma
                                 </a>
-                                <a class="panel-block">
-                                    <span class="panel-icon">
-                                    <i class="fas fa-book" aria-hidden="true"></i>
+                                <a className="panel-block">
+                                    <span className="panel-icon">
+                                    <i className="fas fa-book" aria-hidden="true"></i>
                                     </span>
                                     marksheet
                                 </a>
-                                <a class="panel-block">
-                                    <span class="panel-icon">
-                                    <i class="fas fa-book" aria-hidden="true"></i>
+                                <a className="panel-block">
+                                    <span className="panel-icon">
+                                    <i className="fas fa-book" aria-hidden="true"></i>
                                     </span>
                                     minireset.css
                                 </a>
-                                <a class="panel-block">
-                                    <span class="panel-icon">
-                                    <i class="fas fa-book" aria-hidden="true"></i>
+                                <a className="panel-block">
+                                    <span className="panel-icon">
+                                    <i className="fas fa-book" aria-hidden="true"></i>
                                     </span>
                                     jgthms.github.io
                                 </a>

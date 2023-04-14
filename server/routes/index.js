@@ -9,10 +9,12 @@ import { getCalendarData, addCalendarData, removeCalendarData } from "../control
 import { getDiseaseItems, addDiseaseItem, removeDiseaseItem } from "../controllers/DiseaseItem.js";
 import { getTreatItems, addTreatItem, removeTreatItem } from "../controllers/TreatItem.js";
 import { getMedicineItems, addMedicineItem, removeMedicineItem } from "../controllers/MedicineItem.js";
+import { getReactItems, addReactItem, removeReactItem } from "../controllers/ReactItem.js";
 import { getBedCount, setBedCount, updateBedCount } from "../controllers/BedSetting.js";
- 
+import { getWorkNote, getTargetWorkNote, getDayWorkNote, setWorkNote, updateWorkNote, removeWorkNote } from "../controllers/WorkNote.js";
+
 const router = express.Router();
- 
+
 router.get('/users', verifyToken, getUsers);
 router.post('/users', Register);
 // router.get('/getStudents', getStudents);
@@ -44,9 +46,20 @@ router.get('/getMedicineItems', getMedicineItems);
 router.post('/addMedicineItem', addMedicineItem);
 router.post('/removeMedicineItem', removeMedicineItem);
 
+router.get('/getReactItems', getReactItems);
+router.post('/addReactItem', addReactItem);
+router.post('/removeReactItem', removeReactItem);
+
 router.get('/getBedCount', getBedCount);
 router.post('/setBedCount', setBedCount);
 router.post('/updateBedCount', updateBedCount);
 
- 
+router.get('/getWorkNote', getWorkNote);
+router.get('/getTargetWorkNote', getTargetWorkNote);
+router.get('/getDayWorkNote', getDayWorkNote);
+router.post('/setWorkNote', setWorkNote);
+router.post('/updateWorkNote', updateWorkNote);
+router.post('/removeWorkNote', removeWorkNote);
+
+
 export default router;  
