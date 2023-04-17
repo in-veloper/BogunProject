@@ -20,12 +20,13 @@ export const getDiseaseItems = async(req, res) => {
 }
 
 export const addDiseaseItem = async(req, res) => {
-    const { userId, userName, diseaseText } = req.body;
+    const { userId, userName, diseaseCategory, diseaseText } = req.body;
 
     try {
         await DiseaseItems.create({
             userId : userId,
             userName : userName,
+            diseaseCategory : diseaseCategory,
             diseaseText : diseaseText
         });
 
@@ -36,13 +37,14 @@ export const addDiseaseItem = async(req, res) => {
 }
 
 export const removeDiseaseItem = async(req, res) => {
-    const { userId, userName, diseaseText } = req.body;
+    const { userId, userName, diseaseCategory, diseaseText } = req.body;
 
     try {
         await DiseaseItems.destroy({
             where : {
                 userId : userId,
                 userName : userName,
+                diseaseCategory : diseaseCategory,
                 diseaseText : diseaseText
             }
         });

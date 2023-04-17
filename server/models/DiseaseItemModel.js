@@ -10,6 +10,9 @@ const DiseaseItems = db.define('diseaseItems', {
     userName : {
         type : DataTypes.STRING
     },
+    diseaseCategory : {
+        type : DataTypes.STRING
+    },
     diseaseText : {
         type : DataTypes.STRING
     }
