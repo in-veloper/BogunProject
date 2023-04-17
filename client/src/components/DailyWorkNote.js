@@ -350,13 +350,12 @@ const DailyWorkNote = () => {
         const diseaseCategory = event.target.getElementsByTagName('select')[0].value;
         // 문구 상위에서 전체를 감싸고 있는 Form 하위의 Input 태그
         let diseaseItems = event.target.getElementsByTagName('input');
-        debugger
+        
         // [diseaseItemData = Server에서 받아온 이미 등록되어 있는 문구] -> registeredDiseaseItems에 담음
         diseaseItemData.forEach(item => { registeredDiseaseItems.push(item.diseaseText) });
 
         // 현재 전체 Input 태그들을 돌면서 등록된 문구에 포함되어 있지 않을 시에 Add Service 호출
         for(let i = 0; i < diseaseItems.length; i++) {
-            debugger
             if(!registeredDiseaseItems.includes(diseaseItems[i].value)) {
                 if(diseaseItems[i].value.length > 0) {
                     try {
