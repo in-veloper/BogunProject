@@ -12,6 +12,7 @@ import { getMedicineItems, addMedicineItem, removeMedicineItem } from "../contro
 import { getReactItems, addReactItem, removeReactItem } from "../controllers/ReactItem.js";
 import { getBedCount, setBedCount, updateBedCount } from "../controllers/BedSetting.js";
 import { getWorkNote, getTargetWorkNote, getDayWorkNote, setWorkNote, updateWorkNote, removeWorkNote } from "../controllers/WorkNote.js";
+import { getUseBed, setUseBed, updateUseBedStatus, removeUseBed } from "../controllers/UseBed.js";
 
 const router = express.Router();
 
@@ -60,6 +61,11 @@ router.get('/getDayWorkNote', getDayWorkNote);
 router.post('/setWorkNote', setWorkNote);
 router.post('/updateWorkNote', updateWorkNote);
 router.post('/removeWorkNote', removeWorkNote);
+
+router.get('/getUseBed', getUseBed);
+router.post('/setUseBed', setUseBed);
+router.post('/updateUseBedStatus',updateUseBedStatus);
+router.post('/removeUseBed', removeUseBed);
 
 
 export default router;  

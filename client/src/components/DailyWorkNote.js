@@ -100,6 +100,8 @@ const DailyWorkNote = () => {
     const [searchReactTextArray, setSearchReactTextArray] = useState([]);
     const [searchReactStatus, setSearchReactStatus] = useState(false);
 
+    const [removeBedUseStatusToast, setRemoveBedUseStatusToast] = useState(false);
+
     useEffect(() => {
         getStudentData();
         getDisease();
@@ -108,6 +110,7 @@ const DailyWorkNote = () => {
         getReact();
         getBedCount();
         getDayWorkNote();   // bedCount때처럼 계속 상시적으로 안받아옴 확인 후 동일하게 상시 받아올 수 있도록 처리
+        getUsebedInfo();
     }, []);
 
     // useEffect(() => {
@@ -269,6 +272,81 @@ const DailyWorkNote = () => {
         setReactItemData(reactItemList);
     }
 
+    const getUsebedInfo = () => {
+        if(user) {
+            axios.get('http://localhost:8000/getUseBed', {
+                params : {
+                    userId : user.userId,
+                    userName : user.userName,
+                    schoolName : user.schoolName
+                }
+            }).then((response) => {
+                const today = Moment().format('YYYY-MM-DD').toString();
+                if(response.data.length > 0) {
+                    for(let i = 0; i < response.data.length; i++) {
+                        if(response.data[i].registDate == today && JSON.parse(response.data[i].useStatus)) {
+                            const bedBox = document.getElementById('bed' + response.data[i].bedNumber);
+                            if(bedBox) {
+                                const useStatusTag = bedBox.getElementsByTagName('span')['bedUseStatus'];
+                                // 여기서 에러 나고 있음 (빈 침상에 넣을 방법이랑 사용해제 방안 구상해야함)
+                                useStatusTag.setAttribute('class', 'tag is-info');
+                                useStatusTag.setHTML(response.data[i].targetStudent);
+                                bedBox.childNodes[1].style.color = 'lightblue';
+                                bedBox.childNodes[2].disabled = false;
+                                bedBox.style.border = '1px solid lightblue';
+
+                                let targetStudent = '';
+                                let bedStartTime = '';
+                                let bedEndTime = '';
+                                let registDate = '';
+                                let bedNumber = '';
+                                let useStatus = '';
+
+                                if(useStatusTag) {
+                                    if(response.data[i].targetStudent == useStatusTag.textContent) {
+                                        targetStudent = response.data[i].targetStudent;
+                                        bedStartTime = response.data[i].bedStartTime;
+                                        bedEndTime = response.data[i].bedEndTime;
+                                        registDate = response.data[i].registDate;
+                                        bedNumber = response.data[i].bedNumber;
+                                        useStatus = response.data[i].useStatus;
+                                    }
+                                }
+
+                                bedBox.childNodes[2].addEventListener('click', () => { removeBedUseStatus(targetStudent, bedStartTime, bedEndTime, registDate, bedNumber, useStatus) });
+                            }
+                        }
+
+                    }
+                }
+            });
+        }
+    }
+
+    const removeBedUseStatus = (targetStudent, bedStartTime, bedEndTime, registDate, bedNumber, useStatus) => {
+        if(user && targetStudent.length > 0) {
+            const time = Moment().format('HH:mm');
+            
+            axios.post('http://localhost:8000/updateUseBedStatus', {
+                userId : user.userId,
+                userName : user.userName,
+                schoolName : user.schoolName,
+                targetStudent : targetStudent,
+                bedStartTime : bedStartTime,
+                bedEndTime : time,
+                registDate : registDate,
+                bedNumber : bedNumber,
+                useStatus : 'false'
+            }).then((response) => {
+                setRemoveBedUseStatusToast(true);
+                // 여기서 204 에러 발생 후 preflight 발생 처리 해야할 부분
+                // getUsebedInfo();
+            });
+
+            
+        }
+    }
+
     const GetDiseaseItems = () => {
         const registeredDiseaseItems = [];
         if(diseaseItemData.length > 0) {
@@ -370,7 +448,8 @@ const DailyWorkNote = () => {
                         });
                         // 등록 성공 Toast 출력
                         setRegistDiseaseSuccessToast(true);
-                        setInputText('');
+                        event.target.getElementsByTagName('input')['newDiseaseItem'].value = '';
+                        // setInputText('');
                     } catch (error) {
                         console.log(error);
                     }
@@ -389,7 +468,7 @@ const DailyWorkNote = () => {
         // 이미 등록된 문구 담을 Empty Array
         const registeredMedicineItems = [];
         // 현재 입력한 Input Text
-        const currentInputValue = event.target.getElementsByTagName('input')['medicineItem'].value;
+        const currentInputValue = event.target.getElementsByTagName('input')['newMedicineItem'].value;
         // 문구 상위에서 전체를 감싸고 있는 Form 하위의 Input 태그
         let medicineItems = event.target.getElementsByTagName('input');
         // [medicineItemData = Server에서 받아온 이미 등록되어 있는 문구] -> registeredMedicineItems에 담음
@@ -410,7 +489,8 @@ const DailyWorkNote = () => {
                         });
                         // 등록 성공 Toast 출력
                         setRegistMedicineSuccessToast(true);
-                        setInputText('');
+                        event.target.getElementsByTagName('input')['newMedicineItem'].value = '';
+                        // setInputText('');
                     } catch (error) {
                         console.log(error);
                     }
@@ -429,7 +509,7 @@ const DailyWorkNote = () => {
         // 이미 등록된 문구 담을 Empty Array
         const registeredTreatItems = [];
         // 현재 입력한 Input Text
-        const currentInputValue = event.target.getElementsByTagName('input')['treatItem'].value;
+        const currentInputValue = event.target.getElementsByTagName('input')['newTreatItem'].value;
         // 문구 상위에서 전체를 감싸고 있는 Form 하위의 Input 태그 
         let treatItems = event.target.getElementsByTagName('input');
         // [treatItemData = Server에서 받아온 이미 등록되어 있는 문구] -> registeredTreatItems에 담음
@@ -450,7 +530,8 @@ const DailyWorkNote = () => {
                         });
                         // 등록 성공 Toast 출력
                         setRegistTreatSuccessToast(true);
-                        setInputText('');
+                        event.target.getElementsByTagName('input')['newTreatItem'].value = '';
+                        // setInputText('');
                     }catch (error) {
                         console.log(error);
                     }
@@ -469,7 +550,7 @@ const DailyWorkNote = () => {
         // 이미 등록된 문구 담을 Empty Array
         const registeredReactItems = [];
         // 현재 입력한 Input Text
-        const currentInputValue = event.target.getElementsByTagName('input')['reactItem'].value;
+        const currentInputValue = event.target.getElementsByTagName('input')['newReactItem'].value;
         // 문구 상위에서 전체를 감싸고 있는 Form 하위의 Input 태그 
         let reactItems = event.target.getElementsByTagName('input');
         // [treatItemData = Server에서 받아온 이미 등록되어 있는 문구] -> registeredTreatItems에 담음
@@ -490,7 +571,8 @@ const DailyWorkNote = () => {
                         });
                         // 등록 성공 Toast 출력
                         setRegistReactSuccessToast(true);
-                        setInputText('');
+                        event.target.getElementsByTagName('input')['newReactItem'].value = '';
+                        // setInputText('');
                     }catch (error) {
                         console.log(error);
                     }
@@ -504,8 +586,9 @@ const DailyWorkNote = () => {
     }
 
     const inputTextHandler = (event) => {
+        event.preventDefault();
         const inputText = event.target.value;
-        setInputText(inputText);
+        // setInputText(inputText);
     } 
 
     const removeDiseaseItem = (event) => {
@@ -1193,6 +1276,7 @@ const DailyWorkNote = () => {
         const messageBox = [];
         
         getBedCount();
+        getUsebedInfo();
         
         if(bedCount) {
             if(bedCount > 0) {
@@ -1201,12 +1285,12 @@ const DailyWorkNote = () => {
                         bedBox.push(
                             <div key={i} id={'bed' + (i + 1)} className='box ml-2' style={{ float : 'left', padding : 10, paddingBottom : 0 }}>
                                 <div style={{ float : 'left', marginTop : 3 }}>
-                                    <span className='tag' id='bedUseStatus' style={{ margin : 'auto' }}>미사용중</span>
+                                    <span className='tag' id='bedUseStatus' usestatus='false' style={{ margin : 'auto' }}>미사용중</span>
                                 </div>
                                 <div style={{ float : 'left' }}>
                                     <span id={'bed' + (i + 1)}><FaBed style={{ fontSize : 20, marginLeft : 5, marginTop : 5 }}/></span>
                                 </div>
-                                <button disabled className='button is-small is-light ml-1' style={{ height : 20, marginTop : 5 }} status='notUse' onClick={handleBedUseStatus}>사용 해제</button>
+                                <button disabled className='button is-small is-light ml-1' style={{ height : 20, marginTop : 5 }} status='notUse'>사용 해제</button>
                             </div>
                         )
                     }else{
@@ -1218,7 +1302,7 @@ const DailyWorkNote = () => {
                                 <div style={{ float : 'left' }}>
                                     <span id={'bed' + (i + 1)}><FaBed style={{ fontSize : 20, marginLeft : 5, marginTop : 5 }}/></span>
                                 </div>
-                                <button disabled className='button is-small is-light ml-1' style={{ height : 20, marginTop : 5 }} status='notUse' onClick={handleBedUseStatus}>사용 해제</button>
+                                <button disabled className='button is-small is-light ml-1' style={{ height : 20, marginTop : 5 }} status='notUse'>사용 해제</button>
                             </div>
                         )
                     }
@@ -1264,36 +1348,36 @@ const DailyWorkNote = () => {
     // 아래 Function에서 침상 사용 등록 시 사용해제 버튼 활성화 시켜주고 is-danger로 클래스 바꿔줌
     const handleBedUseStatus = (event) => {
         event.preventDefault();
-
+        debugger
         // 수정 필요
 
-        const bedUseStatus = event.target.parentElement.children['bedUseStatus'];
-        const iconTag = event.target.parentElement.children[1];
-        const bedButton = event.target.parentElement.children[2];
+        // const bedUseStatus = event.target.parentElement.children['bedUseStatus'];
+        // const iconTag = event.target.parentElement.children[1];
+        // const bedButton = event.target.parentElement.children[2];
         
-        if(studentName) {
-            if(bedButton.getAttribute('status') == 'notUse') {
-                bedButton.setAttribute('status', 'use');
-                bedButton.className = 'button is-small is-danger is-light';
-                bedButton.innerHTML = '침상 미사용';
+        // if(studentName) {
+        //     if(bedButton.getAttribute('status') == 'notUse') {
+        //         bedButton.setAttribute('status', 'use');
+        //         bedButton.className = 'button is-small is-danger is-light';
+        //         bedButton.innerHTML = '침상 미사용';
 
-                bedUseStatus.children[0].className = 'tag is-info';
-                bedUseStatus.children[0].innerHTML = studentName;
+        //         bedUseStatus.children[0].className = 'tag is-info';
+        //         bedUseStatus.children[0].innerHTML = studentName;
                 
-                iconTag.style.color = 'lightblue';
+        //         iconTag.style.color = 'lightblue';
 
-                handleUseBedNotification();
-            }else{
-                bedButton.setAttribute('status', 'notUse');
-                bedButton.className = 'button is-small is-info is-light';
-                bedButton.innerHTML = '침상 사용';
+        //         handleUseBedNotification();
+        //     }else{
+        //         bedButton.setAttribute('status', 'notUse');
+        //         bedButton.className = 'button is-small is-info is-light';
+        //         bedButton.innerHTML = '침상 사용';
 
-                bedUseStatus.children[0].className = 'tag';
-                bedUseStatus.children[0].innerHTML = '미사용중';
+        //         bedUseStatus.children[0].className = 'tag';
+        //         bedUseStatus.children[0].innerHTML = '미사용중';
                 
-                iconTag.style.color = '';
-            }
-        }
+        //         iconTag.style.color = '';
+        //     }
+        // }
     }
 
     const handleBedSetting = (event) => {
@@ -1434,9 +1518,68 @@ const DailyWorkNote = () => {
                 getTargetWorkNote(); 
                 getDayWorkNote();
                 setWorkSubmitSuccessToast(true);
+
+                if(response.status == 200 && registDate) {
+                    if(user) {
+                        axios.get('http://localhost:8000/getUseBed', {
+                            params : {
+                                userId : user.userId,
+                                userName : user.userName,
+                                schoolName : user.schoolName
+                            }
+                        }).then((response) => {
+                            // 날이 지나면 침상사용 정보도 초기화 -> 같은 날에 등록된 침상 정보가 없는 경우에는 1번 침상에 세팅
+                            // let sameDateWorkNote = false;
+                            // for(let i = 0; i < response.data.length; i++) {
+                            //     if(response.data[i].registDate == registDate) 
+                            //         sameDateWorkNote = true;
+                            // }
+
+                            let possibleFirstBed = true;
+                            for(let i = 0; i < response.data.length; i++) {
+                                if(response.data[i].registDate == registDate && JSON.parse(response.data[i].useStatus)) {
+                                    possibleFirstBed = false;
+                                }
+                            }
+
+                            if(response.data.length == 0 || possibleFirstBed) {
+                                axios.post('http://localhost:8000/setUseBed', {
+                                    userId : user.userId,
+                                    userName : user.userName,
+                                    schoolName : user.schoolName,
+                                    targetStudent : targetName,
+                                    bedStartTime : selectedBedStartTime,
+                                    bedEndTime : selectedBedEndTime,
+                                    registDate : registDate,
+                                    bedNumber : '1',
+                                    useStatus : 'true'
+                                }).then((response) => {
+                                    getUsebedInfo();
+                                });
+                            }else{
+                                debugger
+                            }
+                        });
+                    }
+
+                    for(let i = 1; i <= bedCount; i++) {
+                        const bedBox = document.getElementById('bed' + i);
+                        const useStatusTag = bedBox.getElementsByTagName('span')['bedUseStatus'];
+                        const useStatus = JSON.parse(bedBox.getElementsByTagName('span')['bedUseStatus'].getAttribute('usestatus'));
+
+
+
+                        if(!useStatus) {
+                            useStatusTag.className = 'tag is-info';
+                            useStatusTag.textContent = targetName;
+                        }
+                    }
+                }
             });
         }
     }
+
+    const [bedBoxStatus, setBedBoxStatus] = useState([]);
 
     const diseaseCategory = ["감염병", "구강치아계", "근골격계", "비뇨생식기계", "소화기계", "순환기계", "안과계", "이비인후과계", "정신신경계", "호흡기계", "기타"];
 
@@ -1459,6 +1602,7 @@ const DailyWorkNote = () => {
         <div className="container mt-5" style={{display: 'flex', flexDirection: 'column', marginBottom : 50}}>
             {workSubmitSuccessToast && <Toast setToast={setWorkSubmitSuccessToast} text="작성하신 보건일지가 정상적으로 등록되었습니다."></Toast>}
             {workNoteNoNameToast && <Toast setToast={setWorkNoteNoNameToast} text="선택된 학생이 존재하지 않아 등록할 수 없습니다."></Toast>}
+            {removeBedUseStatusToast && <Toast setToast={setRemoveBedUseStatusToast} text="해당 침상 사용이 정상적으로 해제되었습니다."></Toast>}
             <div className= {diseaseModalshow ? 'modal is-active' : 'modal'}>
                 {toast && <Toast setToast={setToast} text="작성하지 않은 항목이 있습니다. 모든 항목을 작성 후 추가 항목을 생성하실 수 있습니다."></Toast>}
                 {registDiseaseSuccessToast && <Toast setToast={setRegistDiseaseSuccessToast} text="작성하신 증상명이 정상적으로 등록되었습니다."></Toast>}
@@ -1478,7 +1622,7 @@ const DailyWorkNote = () => {
                                     <div className='select is-small'>
                                         <GetDiseaseCategory/>
                                     </div>
-                                    <input className='input ml-2 newDiseaseItem' name='newDiseaseItem' onChange={inputTextHandler} value={inputText} type='text' placeholder='문구를 입력해주세요' style={{ height : 30, fontSize : 15 }}/>
+                                    <input className='input ml-2 newDiseaseItem' name='newDiseaseItem' onChange={inputTextHandler} type='text' placeholder='문구를 입력해주세요' style={{ height : 30, fontSize : 15 }}/>
                                 </div>
                             </ul>
                             <div style={{ display : 'flex', justifyContent : 'center', alignItems : 'center' }}>
@@ -1510,7 +1654,7 @@ const DailyWorkNote = () => {
                         <section className='modal-card-body' style={{ maxHeight : 300 }}>
                             <ul id='treatItemList'>
                                 <GetTreatItems/>
-                                <input className='input' name='treatItem' onChange={inputTextHandler} value={inputText} type='text' placeholder='문구를 입력해주세요' style={{ width : '100%', height : 30, fontSize : 15 }}/>
+                                <input className='input' name='newTreatItem' onChange={inputTextHandler} type='text' placeholder='문구를 입력해주세요' style={{ width : '100%', height : 30, fontSize : 15 }}/>
                             </ul>
                             <div style={{ display : 'flex', justifyContent : 'center', alignItems : 'center' }}>
                                 {/* <button className='button is-small' onClick={plusTreatItem}>항목 추가</button> */}
@@ -1541,7 +1685,7 @@ const DailyWorkNote = () => {
                         <section className='modal-card-body'>
                             <ul id='medicineItemList'>
                                 <GetMedicineItems/>
-                                <input className='input' name='medicineItem' onChange={inputTextHandler} value={inputText} type='text' placeholder='문구를 입력해주세요.' style={{ width : '100%', height : 30, fontSize : 15 }}/>
+                                <input className='input' name='newMedicineItem' onChange={inputTextHandler} type='text' placeholder='문구를 입력해주세요.' style={{ width : '100%', height : 30, fontSize : 15 }}/>
                             </ul>
                             <div style={{ display : 'flex', justifyContent : 'center', alignItems : 'center' }}>
                                 {/* <button className='button is-small' onClick={plusMedicineItem}>항목 추가</button> */}
@@ -1572,7 +1716,7 @@ const DailyWorkNote = () => {
                         <section className='modal-card-body'>
                             <ul id='reactItemList'>
                                 <GetReactItems/>
-                                <input className='input' name='reactItem' onChange={inputTextHandler} value={inputText} type='text' placeholder='문구를 입력해주세요.' style={{ width : '100%', height : 30, fontSize : 15 }}/>
+                                <input className='input' name='newReactItem' onChange={inputTextHandler} type='text' placeholder='문구를 입력해주세요.' style={{ width : '100%', height : 30, fontSize : 15 }}/>
                             </ul>
                             <div style={{ display : 'flex', justifyContent : 'center', alignItems : 'center' }}>
                                 {/* <button className='button is-small' onClick={plusMedicineItem}>항목 추가</button> */}
@@ -1619,7 +1763,7 @@ const DailyWorkNote = () => {
                 <div style={{ float : 'left'}}>
                     <BedBox/>
                 </div>
-                <div style={{ float : 'right', marginLeft : 'auto', marginTop : 10, marginBottom : 5 }}>
+                <div style={{ float : 'right',  marginTop : 10, marginBottom : 5, marginRight : -30 }}>
                     <button className='button is-small' onClick={handleBedSetting}>침상 수 설정</button>
                     <button className='button is-small ml-2'>학생별 보건일지</button>
                     <button className='button is-small ml-3'>기간별 보건일지</button>
@@ -1681,7 +1825,7 @@ const DailyWorkNote = () => {
                                 </div>
                                 <hr style={{ marginLeft : 10, marginRight : 10 }}/>
                                 <div style={{ height : '175px', overflowY : 'auto', marginBottom : 20 }}>
-                                    <table className='table' style={{ fontSize : 13, width : '95%', marginLeft : 10 }} >
+                                    <table className='table is-striped' style={{ fontSize : 13, width : '95%', marginLeft : 10 }} >
                                         <thead>
                                             <tr>
                                                 <th style={{ textAlign : 'center'}}>학년</th>
@@ -1698,6 +1842,11 @@ const DailyWorkNote = () => {
                                 <div style={{ margin : 'auto' }}>
                                     <button className='button is-small'>학생관리</button>
                                 </div>
+                            </div>
+                            <div className="panel" style={{ width : '50vh', marginTop : -10, height : '31.2vh', display : 'flex', flexDirection : 'column', borderRadius : 0 }}>
+                                <p className="panel-heading" style={{ fontSize : 15, borderRadius : 0 }}>
+                                    보건실 사용 요청 알람 내역
+                                </p>
                             </div>
                         </div>
                         
@@ -1763,7 +1912,7 @@ const DailyWorkNote = () => {
                                         </table>
                                     </div>
                                     <hr style={{ marginLeft : 10, marginRight : 10, marginBottom : 10 }}/>
-                                    <div style={{ display : 'inline-flex', width : '100%' }}>
+                                    <div className='mt-2' style={{ display : 'inline-flex', width : '100%' }}>
                                         <div id='diseaseDiv'>
                                             <nav className='panel ml-3 mb-3' style={{ width : '30vh', borderRadius : 0 }}>
                                                 <p className='panel-heading' style={{ fontSize : 15, padding : 3, borderRadius : 0 }}>
@@ -1797,7 +1946,7 @@ const DailyWorkNote = () => {
                                             </nav>
                                         </div>
                                     </div>
-                                    <div style={{ display : 'inline-flex' }}>
+                                    <div className='mb-3' style={{ display : 'inline-flex' }}>
                                         <div id='medicineDiv'>
                                             <nav className='panel ml-3 mb-3' style={{ width : '30vh', borderRadius : 0 }}>
                                                 <p className='panel-heading' style={{ fontSize : 15, padding : 3, borderRadius : 0 }}>
@@ -1845,6 +1994,7 @@ const DailyWorkNote = () => {
                                                         />
                                                         <button className='button is-small ml-1' style={{ marginTop : 6 }} onClick={selectCurrentTime}>현재시간 선택</button>
                                                         <span className='tag is-danger is-light ml-2' style={{ fontSize : 12, marginTop : -10 }}>종료시간</span>
+                                                        {/* 여기에 10분 단위로 Select Box 만들어줘서 선택해서 시간 입력되도록 하면 편할 듯 */}
                                                         <input className='input is-small ml-1'
                                                             id='bedEndTime'
                                                             type='time'
