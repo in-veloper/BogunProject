@@ -15,21 +15,24 @@ import Notification from "./components/Notification";
 import MedicalInfo from "./components/MedicalInfo";
 // import {Provider} from "./components/Context";
 import UserStore from "./store/User";
+import WorkStatusStore from "./store/WorkStatus";
 
 function App() {
   return (
       <UserStore>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={ <Login /> } />
-            <Route path="/register" element={ <Register /> } />
-            <Route path="/dashboard" element={ <> <Navbar /> <Dashboard /> <Footer /> </> } />
-              <Route path="/dailyWorkNote" element={ <> <Navbar/> <DailyWorkNote /> <Footer /> </> }></Route>
-            <Route path="/myPage" element={ <> <Navbar /> <MyPage /> <Footer /> </> }></Route>
-            <Route path="/calendar" element={ <> <Navbar /> <Notification /> <Calendar /> <Footer /> </> }></Route>
-            <Route path="/medicalInfo" element={ <> <Navbar /> <MedicalInfo /> <Footer /> </> }></Route>
-          </Routes>
-        </BrowserRouter>
+        <WorkStatusStore>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={ <Login /> } />
+              <Route path="/register" element={ <Register /> } />
+              <Route path="/dashboard" element={ <> <Navbar /> <Dashboard /> <Footer /> </> } />
+                <Route path="/dailyWorkNote" element={ <> <Navbar/> <DailyWorkNote /> <Footer /> </> }></Route>
+              <Route path="/myPage" element={ <> <Navbar /> <MyPage /> <Footer /> </> }></Route>
+              <Route path="/calendar" element={ <> <Navbar /> <Notification /> <Calendar /> <Footer /> </> }></Route>
+              <Route path="/medicalInfo" element={ <> <Navbar /> <MedicalInfo /> <Footer /> </> }></Route>
+            </Routes>
+          </BrowserRouter>
+        </WorkStatusStore>
       </UserStore>
   );
 }

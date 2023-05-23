@@ -10,19 +10,32 @@ import { useNavigate } from 'react-router-dom';
 import { FaAngleDown } from 'react-icons/fa';
 import { AiOutlinePlusSquare } from 'react-icons/ai';
 import { UserContext } from '../store/User';
+import { WorkStatusContext } from '../store/WorkStatus'; 
 
 const Navbar = () => {
     const [name, setName] = useState('');
     const [bookmarkData, setBookmarkData] = useState([]);
+    const [workStatus, setWorkStatus] = useState('working');    // [값 참고] -> 1 : 재중, 2 : 부재, 3 : 휴가
+    const [initWorkStatus, setInitWorkStatus] = useState(true);
+    const [currentWorkStatus, setCurrentWorkStatus] = useState('');
+
     const navigate = useNavigate();
     
     useEffect(() => {
         getBookmarkData();
+        // getInitWorkStatus();
+        // getWorkStatus();
     }, []);
 
     const context = useContext(UserContext);
     if(context && name.length == 0) {
         setName(context.userName);
+    }
+
+    const workStatusContext = useContext(WorkStatusContext);
+    // debugger
+    if(workStatusContext) {
+        // debugger
     }
 
     const Logout = async () => {
@@ -33,7 +46,50 @@ const Navbar = () => {
             console.log(error);
         }
     }
+
+    // const getInitWorkStatus = () => {
+    //     if(initWorkStatus && context) {
+    //         axios.post('http://localhost:8000/setWorkStatus', {
+    //             userId : context.userId,
+    //             userName : context.userName,
+    //             schoolName : context.schoolName,
+    //             currentWorkStatus : 'working'
+    //         });
+
+    //         setInitWorkStatus(false);
+    //     }
+    // }
     
+    // const getWorkStatus = () => {
+    //     if(!initWorkStatus && context) {
+    //         axios.get('http://localhost:8000/getWorkStatus', {
+    //             params : {
+    //                 userId : context.userId,
+    //                 userName : context.userName,
+    //                 schoolName : context.schoolName
+    //             }
+    //         }).then((response) => {
+    //             const currentWorkStatus = response.data[0].currentWorkStatus;
+    //             setCurrentWorkStatus(currentWorkStatus);
+    //         });
+    //     }
+    // }
+
+    // const updateWorkStatus = (selectedWorkStatus) => {
+    //     if(!initWorkStatus && context && (workStatus != currentWorkStatus)) {
+    //         // 여기서부터 진행하면 됨(기존의 Row를 업데이트하는 것이 아닌 하나씩 추가되고 있음 -> 처리 필요)
+    //         axios.post('http://localhost:8000/updateWorkStatus', {
+    //             userId : context.userId,
+    //             userName : context.userName,
+    //             schoolName : context.schoolName,
+    //             currentWorkStatus : selectedWorkStatus
+    //         }).then((response) => {
+    //             setWorkStatus(selectedWorkStatus);
+    //         });
+
+    //     }
+    // }
+
     const goDailyWorkNote = async () => {
         navigate("/dailyWorkNote");
     }
@@ -195,6 +251,64 @@ const Navbar = () => {
         }
     }
 
+    const WorkStatusButtons = () => {
+        if(workStatus == 'working') {
+            return (
+                <div className='buttons has-addons is-right' onClick={handleWorkStatus}>
+                    <button className='button is-small is-info is-selected' name='working'>재실</button>
+                    <button className='button is-small' name='away'>부재</button>
+                    <button className='button is-small' name='vacation'>휴가</button>
+                </div>
+            )
+        }else if(workStatus == 'away') {
+            return (
+                <div className='buttons has-addons is-right' onClick={handleWorkStatus}>
+                    <button className='button is-small' name='working'>재실</button>
+                    <button className='button is-small is-info is-selected' name='away'>부재</button>
+                    <button className='button is-small' name='vacation'>휴가</button>
+                </div>
+            )
+        }else if(workStatus == 'vacation') {
+            return (
+                <div className='buttons has-addons is-right' onClick={handleWorkStatus}>
+                    <button className='button is-small' name='working'>재실</button>
+                    <button className='button is-small' name='away'>부재</button>
+                    <button className='button is-small is-info is-selected' name='vacation'>휴가</button>
+                </div>
+            )
+        }
+    }
+
+    const handleWorkStatus = (event) => {
+        event.preventDefault();
+
+        const target = event.target;
+        const workStatus = event.target.name;
+        const workingButton = event.target.parentElement.childNodes[0]
+        const awayButton = event.target.parentElement.childNodes[1];
+        const vacationButton = event.target.parentElement.childNodes[2];
+
+        // 선택하고 남은 잔여 버튼들 
+        if(workStatus == 'working') {
+            target.className = 'button is-small is-info';
+            awayButton.className = 'button is-small';
+            vacationButton.className = 'button is-small';
+        }else if(workStatus == 'away') {
+            target.className = 'button is-small is-info';
+            workingButton.className = 'button is-small';
+            vacationButton.className = 'button is-small';
+            if(currentWorkStatus != workStatus) {
+                updateWorkStatus(workStatus);
+            }
+        }else if(workStatus == 'vacation') {
+            target.className = 'button is-small is-info';
+            workingButton.className = 'button is-small';
+            awayButton.className = 'button is-small';
+        }
+
+        //Work Status 값 setWorkStatus Function 활용하여 세팅
+    }
+
     return (
         <nav className="navbar" style={{ borderBottom : '1px solid lightgrey'}} role="navigation" aria-label="main navigation">
             <div className="container">
@@ -279,8 +393,16 @@ const Navbar = () => {
                             </div>
                         </form>
                     </div>
- 
+
                     <div className="navbar-end">
+                        <div className='navbar-item' style={{ fontSize : 13 }}>
+                            <WorkStatusButtons />
+                            {/* <div className='buttons has-addons is-right'>
+                                <button className='button is-small'>재실</button>
+                                <button className='button is-small'>부재</button>
+                                <button className='button is-small'>휴가</button>
+                            </div> */}
+                        </div>
                         <div className="navbar-item" style={{ fontSize : 13 }}>
                             <span style={{ marginRight: 20, color: 'gray' }}><b><u><a href='/myPage' style={{color: 'gray'}}>{name} 보건교사님</a></u></b></span>
                             <div className="buttons are-small">
@@ -296,4 +418,4 @@ const Navbar = () => {
     )
 }
 
-export default Navbar
+export default Navbar;

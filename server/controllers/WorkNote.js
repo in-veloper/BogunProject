@@ -100,7 +100,7 @@ export const setWorkNote = async(req, res) => {
 }
 
 export const updateWorkNote = async(req, res) => {
-    const {userId, userName, schoolName, grade, classNum, num, gender, studentName, disease, treat, medicine, reactThing, bedStartTime, bedEndTime, registDate } = req.body;
+    const { userId, userName, schoolName, grade, classNum, num, gender, studentName, disease, treat, medicine, reactThing, bedStartTime, bedEndTime, registDate } = req.body;
 
     try {
         await WorkNote.update({
@@ -126,6 +126,29 @@ export const updateWorkNote = async(req, res) => {
 
         res.json({ msg : "Update WorkNote Successful" });
 
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const updateUseBedWorkNote = async(req, res) => {
+    const { userId, userName, schoolName, studentName, bedStartTime, bedEndTime, registDate } = req.body;
+
+    try {
+        await WorkNote.update({
+            bedEndTime : bedEndTime
+        },{
+            where : {
+                userId : userId,
+                userName : userName,
+                schoolName : schoolName,
+                studentName : studentName,
+                bedStartTime : bedStartTime,
+                registDate : registDate
+            }
+        });
+
+        res.json({ msg : "Update Use Bed WorkNote Successful" });
     } catch (error) {
         console.log(error);
     }

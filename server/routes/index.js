@@ -11,8 +11,9 @@ import { getTreatItems, addTreatItem, removeTreatItem } from "../controllers/Tre
 import { getMedicineItems, addMedicineItem, removeMedicineItem } from "../controllers/MedicineItem.js";
 import { getReactItems, addReactItem, removeReactItem } from "../controllers/ReactItem.js";
 import { getBedCount, setBedCount, updateBedCount } from "../controllers/BedSetting.js";
-import { getWorkNote, getTargetWorkNote, getDayWorkNote, setWorkNote, updateWorkNote, removeWorkNote } from "../controllers/WorkNote.js";
+import { getWorkNote, getTargetWorkNote, getDayWorkNote, setWorkNote, updateWorkNote, updateUseBedWorkNote, removeWorkNote } from "../controllers/WorkNote.js";
 import { getUseBed, setUseBed, updateUseBedStatus, removeUseBed } from "../controllers/UseBed.js";
+import { getWorkStatus, setWorkStatus, updateWorkStatus } from "../controllers/WorkStatus.js";
 
 const router = express.Router();
 
@@ -60,6 +61,7 @@ router.get('/getTargetWorkNote', getTargetWorkNote);
 router.get('/getDayWorkNote', getDayWorkNote);
 router.post('/setWorkNote', setWorkNote);
 router.post('/updateWorkNote', updateWorkNote);
+router.post('/updateUseBedWorkNote', updateUseBedWorkNote);
 router.post('/removeWorkNote', removeWorkNote);
 
 router.get('/getUseBed', getUseBed);
@@ -67,5 +69,8 @@ router.post('/setUseBed', setUseBed);
 router.post('/updateUseBedStatus',updateUseBedStatus);
 router.post('/removeUseBed', removeUseBed);
 
+router.get('/getWorkStatus', getWorkStatus);
+router.post('/setWorkStatus', setWorkStatus);
+router.post('/updateWorkStatus', updateWorkStatus);
 
 export default router;  

@@ -6,7 +6,7 @@ export const UserContext = createContext();
 
 const UserStore = (props) => {
     const [user, setUser] = useState(null);
-
+    
     const getUser = async () => {
         try {
             const response = await axios.get('http://localhost:8000/token');

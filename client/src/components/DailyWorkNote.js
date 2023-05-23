@@ -22,6 +22,7 @@ import './style/toggleButton.css';
 import Moment from 'moment';
 import "moment/locale/ko";
 import { UserContext } from '../store/User.js';
+import { WorkStatusContext } from '../store/WorkStatus.js';
 
 const DailyWorkNote = () => {
 
@@ -101,6 +102,7 @@ const DailyWorkNote = () => {
     const [searchReactStatus, setSearchReactStatus] = useState(false);
 
     const [removeBedUseStatusToast, setRemoveBedUseStatusToast] = useState(false);
+    const [fullUsedBedToast, setFullUsedBedToast] = useState(false);
 
     useEffect(() => {
         getStudentData();
@@ -129,6 +131,12 @@ const DailyWorkNote = () => {
     if(context && !user) {
         setUser(context);
     }
+
+    // const workContext = useContext(WorkStatusContext);
+    // debugger
+    // if(workContext) {
+    //     debugger
+    // }
 
     const handleDiseaseModalShow = (event) => {
         event.preventDefault();
@@ -339,8 +347,22 @@ const DailyWorkNote = () => {
                 useStatus : 'false'
             }).then((response) => {
                 setRemoveBedUseStatusToast(true);
+                // getDayWorkNote();
                 // 여기서 204 에러 발생 후 preflight 발생 처리 해야할 부분
                 // getUsebedInfo();
+            });
+
+            // 바로 반영되어 새로고침되지 않고 있음 (확인 필요)
+            axios.post('http://localhost:8000/updateUseBedWorkNote', {
+                userId : user.userId,
+                userName : user.userName,
+                schoolName : user.schoolName,
+                studentName : targetStudent,
+                bedStartTime : bedStartTime,
+                bedEndTime : time,
+                registDate : registDate
+            }).then((response) => {
+
             });
 
             
@@ -1536,9 +1558,11 @@ const DailyWorkNote = () => {
                             // }
 
                             let possibleFirstBed = true;
+                            let alreadyUsedBed = 0;
                             for(let i = 0; i < response.data.length; i++) {
                                 if(response.data[i].registDate == registDate && JSON.parse(response.data[i].useStatus)) {
                                     possibleFirstBed = false;
+                                    alreadyUsedBed++;
                                 }
                             }
 
@@ -1557,6 +1581,24 @@ const DailyWorkNote = () => {
                                     getUsebedInfo();
                                 });
                             }else{
+                                if(alreadyUsedBed < bedCount) {
+                                    axios.post('http://localhost:8000/setUseBed', {
+                                        userId : user.userId,
+                                        userName : user.userName,
+                                        schoolName : user.schoolName,
+                                        targetStudent : targetName,
+                                        bedStartTime : selectedBedStartTime,
+                                        bedEndTime : selectedBedEndTime,
+                                        registDate : registDate,
+                                        bedNumber : (Number(alreadyUsedBed) + 1).toString(),
+                                        useStatus : 'true'
+                                    }).then((response) => {
+                                        getUsebedInfo();
+                                    });
+                                }else{
+                                    setFullUsedBedToast(true);
+                                    // 안내 Toast 후 Return 시켜 등록되지 않도록 처리 필요
+                                }
                                 debugger
                             }
                         });
@@ -1603,6 +1645,7 @@ const DailyWorkNote = () => {
             {workSubmitSuccessToast && <Toast setToast={setWorkSubmitSuccessToast} text="작성하신 보건일지가 정상적으로 등록되었습니다."></Toast>}
             {workNoteNoNameToast && <Toast setToast={setWorkNoteNoNameToast} text="선택된 학생이 존재하지 않아 등록할 수 없습니다."></Toast>}
             {removeBedUseStatusToast && <Toast setToast={setRemoveBedUseStatusToast} text="해당 침상 사용이 정상적으로 해제되었습니다."></Toast>}
+            {fullUsedBedToast && <Toast setToast={setFullUsedBedToast} text="모든 침상이 사용중이므로 침상을 사용할 수 없습니다."></Toast>}
             <div className= {diseaseModalshow ? 'modal is-active' : 'modal'}>
                 {toast && <Toast setToast={setToast} text="작성하지 않은 항목이 있습니다. 모든 항목을 작성 후 추가 항목을 생성하실 수 있습니다."></Toast>}
                 {registDiseaseSuccessToast && <Toast setToast={setRegistDiseaseSuccessToast} text="작성하신 증상명이 정상적으로 등록되었습니다."></Toast>}
@@ -1763,7 +1806,7 @@ const DailyWorkNote = () => {
                 <div style={{ float : 'left'}}>
                     <BedBox/>
                 </div>
-                <div style={{ float : 'right',  marginTop : 10, marginBottom : 5, marginRight : -30 }}>
+                <div style={{ float : 'right',  marginTop : 10, marginBottom : 5 }}>
                     <button className='button is-small' onClick={handleBedSetting}>침상 수 설정</button>
                     <button className='button is-small ml-2'>학생별 보건일지</button>
                     <button className='button is-small ml-3'>기간별 보건일지</button>
@@ -1853,7 +1896,7 @@ const DailyWorkNote = () => {
                         <div className='tile is-child' style={{ padding : 0 }}>
                             {/* <form onSubmit={onWorkNoteSubmit}> */}
                             <form>
-                                <div className='panel' id='workNotePage' style={{ height : '98vh', width : '94vh', borderRadius : 0 }}>
+                                <div className='panel' id='workNotePage' style={{ height : '98vh', width : '87vh', borderRadius : 0 }}>
                                     <p className='panel-heading' style={{ fontSize : 15, borderRadius : 0 }}>
                                         보건일지 작성
                                     </p>
@@ -1897,7 +1940,7 @@ const DailyWorkNote = () => {
                                         </div>
                                     </div>
                                     <div style={{ height : 151, overflowY : 'auto'}}>
-                                        <table className='table is-striped is-narrow is-hoverable ml-4' style={{ width : '96.5%', fontSize : 12 }}>
+                                        <table className='table is-striped is-narrow is-hoverable ml-3' style={{ width : '97.5%', fontSize : 12 }}>
                                             <thead>
                                                 <tr>
                                                     <th style={{ textAlign : 'center' }}>등록일</th>
@@ -1914,7 +1957,7 @@ const DailyWorkNote = () => {
                                     <hr style={{ marginLeft : 10, marginRight : 10, marginBottom : 10 }}/>
                                     <div className='mt-2' style={{ display : 'inline-flex', width : '100%' }}>
                                         <div id='diseaseDiv'>
-                                            <nav className='panel ml-3 mb-3' style={{ width : '30vh', borderRadius : 0 }}>
+                                            <nav className='panel ml-2 mb-3' style={{ width : '28vh', borderRadius : 0 }}>
                                                 <p className='panel-heading' style={{ fontSize : 15, padding : 3, borderRadius : 0 }}>
                                                     증상
                                                 </p>
@@ -1930,7 +1973,7 @@ const DailyWorkNote = () => {
                                             </nav>
                                         </div>
                                         <div id='treatDiv'>
-                                            <nav className='panel ml-3 mb-3' style={{ width : '60vh', borderRadius : 0 }}>
+                                            <nav className='panel ml-3 mb-3' style={{ width : '56vh', borderRadius : 0 }}>
                                                 <p className='panel-heading' style={{ fontSize : 15, padding : 3, borderRadius : 0 }}>
                                                     처치사항
                                                 </p>
@@ -1948,7 +1991,7 @@ const DailyWorkNote = () => {
                                     </div>
                                     <div className='mb-3' style={{ display : 'inline-flex' }}>
                                         <div id='medicineDiv'>
-                                            <nav className='panel ml-3 mb-3' style={{ width : '30vh', borderRadius : 0 }}>
+                                            <nav className='panel ml-2 mb-3' style={{ width : '28vh', borderRadius : 0 }}>
                                                 <p className='panel-heading' style={{ fontSize : 15, padding : 3, borderRadius : 0 }}>
                                                     투약사항
                                                 </p>
@@ -1965,7 +2008,7 @@ const DailyWorkNote = () => {
                                         </div>
                                         <div>
                                             <div id='reactDiv'>
-                                                <nav className='panel ml-3' style={{ width : '60vh', borderRadius : 0 }}>
+                                                <nav className='panel ml-3' style={{ width : '56vh', borderRadius : 0 }}>
                                                     <p className='panel-heading' style={{ fontSize : 15, padding : 3, borderRadius : 0 }}>
                                                         조치사항
                                                     </p>
@@ -1981,7 +2024,7 @@ const DailyWorkNote = () => {
                                                 </nav>
                                             </div>
                                             <div className='mb-3 mt-3' id='bedTimeDiv'>
-                                                <nav className='panel ml-3 mb-3 mt-2' style={{ width : '60vh', borderRadius : 0 }}>
+                                                <nav className='panel ml-3 mb-3 mt-2' style={{ width : '56vh', borderRadius : 0 }}>
                                                     <p className='panel-heading' style={{ fontSize : 15, padding : 3, borderRadius : 0 }}>
                                                         침상안정
                                                     </p>
