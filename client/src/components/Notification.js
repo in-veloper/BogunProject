@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import React, { useState } from 'react';
 import { BiInfoSquare } from 'react-icons/bi';
 

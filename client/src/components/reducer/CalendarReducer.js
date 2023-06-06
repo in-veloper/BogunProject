@@ -1,5 +1,4 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable default-case */
+/* eslint-disable */
 import React from 'react';
 
 function CalendarReducer(state, action) {

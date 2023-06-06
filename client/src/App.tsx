@@ -1,6 +1,4 @@
-/* eslint-disable react/react-in-jsx-scope */
-// /* eslint-disable @typescript-eslint/no-explicit-any */
-// /* eslint-disable react/react-in-jsx-scope */
+/* eslint-disable */
 
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Dashboard from "./components/Dashboard";

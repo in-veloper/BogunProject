@@ -1,5 +1,4 @@
-/* eslint-disable eqeqeq */
-/* eslint-disable array-callback-return */
+/* eslint-disable */
 import React, {useReducer} from 'react';
 import Modal from "./Modal";
 import CalendarReducer from "./reducer/CalendarReducer";

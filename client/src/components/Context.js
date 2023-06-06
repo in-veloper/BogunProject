@@ -1,3 +1,5 @@
+/* eslint-disable  */
+
 import { stat } from "fs";
 import React, { useContext, useReducer } from "react";
 

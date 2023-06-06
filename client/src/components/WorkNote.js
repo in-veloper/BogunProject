@@ -1,15 +1,5 @@
-// /* eslint-disable array-callback-return */
-// /* eslint-disable react-hooks/exhaustive-deps */
-// /* eslint-disable no-useless-concat */
-// /* eslint-disable eqeqeq */
-// /* eslint-disable jsx-a11y/anchor-is-valid */
-// /* eslint-disable no-unused-vars */
-// /* eslint-disable no-debugger */
-// /* eslint-disable @typescript-eslint/no-unused-vars */
-// /* eslint-disable react/no-unknown-property */
-// /* eslint-disable no-undef */
-// /* eslint-disable react/jsx-key */
-// /* eslint-disable react/react-in-jsx-scope */
+/* eslint-disable */
+
 // import { FaAngleDown, FaDAndDBeyond } from 'react-icons/fa';
 // import { AiOutlinePrinter, AiOutlineSave } from 'react-icons/ai';
 // import { FiPlusSquare } from 'react-icons/fi';

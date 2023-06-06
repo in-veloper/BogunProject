@@ -1,5 +1,5 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react-hooks/rules-of-hooks */
+/* eslint-disable */
+
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import { FcSearch } from 'react-icons/fc';

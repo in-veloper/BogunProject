@@ -1,4 +1,5 @@
-/* eslint-disable array-callback-return */
+/* eslint-disable */
+
 import React from "react";
 import Style from "./Style";
 

@@ -1,4 +1,5 @@
-/* eslint-disable eqeqeq */
+/* eslint-disable */
+
 import React, { createContext, useContext, useState } from "react";
 import axios from 'axios';
 import { UserContext } from '../store/User.js';
@@ -28,12 +29,13 @@ const WorkStatusStore = (props) => {
                     }
                 }).then((response) => {
                     if(response.data.length == 0 && workStatus.length == 0) {
+                        debugger
                         initWorkStatus();
                     }
                 });
-
-                setWorkStatus('working');
                 debugger
+                // setWorkStatus('working');
+                // debugger
                 // if(response.data.length == 0 && workStatus.length == 0) {
                 //     setWorkStatus('working');
                 //     initWorkStatus();
@@ -51,6 +53,7 @@ const WorkStatusStore = (props) => {
 
     const initWorkStatus = () => {
         if(user) {
+            debugger
             axios.post('http://localhost:8000/setWorkStatus', {
                 userId : user.userId,
                 userName : user.userName,

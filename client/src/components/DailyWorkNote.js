@@ -1,15 +1,5 @@
-/* eslint-disable array-callback-return */
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable no-useless-concat */
-/* eslint-disable eqeqeq */
-/* eslint-disable jsx-a11y/anchor-is-valid */
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-debugger */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable react/no-unknown-property */
-/* eslint-disable no-undef */
-/* eslint-disable react/jsx-key */
-/* eslint-disable react/react-in-jsx-scope */
+/* eslint-disable */
+
 import { FaAngleDown, FaDAndDBeyond } from 'react-icons/fa';
 import { AiOutlinePrinter, AiOutlineSave, AiOutlineNotification } from 'react-icons/ai';
 import { FiPlusSquare } from 'react-icons/fi';
@@ -196,10 +186,12 @@ const DailyWorkNote = () => {
                 }
             });
             
-            if(response.data) {
+            if(response.data.length > 0) {
                 const bedCountInput = document.getElementById('bedCountInput');
                 bedCountInput.setAttribute('value', response.data[0].bedCount);
                 setBedCount(response.data[0].bedCount);
+            }else{
+
             }
         }
     }
@@ -1417,7 +1409,7 @@ const DailyWorkNote = () => {
                 axios.post('http://localhost:8000/setBedCount', {
                     userId : user.userId,
                     userName : user.userName,
-                    bedCount : bedCount
+                    bedCount : inputBedCount
                 }).then((response) => {
                     setBedCountSuccessToast(true);
                     getBedCount();

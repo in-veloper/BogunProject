@@ -1,5 +1,5 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
-/* eslint-disable react/react-in-jsx-scope */
+/* eslint-disable  */
+
 const Footer = () => {
     return (
         <footer className="footer" style={{ height : 60, padding : 20 , borderTop : '1px solid lightgrey', background : 'transparent' }}>

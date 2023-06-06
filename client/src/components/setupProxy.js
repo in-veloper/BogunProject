@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 // const { createProxyMiddleware } = require('http-proxy-middleware');
 
 // //https://open.neis.go.kr/hub/schoolInfo

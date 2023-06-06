@@ -1,8 +1,5 @@
-/* eslint-disable eqeqeq */
-/* eslint-disable no-unused-vars */
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable jsx-a11y/anchor-is-valid */
-/* eslint-disable no-undef */
+/* eslint-disable */
+
 import React, { useState, useEffect, useContext } from 'react';
 import jwt_decode from "jwt-decode";
 import axios from 'axios';

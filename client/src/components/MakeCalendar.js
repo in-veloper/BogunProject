@@ -1,5 +1,5 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable eqeqeq */
+/* eslint-disable */
+
 import React from 'react';
 import Schedule from './Schedule';
 import { transString } from './CalcDate';

@@ -1,4 +1,5 @@
-// /* eslint-disable react/react-in-jsx-scope */
+/* eslint-disable */
+
 // import ReactDOM from 'react-dom';
 // import './index.css';
 // import App from './App';

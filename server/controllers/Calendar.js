@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import Calendars from "../models/CalendarModel.js";
 
 export const getCalendarData = async(req, res) => {

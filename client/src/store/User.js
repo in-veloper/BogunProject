@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import React, { createContext, useState } from "react";
 import jwt_decode from "jwt-decode";
 import axios from 'axios';

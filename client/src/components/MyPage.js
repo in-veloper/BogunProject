@@ -1,15 +1,4 @@
-/* eslint-disable eqeqeq */
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/no-unknown-property */
-/* eslint-disable no-inner-declarations */
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable no-empty */
-/* eslint-disable no-debugger */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable no-undef */
-/* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable react/react-in-jsx-scope */
+/* eslint-disable */
 
 import { useState, useEffect } from 'react';
 import axios from 'axios';

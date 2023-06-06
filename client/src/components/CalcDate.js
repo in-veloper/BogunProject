@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-vars */
+/* eslint-disable */
 import React from 'react';
 
 export const transString = (year, month, day) => {

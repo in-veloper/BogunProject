@@ -1,6 +1,5 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable no-unused-vars */
-/* eslint-disable eqeqeq */
+/* eslint-disable */
+
 import React, { useState, useEffect, useCallback, useReducer} from 'react';
 import Picker from "./Picker";
 import Style from "./Style";

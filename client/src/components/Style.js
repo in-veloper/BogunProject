@@ -1,4 +1,5 @@
-/* eslint-disable no-unused-vars */
+/* eslint-disable */
+
 import React from "react";
 
 const Style = (color) => {

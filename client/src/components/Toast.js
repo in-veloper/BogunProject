@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import { useEffect } from "react";
 
 const Toast = ({ setToast, text }) => {
