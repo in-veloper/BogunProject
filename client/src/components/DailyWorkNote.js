@@ -1859,7 +1859,7 @@ const DailyWorkNote = () => {
                                     <button className='button is-small ml-2' onClick={studentSearchReset}>초기화</button>
                                 </div>
                                 <hr style={{ marginLeft : 10, marginRight : 10 }}/>
-                                <div style={{ height : '175px', overflowY : 'auto', marginBottom : 20 }}>
+                                <div style={{ height : '200px', overflowY : 'auto', marginBottom : 20 }}>
                                     <table className='table is-striped' style={{ fontSize : 13, width : '95%', marginLeft : 10 }} >
                                         <thead>
                                             <tr>
@@ -1878,7 +1878,7 @@ const DailyWorkNote = () => {
                                     <button className='button is-small'>학생관리</button>
                                 </div>
                             </div>
-                            <div className="panel" style={{ width : '50vh', marginTop : -10, height : '31.2vh', display : 'flex', flexDirection : 'column', borderRadius : 0 }}>
+                            <div className="panel" style={{ width : '50vh', marginTop : -10, height : '33.3vh', display : 'flex', flexDirection : 'column', borderRadius : 0 }}>
                                 <p className="panel-heading" style={{ fontSize : 15, borderRadius : 0 }}>
                                     보건실 사용 요청 알람 내역
                                 </p>
@@ -1888,7 +1888,7 @@ const DailyWorkNote = () => {
                         <div className='tile is-child' style={{ padding : 0 }}>
                             {/* <form onSubmit={onWorkNoteSubmit}> */}
                             <form>
-                                <div className='panel' id='workNotePage' style={{ height : '98vh', width : '87vh', borderRadius : 0 }}>
+                                <div className='panel' id='workNotePage' style={{ height : '100vh', width : '87vh', borderRadius : 0 }}>
                                     <p className='panel-heading' style={{ fontSize : 15, borderRadius : 0 }}>
                                         보건일지 작성
                                     </p>
@@ -1931,7 +1931,7 @@ const DailyWorkNote = () => {
                                             />
                                         </div>
                                     </div>
-                                    <div style={{ height : 151, overflowY : 'auto'}}>
+                                    <div style={{ height : 190, overflowY : 'auto'}}>
                                         <table className='table is-striped is-narrow is-hoverable ml-3' style={{ width : '97.5%', fontSize : 12 }}>
                                             <thead>
                                                 <tr>
@@ -1949,7 +1949,7 @@ const DailyWorkNote = () => {
                                     <hr style={{ marginLeft : 10, marginRight : 10, marginBottom : 10 }}/>
                                     <div className='mt-2' style={{ display : 'inline-flex', width : '100%' }}>
                                         <div id='diseaseDiv'>
-                                            <nav className='panel ml-2 mb-3' style={{ width : '28vh', borderRadius : 0 }}>
+                                            <nav className='panel ml-2 mb-3' style={{ width : '24vh', borderRadius : 0 }}>
                                                 <p className='panel-heading' style={{ fontSize : 15, padding : 3, borderRadius : 0 }}>
                                                     증상
                                                 </p>
@@ -1965,7 +1965,7 @@ const DailyWorkNote = () => {
                                             </nav>
                                         </div>
                                         <div id='treatDiv'>
-                                            <nav className='panel ml-3 mb-3' style={{ width : '56vh', borderRadius : 0 }}>
+                                            <nav className='panel ml-3 mb-3' style={{ width : '60vh', borderRadius : 0 }}>
                                                 <p className='panel-heading' style={{ fontSize : 15, padding : 3, borderRadius : 0 }}>
                                                     처치사항
                                                 </p>
@@ -1981,9 +1981,9 @@ const DailyWorkNote = () => {
                                             </nav>
                                         </div>
                                     </div>
-                                    <div className='mb-3' style={{ display : 'inline-flex' }}>
+                                    <div style={{ display : 'inline-flex' }}>
                                         <div id='medicineDiv'>
-                                            <nav className='panel ml-2 mb-3' style={{ width : '28vh', borderRadius : 0 }}>
+                                            <nav className='panel ml-2 mb-3' style={{ width : '24vh', borderRadius : 0 }}>
                                                 <p className='panel-heading' style={{ fontSize : 15, padding : 3, borderRadius : 0 }}>
                                                     투약사항
                                                 </p>
@@ -2000,7 +2000,7 @@ const DailyWorkNote = () => {
                                         </div>
                                         <div>
                                             <div id='reactDiv'>
-                                                <nav className='panel ml-3' style={{ width : '56vh', borderRadius : 0 }}>
+                                                <nav className='panel ml-3' style={{ width : '60vh', borderRadius : 0 }}>
                                                     <p className='panel-heading' style={{ fontSize : 15, padding : 3, borderRadius : 0 }}>
                                                         조치사항
                                                     </p>
@@ -2016,7 +2016,7 @@ const DailyWorkNote = () => {
                                                 </nav>
                                             </div>
                                             <div className='mb-3 mt-3' id='bedTimeDiv'>
-                                                <nav className='panel ml-3 mb-3 mt-2' style={{ width : '56vh', borderRadius : 0 }}>
+                                                <nav className='panel ml-3 mb-3 mt-2' style={{ width : '60vh', borderRadius : 0 }}>
                                                     <p className='panel-heading' style={{ fontSize : 15, padding : 3, borderRadius : 0 }}>
                                                         침상안정
                                                     </p>

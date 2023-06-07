@@ -29,11 +29,11 @@ const WorkStatusStore = (props) => {
                     }
                 }).then((response) => {
                     if(response.data.length == 0 && workStatus.length == 0) {
-                        debugger
                         initWorkStatus();
+                    }else{
+                        setWorkStatus(response.data[0].currentWorkStatus);
                     }
                 });
-                debugger
                 // setWorkStatus('working');
                 // debugger
                 // if(response.data.length == 0 && workStatus.length == 0) {
@@ -60,6 +60,8 @@ const WorkStatusStore = (props) => {
                 schoolName : user.schoolName,
                 currentWorkStatus : 'working'
             });
+
+            setWorkStatus('working');
         }
     }
 

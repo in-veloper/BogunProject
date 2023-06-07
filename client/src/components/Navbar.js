@@ -12,7 +12,8 @@ import { WorkStatusContext } from '../store/WorkStatus';
 const Navbar = () => {
     const [name, setName] = useState('');
     const [bookmarkData, setBookmarkData] = useState([]);
-    const [workStatus, setWorkStatus] = useState('working');    // [값 참고] -> 1 : 재중, 2 : 부재, 3 : 휴가
+    const [workStatus, setWorkStatus] = useState('');    // [값 참고] -> 1 : 재중, 2 : 부재, 3 : 휴가
+    const [workButtonStatus, setWorkButtonStatus] = useState('working');
     const [initWorkStatus, setInitWorkStatus] = useState(true);
     const [currentWorkStatus, setCurrentWorkStatus] = useState('');
 
@@ -20,8 +21,6 @@ const Navbar = () => {
     
     useEffect(() => {
         getBookmarkData();
-        // getInitWorkStatus();
-        // getWorkStatus();
     }, []);
 
     const context = useContext(UserContext);
@@ -30,10 +29,6 @@ const Navbar = () => {
     }
 
     const workStatusContext = useContext(WorkStatusContext);
-    // debugger
-    if(workStatusContext) {
-        // debugger
-    }
 
     const Logout = async () => {
         try {
@@ -44,51 +39,22 @@ const Navbar = () => {
         }
     }
 
-    // const getInitWorkStatus = () => {
-    //     if(initWorkStatus && context) {
-    //         axios.post('http://localhost:8000/setWorkStatus', {
-    //             userId : context.userId,
-    //             userName : context.userName,
-    //             schoolName : context.schoolName,
-    //             currentWorkStatus : 'working'
-    //         });
-
-    //         setInitWorkStatus(false);
-    //     }
-    // }
-    
-    // const getWorkStatus = () => {
-    //     if(!initWorkStatus && context) {
-    //         axios.get('http://localhost:8000/getWorkStatus', {
-    //             params : {
-    //                 userId : context.userId,
-    //                 userName : context.userName,
-    //                 schoolName : context.schoolName
-    //             }
-    //         }).then((response) => {
-    //             const currentWorkStatus = response.data[0].currentWorkStatus;
-    //             setCurrentWorkStatus(currentWorkStatus);
-    //         });
-    //     }
-    // }
-
-    // const updateWorkStatus = (selectedWorkStatus) => {
-    //     if(!initWorkStatus && context && (workStatus != currentWorkStatus)) {
-    //         // 여기서부터 진행하면 됨(기존의 Row를 업데이트하는 것이 아닌 하나씩 추가되고 있음 -> 처리 필요)
-    //         axios.post('http://localhost:8000/updateWorkStatus', {
-    //             userId : context.userId,
-    //             userName : context.userName,
-    //             schoolName : context.schoolName,
-    //             currentWorkStatus : selectedWorkStatus
-    //         }).then((response) => {
-    //             setWorkStatus(selectedWorkStatus);
-    //         });
-
-    //     }
-    // }
+    const updateWorkStatus = (selectedWorkStatus) => {
+        if(selectedWorkStatus != workStatusContext) {
+            axios.post('http://localhost:8000/updateWorkStatus', {
+                userId : context.userId,
+                userName : context.userName,
+                schoolName : context.schoolName,
+                currentWorkStatus : selectedWorkStatus
+            }).then((response) => {
+                // setWorkStatus(selectedWorkStatus);
+                // setWorkButtonStatus(selectedWorkStatus);
+            });
+        }
+    }
 
     const goDailyWorkNote = async () => {
-        navigate("/dailyWorkNote");
+        navigate("/dailyWorkNote"); // 로그인 정보 만료로 로그인 페이지로 전환시킬때 navigate 참고하면 될듯!
     }
 
     const [show, setShow] = useState(false);
@@ -249,28 +215,28 @@ const Navbar = () => {
     }
 
     const WorkStatusButtons = () => {
-        if(workStatus == 'working') {
+        if(workStatusContext && workStatusContext == 'working') {
             return (
                 <div className='buttons has-addons is-right' onClick={handleWorkStatus}>
                     <button className='button is-small is-info is-selected' name='working'>재실</button>
                     <button className='button is-small' name='away'>부재</button>
-                    <button className='button is-small' name='vacation'>휴가</button>
+                    <button className='button is-small' name='outdoor'>출장</button>
                 </div>
             )
-        }else if(workStatus == 'away') {
+        }else if(workStatusContext && workStatusContext == 'away') {
             return (
                 <div className='buttons has-addons is-right' onClick={handleWorkStatus}>
                     <button className='button is-small' name='working'>재실</button>
                     <button className='button is-small is-info is-selected' name='away'>부재</button>
-                    <button className='button is-small' name='vacation'>휴가</button>
+                    <button className='button is-small' name='outdoor'>출장</button>
                 </div>
             )
-        }else if(workStatus == 'vacation') {
+        }else if(workStatusContext && workStatusContext == 'outdoor') {
             return (
                 <div className='buttons has-addons is-right' onClick={handleWorkStatus}>
                     <button className='button is-small' name='working'>재실</button>
                     <button className='button is-small' name='away'>부재</button>
-                    <button className='button is-small is-info is-selected' name='vacation'>휴가</button>
+                    <button className='button is-small is-info is-selected' name='outdoor'>출장</button>
                 </div>
             )
         }
@@ -278,29 +244,35 @@ const Navbar = () => {
 
     const handleWorkStatus = (event) => {
         event.preventDefault();
-
+        
         const target = event.target;
         const workStatus = event.target.name;
         const workingButton = event.target.parentElement.childNodes[0]
         const awayButton = event.target.parentElement.childNodes[1];
-        const vacationButton = event.target.parentElement.childNodes[2];
-
+        const outdoorButton = event.target.parentElement.childNodes[2];
+        
         // 선택하고 남은 잔여 버튼들 
         if(workStatus == 'working') {
-            target.className = 'button is-small is-info';
+            target.className = 'button is-small is-info is-selected';
             awayButton.className = 'button is-small';
-            vacationButton.className = 'button is-small';
-        }else if(workStatus == 'away') {
-            target.className = 'button is-small is-info';
-            workingButton.className = 'button is-small';
-            vacationButton.className = 'button is-small';
-            if(currentWorkStatus != workStatus) {
+            outdoorButton.className = 'button is-small';
+            // if(workStatusContext != workStatus) {
                 updateWorkStatus(workStatus);
-            }
-        }else if(workStatus == 'vacation') {
-            target.className = 'button is-small is-info';
+            // }
+        }else if(workStatus == 'away') {
+            target.className = 'button is-small is-info is-selected';
+            workingButton.className = 'button is-small';
+            outdoorButton.className = 'button is-small';
+            // if(workStatusContext != workStatus) {
+                updateWorkStatus(workStatus);
+            // }
+        }else if(workStatus == 'outdoor') {
+            target.className = 'button is-small is-info is-selected';
             workingButton.className = 'button is-small';
             awayButton.className = 'button is-small';
+            // if(workStatusContext != workStatus) {
+                updateWorkStatus(workStatus);
+            // }
         }
 
         //Work Status 값 setWorkStatus Function 활용하여 세팅
@@ -328,13 +300,13 @@ const Navbar = () => {
                         <a href="/dashboard" className="navbar-item">
                             <b>메인</b>
                         </a>
-                        <a href="#" className="navbar-item">
+                        <a href="/examination" className="navbar-item">
                             <b>건강검진</b>
                         </a>
                         <a href="/dailyWorkNote" className="navbar-item" onClick={goDailyWorkNote}>
                             <b>보건일지</b>
                         </a>
-                        <a href="#" className="navbar-item">
+                        <a href="/currentStatus" className="navbar-item">
                             <b>현황/증명서</b>
                         </a>
                         <a href="/calendar" className="navbar-item">

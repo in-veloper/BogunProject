@@ -1,6 +1,7 @@
 /* eslint-disable */
 
 import React, { createContext, useState } from "react";
+import { useNavigate } from 'react-router-dom';
 import jwt_decode from "jwt-decode";
 import axios from 'axios';
 
@@ -21,6 +22,8 @@ const UserStore = (props) => {
             });
         } catch (error) {
             if(error.response) {
+                // await axios.delete('http://localhost:8000/logout');
+                useNavigate("/");
                 console.log(error);
             }
         }
