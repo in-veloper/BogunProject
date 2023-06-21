@@ -367,7 +367,7 @@ const DailyWorkNote = () => {
             for(let i = 0; i < diseaseItemData.length; i++) {
                 registeredDiseaseItems.push(
                     <div key={i} style={{ width : '100%', display : 'inline-flex' }}>
-                        <span className='tag is-small' style={{ width : '25%' }}>{diseaseItemData[i].diseaseCategory}</span>
+                        <span className='tag is-small mt-1' style={{ width : '25%' }}>{diseaseItemData[i].diseaseCategory}</span>
                         <input className='input ml-2' name='registeredDiseaseItem' type='text' value={diseaseItemData[i].diseaseText || ''} readOnly={true} style={{ height : 30, fontSize : 13 }}/>
                         <button key={i} className='button is-small is-danger ml-2' style={{ marginRight : 'auto' }} onClick={removeDiseaseItem}>삭제</button>
                     </div>
@@ -1798,10 +1798,10 @@ const DailyWorkNote = () => {
                 <div style={{ float : 'left'}}>
                     <BedBox/>
                 </div>
-                <div style={{ float : 'right',  marginTop : 10, marginBottom : 5 }}>
+                <div className='mt-4' style={{ float : 'right',  marginTop : 10, marginBottom : 5 }}>
                     <button className='button is-small' onClick={handleBedSetting}>침상 수 설정</button>
                     <button className='button is-small ml-2'>학생별 보건일지</button>
-                    <button className='button is-small ml-3'>기간별 보건일지</button>
+                    <button className='button is-small ml-2'>기간별 보건일지</button>
                 </div>
             </div>
 
@@ -1809,7 +1809,7 @@ const DailyWorkNote = () => {
                 <div className='tile is-vertical is-12'>
                     <div className='tile mt-3 mb-5'>
                         <div className='tile is-parent is-vertical'>
-                            <div className="panel" style={{ width : '50vh', marginTop : -10, height : '65vh', display : 'flex', flexDirection : 'column', borderRadius : 0 }}>
+                            <div className="panel" style={{ width : '39vh', marginTop : -10, height : '48vh', display : 'flex', flexDirection : 'column', borderRadius : 0 }}>
                                 <p className="panel-heading" style={{ fontSize : 15, borderRadius : 0 }}>
                                     학생 조회
                                 </p>
@@ -1854,7 +1854,7 @@ const DailyWorkNote = () => {
                                     </div>
                                 </div>
 
-                                <div style={{ margin : 'auto', marginTop : 10, marginBottom : 0 }}>
+                                <div style={{ margin : 'auto', marginTop : 15, marginBottom : -10 }}>
                                     <button className='button is-small is-info' onClick={onSearchStudent}>조회</button>
                                     <button className='button is-small ml-2' onClick={studentSearchReset}>초기화</button>
                                 </div>
@@ -1873,22 +1873,22 @@ const DailyWorkNote = () => {
                                         <StudentSearchResult/>
                                     </table>
                                 </div>
-                                <span className='tag ml-3 mt-5 mb-2' style={{ fontSize : 12, width : '95%' }}><AiOutlineNotification style={{ fontSize : 15, marginRight : 7 }}/>행 선택 시 보건일지에 자동으로 입력됩니다</span>
+                                <span className='tag ml-3' style={{ fontSize : 12, width : '95%' }}><AiOutlineNotification style={{ fontSize : 15, marginRight : 7 }}/>행 선택 시 보건일지에 자동으로 입력됩니다</span>
                                 <div style={{ margin : 'auto' }}>
                                     <button className='button is-small'>학생관리</button>
                                 </div>
                             </div>
-                            <div className="panel" style={{ width : '50vh', marginTop : -10, height : '33.3vh', display : 'flex', flexDirection : 'column', borderRadius : 0 }}>
+                            <div className="panel" style={{ width : '39vh', marginTop : -10, height : '27.8vh', display : 'flex', flexDirection : 'column', borderRadius : 0 }}>
                                 <p className="panel-heading" style={{ fontSize : 15, borderRadius : 0 }}>
                                     보건실 사용 요청 알람 내역
                                 </p>
                             </div>
                         </div>
                         
-                        <div className='tile is-child' style={{ padding : 0 }}>
+                        <div className='tile is-child' style={{ padding : 0, minWidth : '67%' }}>
                             {/* <form onSubmit={onWorkNoteSubmit}> */}
                             <form>
-                                <div className='panel' id='workNotePage' style={{ height : '100vh', width : '87vh', borderRadius : 0 }}>
+                                <div className='panel' id='workNotePage' style={{ height : '77vh', width : '92%', borderRadius : 0 }}>
                                     <p className='panel-heading' style={{ fontSize : 15, borderRadius : 0 }}>
                                         보건일지 작성
                                     </p>
@@ -1931,7 +1931,7 @@ const DailyWorkNote = () => {
                                             />
                                         </div>
                                     </div>
-                                    <div style={{ height : 190, overflowY : 'auto'}}>
+                                    <div style={{ height : 210, overflowY : 'auto'}}>
                                         <table className='table is-striped is-narrow is-hoverable ml-3' style={{ width : '97.5%', fontSize : 12 }}>
                                             <thead>
                                                 <tr>
@@ -1948,8 +1948,8 @@ const DailyWorkNote = () => {
                                     </div>
                                     <hr style={{ marginLeft : 10, marginRight : 10, marginBottom : 10 }}/>
                                     <div className='mt-2' style={{ display : 'inline-flex', width : '100%' }}>
-                                        <div id='diseaseDiv'>
-                                            <nav className='panel ml-2 mb-3' style={{ width : '24vh', borderRadius : 0 }}>
+                                        <div id='diseaseDiv' style={{ width : '40%' }}>
+                                            <nav className='panel ml-2 mb-3' style={{ borderRadius : 0 }}>
                                                 <p className='panel-heading' style={{ fontSize : 15, padding : 3, borderRadius : 0 }}>
                                                     증상
                                                 </p>
@@ -1964,8 +1964,8 @@ const DailyWorkNote = () => {
                                                 </div>
                                             </nav>
                                         </div>
-                                        <div id='treatDiv'>
-                                            <nav className='panel ml-3 mb-3' style={{ width : '60vh', borderRadius : 0 }}>
+                                        <div id='treatDiv' style={{ width : '59%' }}>
+                                            <nav className='panel ml-3 mb-3' style={{ borderRadius : 0 }}>
                                                 <p className='panel-heading' style={{ fontSize : 15, padding : 3, borderRadius : 0 }}>
                                                     처치사항
                                                 </p>
@@ -1981,9 +1981,9 @@ const DailyWorkNote = () => {
                                             </nav>
                                         </div>
                                     </div>
-                                    <div style={{ display : 'inline-flex' }}>
-                                        <div id='medicineDiv'>
-                                            <nav className='panel ml-2 mb-3' style={{ width : '24vh', borderRadius : 0 }}>
+                                    <div style={{ display : 'inline-flex', width : '100%' }}>
+                                        <div id='medicineDiv' style={{ width : '40%' }}>
+                                            <nav className='panel ml-2 mb-3' style={{ borderRadius : 0 }}>
                                                 <p className='panel-heading' style={{ fontSize : 15, padding : 3, borderRadius : 0 }}>
                                                     투약사항
                                                 </p>
@@ -1998,9 +1998,9 @@ const DailyWorkNote = () => {
                                                 </div>
                                             </nav>
                                         </div>
-                                        <div>
+                                        <div style={{ width : '59%' }}>
                                             <div id='reactDiv'>
-                                                <nav className='panel ml-3' style={{ width : '60vh', borderRadius : 0 }}>
+                                                <nav className='panel ml-3' style={{ borderRadius : 0 }}>
                                                     <p className='panel-heading' style={{ fontSize : 15, padding : 3, borderRadius : 0 }}>
                                                         조치사항
                                                     </p>
@@ -2016,7 +2016,7 @@ const DailyWorkNote = () => {
                                                 </nav>
                                             </div>
                                             <div className='mb-3 mt-3' id='bedTimeDiv'>
-                                                <nav className='panel ml-3 mb-3 mt-2' style={{ width : '60vh', borderRadius : 0 }}>
+                                                <nav className='panel ml-3 mb-3 mt-2' style={{ borderRadius : 0 }}>
                                                     <p className='panel-heading' style={{ fontSize : 15, padding : 3, borderRadius : 0 }}>
                                                         침상안정
                                                     </p>
@@ -2056,7 +2056,7 @@ const DailyWorkNote = () => {
                     </div>
                     <div className='tile is-vertical is-12 ml-2 mt-1'>
                         <div style={{ minHeight : 230, overflowY : 'auto'}}>
-                            <table className='table is-bordered is-striped is-narrow is-hoverable is-fullwidth' style={{ fontSize : 13 }}>
+                            <table className='table is-bordered is-striped is-narrow is-hoverable' style={{ fontSize : 13, width : '99.5%' }}>
                                 <thead>
                                     <tr>
                                         <th style={{ textAlign : 'center', backgroundColor : 'lightblue' }}>등록일</th>

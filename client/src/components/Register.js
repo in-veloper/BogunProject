@@ -21,12 +21,12 @@ const Register = () => {
     const [confPassword, setConfPassword] = useState('');
     const [msg, setMsg] = useState('');
     const navigate = useNavigate();
-    
+
     // const URL = "https://open.neis.go.kr/hub/schoolInfo";
-    const getSchoolInfo = (e) => {
+    const getSchoolInfo = async (e) => {
         try {
             setLoading(true);
-            neis.getSchoolInfo({
+            await neis.getSchoolInfo({
                     // args
                     SCHUL_NM : e
                 },{
@@ -37,16 +37,12 @@ const Register = () => {
                 if(!response) {
                     setData(null);
                 }else{
-                    if(response.length > 20) {
-                        setData(null)
-                    }else{
-                        setData(response);
-                    }
+                    setData(response);
                 }
             });
         } catch (error) {
             console.log(error);
-            setError(error)
+            setError(error);
         }
         setLoading(false);
     }
@@ -65,13 +61,21 @@ const Register = () => {
     const SearchResultBox = () => {
         if(data && !isSelected) {
             const schoolList = [];
-            for(let i = 0; i < data.length; i++) {
-                let info = data[i];
-                schoolList.push(<li key={i} onClick={(event)=>{ selectSchool(info.SCHUL_NM) }}><b>{ info.SCHUL_NM }</b> [{ info.ORG_RDNMA }]</li>);
+            if(data.length > 20) {
+                return <div className='box'>
+                    <ul>
+                        <li>해당하는 학교의 수가 많아 표시할 수 없습니다.</li>
+                    </ul>
+                </div>
+            }else{
+                for(let i = 0; i < data.length; i++) {
+                    let info = data[i];
+                    schoolList.push(<li key={i} onClick={(event)=>{ selectSchool(info.SCHUL_NM) }} style={{ cursor : 'pointer'}}><b>{ info.SCHUL_NM }</b> [{ info.ORG_RDNMA }]</li>);
+                }
+                return <div className='box'>
+                    <ul> { schoolList } </ul>
+                </div>
             }
-            return <div className='box'>
-                <ul> { schoolList } </ul>
-            </div>
         }
     }
 
